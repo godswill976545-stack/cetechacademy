@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://js.paystack.co https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co;">
+    <title>CeTech Academy | Master the Digital Craft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            300: '#7cc7fb',
+                            400: '#38a9f8',
+                            500: '#007bff', // Primary Blue
+                            600: '#0061cc',
+                            700: '#004da3',
+                            800: '#003e85',
+                            900: '#00356e',
+                            950: '#070b10',
+                        },
+                        accent: {
+                            400: '#00d2ff', // Cyan
+                            500: '#00b8e6',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Space Grotesk', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                        'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                            '50%': { opacity: '0.7', transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Lighter Base */
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
+            color: #020617;
+        }
+        
+        /* Glassmorphism Utilities - Light Mode */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(0, 123, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 53, 110, 0.05);
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 123, 255, 0.08);
+        }
+
+        /* Interactive Cards */
+        .interactive-card {
+            transition: all 0.2s ease-in-out;
+            background: #ffffff;
+            border: 1px solid rgba(0, 123, 255, 0.15);
+        }
+        .interactive-card:hover {
+            transform: translateY(-8px);
+            background: #ffffff;
+            border-color: rgba(0, 123, 255, 0.4);
+            box-shadow: 0 20px 40px -10px rgba(0, 53, 110, 0.1), 0 0 20px rgba(0, 123, 255, 0.05);
+        }
+
+        /* Text Gradients */
+        .text-gradient {
+            background: linear-gradient(135deg, #020617 0%, #007bff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .text-gradient-mint {
+            background: linear-gradient(135deg, #00d2ff 0%, #007bff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Ambient Orbs */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        /* Animation Staggers
+           Important: content is visible by default. JS opts-in to reveal animations
+           by adding `.reveal-ready` to <html>. This prevents “missing text” if JS fails. */
+        .section-reveal {
+            opacity: 1;
+            transform: none;
+        }
+        .reveal-ready .section-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-ready .section-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+        .stagger-6 { transition-delay: 0.6s; }
+
+        /* Mobile Menu Transitions */
+        #mobileMenu {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #mobileMenu.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #mobileMenu .glass-panel {
+            transform: translateY(-20px) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #mobileMenu.active .glass-panel {
+            transform: translateY(0) scale(1);
+        }
+
+        /* Responsive Design Improvements */
+        @media (max-width: 768px) {
+            /* Typography */
+            h1 { font-size: 2.5rem !important; line-height: 1.2 !important; }
+            h2 { font-size: 0.875rem !important; }
+            h3 { font-size: 2rem !important; line-height: 1.2 !important; }
+            h4 { font-size: 1.5rem !important; }
+            p { font-size: 1rem !important; }
+
+            /* Spacing */
+            section { padding-top: 5rem !important; padding-bottom: 5rem !important; }
+            .hero-section { padding-top: 6rem !important; }
+            
+            /* Component Sizing */
+            .glass-panel { padding: 1.5rem !important; }
+            
+            /* Hero Adjustments */
+            #headline-container { margin-bottom: 1.5rem; text-align: center; }
+            #headline-container + p { text-align: center; margin-left: auto; margin-right: auto; }
+            .hero-section .flex-wrap { justify-content: center; }
+            .animate-float { scale: 0.8; }
+            .hero-section .animate-float:first-of-type { left: -1rem !important; top: 2rem !important; }
+            .hero-section .animate-float:last-of-type { right: -1rem !important; bottom: 4rem !important; }
+            
+            /* Navbar Logo */
+            .nav-logo-img { height: 4rem !important; } /* Mobile: 64px (Increase from 56px) */
+            .footer-logo-img { height: 3.5rem !important; } /* Mobile: 56px (Increase from 48px) */
+            
+            /* Mobile Menu Refinement */
+            #mobileMenu .glass-panel { 
+                background: rgba(255, 255, 255, 0.98) !important; 
+                border: 1px solid rgba(0, 123, 255, 0.2) !important;
+            }
+            #mobileMenu a { 
+                color: #1e293b !important; 
+                font-weight: 600 !important;
+                padding: 1rem !important;
+            }
+        }
+
+        /* ===== DUOLINGO BUTTONS (DIRECT) ===== */
+        .duo-btn {
+            --btn-face: #007bff;
+            --btn-shadow: #0056b3;
+            --btn-text: #ffffff;
+            --btn-radius: 14px;
+            --btn-depth: 5px;
+
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 12px 24px;
+            background-color: var(--btn-face) !important;
+            color: var(--btn-text) !important;
+            border: none !important;
+            border-bottom: var(--btn-depth) solid var(--btn-shadow) !important;
+            border-radius: var(--btn-radius) !important;
+            font-family: 'Space Grotesk', sans-serif !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            cursor: pointer !important;
+            transition: all 0.1s ease !important;
+            text-decoration: none !important;
+            z-index: 100 !important;
+        }
+
+        .duo-btn:active {
+            transform: translateY(4px) !important;
+            border-bottom-width: 1px !important;
+        }
+
+        .duo-btn-primary { --btn-face: #007bff; --btn-shadow: #0056b3; }
+        .duo-btn-secondary { --btn-face: #ffffff; --btn-shadow: #e2e8f0; --btn-text: #007bff; border: 1px solid #e2e8f0 !important; }
+        .duo-btn-accent { --btn-face: #00d2ff; --btn-shadow: #00b8e6; --btn-text: #020617; }
+        .duo-btn-destructive { --btn-face: #ef4444; --btn-shadow: #b91c1c; }
+        
+        .duo-btn-sm { padding: 8px 16px; font-size: 0.75rem; --btn-depth: 3px; }
+        .duo-btn-lg { padding: 16px 32px; font-size: 1rem; --btn-depth: 6px; }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-500/30 selection:text-brand-300">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:rounded-lg focus:bg-brand-900 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent-400">
+        Skip to content
+    </a>
+    
+    <!-- Aurora background (animated gradient) -->
+    <div class="fixed inset-0 pointer-events-none z-0 opacity-70">
+        <div id="aurora-bg" class="absolute inset-0"></div>
+        <!-- Slight wash to keep text contrast consistent -->
+        <div class="absolute inset-0 bg-white/40"></div>
+    </div>
+
+    <!-- Ambient Background Lighting -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="ambient-orb bg-brand-400/40 w-[800px] h-[800px] -top-96 -left-48 animate-pulse-glow"></div>
+        <div class="ambient-orb bg-slate-300/40 w-[600px] h-[600px] top-1/2 right-0 translate-x-1/3 -translate-y-1/2"></div>
+        <div class="ambient-orb bg-accent-200/50 w-[1000px] h-[1000px] -bottom-[500px] -left-1/4"></div>
+        
+        <!-- Grid pattern overlay -->
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTU5IDYwaDFWMGgtMXY2MHptLTEgMHYxaDYwdi0xaC02MHoiIGZpbGw9InJnYmEoMTUsIDIzLCA0MiwgMC4wNSkiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==')] opacity-50"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-white blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <img src="assets/logo.png" alt="CeTech Academy" class="h-14 md:h-20 w-auto object-contain relative z-10 transition-transform duration-300 group-hover:scale-105 nav-logo-img">
+                </div>
+                <span class="text-xl font-bold tracking-tight text-slate-900 group-hover:text-brand-900 transition-colors">CeTech Academy</span>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#pricing" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Pricing</a>
+                <a href="#mentors" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Mentors</a>
+                <div id="auth-buttons" class="flex items-center gap-4">
+                    <a href="login.html" class="duo-btn duo-btn-sm duo-btn-secondary auth-guest">SIGN IN</a>
+                    <a href="login.html?mode=signup" class="duo-btn duo-btn-sm duo-btn-primary auth-guest">GET STARTED</a>
+                    <a href="frontend/portal.html" class="duo-btn duo-btn-sm duo-btn-accent auth-user hidden">PORTAL</a>
+                    <button id="logoutBtn" class="duo-btn duo-btn-sm duo-btn-destructive auth-user hidden">SIGN OUT</button>
+                </div>
+            </div>
+            
+            <button id="mobileMenuButton" class="md:hidden text-slate-900 p-2 rounded-lg hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-0" type="button" aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 hidden md:hidden">
+        <div id="mobileMenuBackdrop" class="absolute inset-0 bg-black/40"></div>
+        <div class="absolute inset-x-0 top-[72px]">
+        <div class="mx-4 rounded-2xl glass-panel border border-white/10 shadow-2xl overflow-hidden relative">
+            <div class="p-3 flex flex-col">
+                <a href="#pricing" class="rounded-xl px-4 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-accent-400">Pricing</a>
+                <a href="#mentors" class="rounded-xl px-4 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-accent-400">Mentors</a>
+                <div class="p-2 flex flex-col gap-2">
+                    <a href="login.html" class="duo-btn duo-btn-secondary auth-guest">Sign In</a>
+                    <a href="login.html?mode=signup" class="duo-btn duo-btn-primary auth-guest">Get started</a>
+                    <a href="frontend/portal.html" class="duo-btn duo-btn-accent auth-user hidden">Portal</a>
+                    <button id="logoutBtnMobile" class="duo-btn duo-btn-destructive auth-user hidden">Sign Out</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <main id="main" class="relative z-10">
+    <section class="hero-section min-h-screen relative flex items-center pt-20 overflow-hidden bg-white">
+        <!-- Hero Content -->
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+            <div class="animate-slide-up z-10">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-brand-200 text-brand-700 text-xs font-bold tracking-wider uppercase mb-8 shadow-sm">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-500"></span>
+                    </span>
+                    Enrollment Open for Q4 2026
+                </div>
+                
+                <div id="headline-container"></div>
+                
+                <p class="text-slate-600 text-lg lg:text-xl font-light mb-10 max-w-lg leading-relaxed">
+                    Gain practical digital skills, build real-world experience, and position yourself to earn and stand out in today’s digital world.
+                </p>
+                
+                <div class="flex flex-wrap items-center gap-8">
+                    <a href="#pricing" class="duo-btn duo-btn-lg duo-btn-primary">
+                        Secure Your Spot
+                        <i data-lucide="arrow-right" class="w-5 h-5 ml-3"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="relative animate-slide-up stagger-2 lg:h-[600px] flex items-center justify-center">
+                <!-- Abstract Hero Visual -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-brand-500/10 to-transparent rounded-[3rem] rotate-3 scale-105 blur-lg"></div>
+                <div class="glass-panel rounded-[2.5rem] p-2 relative z-10 w-full h-full min-h-[500px]">
+                    <div class="rounded-[2rem] overflow-hidden relative bg-slate-50 border border-slate-200 w-full h-full flex items-center justify-center">
+                        <div id="antigravity-container" class="absolute inset-0"></div>
+                        
+                        <!-- Floating UI Elements -->
+                        <div class="absolute top-8 -left-8 glass-panel px-6 py-4 rounded-2xl flex items-center gap-4 border-brand-500/20 shadow-lg animate-float" style="animation-delay: -2s;">
+                            <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
+                                <i data-lucide="code-2" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-slate-500 font-medium">Weekly Challenge</div>
+                                <div class="font-bold text-slate-900">Frontend Architecture</div>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute bottom-12 -right-6 glass-panel px-6 py-4 rounded-2xl flex items-center gap-4 border-brand-500/20 shadow-lg animate-float" style="animation-delay: -4s;">
+                            <div class="w-12 h-12 rounded-xl bg-accent-500/10 flex items-center justify-center text-accent-600">
+                                <i data-lucide="check-circle" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-slate-500 font-medium">Task Completed</div>
+                                <div class="font-bold text-slate-900">UI/UX Wireframing</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROGRAM LEVELS SECTION -->
+    <section id="program" class="py-32 px-6 relative z-10 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 section-reveal">
+                <h2 class="text-brand-600 font-bold tracking-wider text-sm uppercase mb-3">The Journey</h2>
+                <h3 class="text-4xl lg:text-5xl font-bold mb-6 text-slate-900">Our Digital Career Program</h3>
+                <p class="text-slate-600 max-w-2xl mx-auto text-lg">A structured 4-month program designed to take you from beginner to a confident, job-ready digital professional with skills you can start earning from.</p>
+            </div>
+
+            <!-- Program Quick Details -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 section-reveal stagger-1">
+                <div class="glass-panel p-6 rounded-3xl text-center border-slate-100">
+                    <div class="text-[10px] font-bold text-brand-600 uppercase tracking-widest mb-1">Duration</div>
+                    <div class="text-lg font-bold text-slate-900">4 Months</div>
+                </div>
+                <div class="glass-panel p-6 rounded-3xl text-center border-slate-100">
+                    <div class="text-[10px] font-bold text-brand-600 uppercase tracking-widest mb-1">Mode</div>
+                    <div class="text-lg font-bold text-slate-900">Hybrid</div>
+                </div>
+                <div class="glass-panel p-6 rounded-3xl text-center border-slate-100">
+                    <div class="text-[10px] font-bold text-brand-600 uppercase tracking-widest mb-1">Cohort Size</div>
+                    <div class="text-lg font-bold text-slate-900">30 Students</div>
+                </div>
+                <div class="glass-panel p-6 rounded-3xl text-center border-slate-100">
+                    <div class="text-[10px] font-bold text-brand-600 uppercase tracking-widest mb-1">Fee</div>
+                    <div class="text-lg font-bold text-slate-900">Varies</div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Beginner Level -->
+            <div class="glass-panel p-8 rounded-[2.5rem] border-slate-200 hover:border-brand-500/30 transition-all group">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 01</div>
+                <h4 class="text-2xl font-bold text-slate-900 mb-4">Beginner Level (Foundation)</h4>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8">Build a strong understanding of the digital space and develop essential foundational skills. At this stage, you’ll gain clarity, confidence, and the ability to navigate and begin working within the digital world.</p>
+                <a href="login.html" class="duo-btn duo-btn-sm duo-btn-secondary w-full">Start Phase 01</a>
+            </div>
+
+                <!-- Intermediate Level -->
+                <div class="glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 02</div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">Intermediate Level (Skill Building)</h4>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-8">Move from understanding to doing. You’ll develop practical, hands-on skills, work on guided tasks, and begin applying what you’ve learned to real scenarios while improving your confidence and creativity.</p>
+                    <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary w-full">Join Phase 02</a>
+                </div>
+
+                <!-- Advanced Level -->
+                <div class="glass-panel p-8 rounded-[2.5rem] border-slate-200 hover:border-brand-500/30 transition-all group">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 03</div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">Advanced Level (Real-World Application)</h4>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-8">Bring everything together through real-world projects, portfolio development, and personal positioning. You’ll learn how to turn your skills into value, position yourself professionally, and start creating income opportunities.</p>
+                    <a href="login.html" class="duo-btn duo-btn-sm duo-btn-secondary w-full">Master Phase 03</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CURRICULUM SECTION -->
+    <section id="curriculum" class="py-32 px-6 relative z-10 bg-slate-50/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 section-reveal">
+                <h2 class="text-brand-600 font-bold tracking-wider text-sm uppercase mb-3">The Ecosystem</h2>
+                <h3 class="text-4xl lg:text-5xl font-bold mb-6 text-slate-900">Disciplines of Mastery</h3>
+                <p class="text-slate-600 max-w-2xl mx-auto text-lg">Curated paths designed to transform ambitious beginners into highly sought-after digital architects.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-1 group cursor-pointer hover:border-brand-500/50 shadow-sm">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-500/10 flex items-center justify-center mb-8 text-brand-600 group-hover:scale-110 group-hover:bg-brand-500/20 transition-all duration-300">
+                        <i data-lucide="layout" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-3 text-slate-900">UI/UX Design</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Map immersive digital interfaces that pulse with life. Master Figma, user research, wireframing, and interactive prototyping.</p>
+                    <div class="flex items-center text-brand-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                        Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-2 group cursor-pointer hover:border-sky-500/50 shadow-sm">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-500/10 flex items-center justify-center mb-8 text-sky-600 group-hover:scale-110 group-hover:bg-sky-500/20 transition-all duration-300">
+                        <i data-lucide="terminal" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-3 text-slate-900">Web Engineering</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Build the architecture of the modern web. From semantic HTML/CSS to advanced React and modern backend frameworks.</p>
+                    <div class="flex items-center text-sky-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                        Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                    </div>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-3 group cursor-pointer hover:border-purple-500/50 shadow-sm">
+                    <div class="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-8 text-purple-600 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all duration-300">
+                        <i data-lucide="palette" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-3 text-slate-900">Brand Identity</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Visual storytelling redefined. Learn color theory, advanced typography, and how to craft cohesive visual identities.</p>
+                    <div class="flex items-center text-purple-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                        Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                    </div>
+                </div>
+                
+                <!-- Card 4 -->
+                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-4 group cursor-pointer hover:border-rose-500/50">
+                    <div class="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-8 text-rose-400 group-hover:scale-110 group-hover:bg-rose-500/20 group-hover:shadow-[0_0_30px_rgba(244,63,94,0.3)] transition-all duration-300">
+                        <i data-lucide="trending-up" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-3">Growth Marketing</h4>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-6">Master data-driven strategies, SEO, and campaign engineering to dominate digital landscapes and scale businesses.</p>
+                    <div class="flex items-center text-rose-400 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                        Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                    </div>
+                </div>
+                
+                <!-- Card 5 -->
+                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-5 group cursor-pointer hover:border-amber-500/50">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-8 text-amber-400 group-hover:scale-110 group-hover:bg-amber-500/20 group-hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all duration-300">
+                        <i data-lucide="database" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-3">Data Science</h4>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-6">Extract deep, actionable insights from complex data ecosystems using Python, SQL, and predictive modeling.</p>
+                    <div class="flex items-center text-amber-400 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                        Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                    </div>
+                </div>
+                
+                <!-- Card 6 -->
+                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-6 group cursor-pointer hover:border-indigo-500/50">
+                    <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-8 text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20 group-hover:shadow-[0_0_30px_rgba(99,102,241,0.3)] transition-all duration-300">
+                        <i data-lucide="bot" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-3">AI & Automation</h4>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-6">Leverage the power of artificial intelligence and workflow automation to scale productivity and build intelligent tools.</p>
+                    <div class="flex items-center text-indigo-400 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                        Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- WHY CHOOSE US SECTION -->
+    <section class="py-32 px-6 relative z-10 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="section-reveal">
+                    <h2 class="text-brand-600 font-bold tracking-wider text-sm uppercase mb-3">Why CETECH?</h2>
+                    <h3 class="text-4xl lg:text-5xl font-bold mb-8 text-slate-900">Why Choose CETECH Academy?</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-600 mt-1 shrink-0">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <p class="text-slate-700 font-medium">Practical, hands-on training</p>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-600 mt-1 shrink-0">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <p class="text-slate-700 font-medium">Hybrid learning (Live + Recorded)</p>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-600 mt-1 shrink-0">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <p class="text-slate-700 font-medium">Real-world projects</p>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-600 mt-1 shrink-0">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <p class="text-slate-700 font-medium">Mentorship & support</p>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-600 mt-1 shrink-0">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <p class="text-slate-700 font-medium">Small class size (30 students max)</p>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-600 mt-1 shrink-0">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <p class="text-slate-700 font-medium">Focus on income and growth</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-10 rounded-[3rem] border-brand-500/20 bg-brand-900 text-white text-center relative overflow-hidden section-reveal stagger-2">
+                    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LCAyNTUsIDI1NSwgMC4wNSkiLz48L3N2Zz4=')] opacity-30"></div>
+                    <div class="relative z-10">
+                        <div class="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8">
+                            <i data-lucide="sparkles" class="w-10 h-10 text-brand-400"></i>
+                        </div>
+                        <h4 class="text-3xl font-bold mb-4">Start Your Journey</h4>
+                        <p class="text-brand-100/70 mb-10 text-lg">No experience needed. Just your willingness to learn and grow.</p>
+                        <a href="login.html" class="duo-btn duo-btn-accent">Secure Your Spot</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section id="pricing" class="py-32 px-6 relative bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 section-reveal">
+                <h2 class="text-brand-600 font-bold tracking-wider text-sm uppercase mb-3">Investment</h2>
+                <h3 class="text-4xl lg:text-5xl font-bold mb-6 text-slate-900">Choose Your Path to Mastery</h3>
+                <p class="text-slate-600 max-w-2xl mx-auto text-lg">Elite programs designed for those ready to dominate the digital landscape.</p>
+            </div>
+
+            <div class="flex justify-center section-reveal">
+                <button id="viewCoursesBtn" class="duo-btn duo-btn-secondary">
+                    View Full Courses & Fees
+                    <i data-lucide="chevron-down" class="w-6 h-6 ml-3 group-hover:translate-y-1 transition-transform"></i>
+                </button>
+            </div>
+
+            <!-- Full Course List (Revealed on Click) -->
+            <div id="courseListSection" class="hidden mt-16 animate-slide-up">
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Digital Marketing -->
+                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
+                                <i data-lucide="megaphone" class="w-6 h-6"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tuition</div>
+                                <div class="text-xl font-bold text-slate-900">₦130,000</div>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-2">Digital Marketing</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed mb-6">Master SEO, content strategy, and social media ecosystems.</p>
+                        <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
+                            Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </a>
+                    </div>
+
+                    <!-- UI/UX Design -->
+                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
+                                <i data-lucide="layout" class="w-6 h-6"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tuition</div>
+                                <div class="text-xl font-bold text-slate-900">₦150,000</div>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-2">UI/UX Design</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed mb-6">Advanced Figma mastery and human-centric design systems.</p>
+                        <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
+                            Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </a>
+                    </div>
+
+                    <!-- Software Engineering -->
+                    <div class="glass-panel p-8 rounded-3xl border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center text-brand-600">
+                                <i data-lucide="code-2" class="w-6 h-6"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] font-bold text-brand-600/60 uppercase tracking-widest mb-1">Tuition</div>
+                                <div class="text-xl font-bold text-slate-900">₦200k - 250k</div>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-2">Software Engineering</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed mb-6">Fullstack development with React, Node.js, and modern APIs.</p>
+                        <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
+                            Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </a>
+                    </div>
+
+                    <!-- AI Automation -->
+                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
+                                <i data-lucide="bot" class="w-6 h-6"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tuition</div>
+                                <div class="text-xl font-bold text-slate-900">₦180,000</div>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-2">AI Automation</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed mb-6">Leveraging LLMs and workflow automation for productivity.</p>
+                        <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
+                            Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </a>
+                    </div>
+
+                    <!-- Data Analyst -->
+                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
+                                <i data-lucide="database" class="w-6 h-6"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tuition</div>
+                                <div class="text-xl font-bold text-slate-900">₦200,000</div>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-2">Data Analyst</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed mb-6">Python, SQL, and data visualization for business intelligence.</p>
+                        <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
+                            Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </a>
+                    </div>
+
+                    <!-- Graphic Design -->
+                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
+                                <i data-lucide="palette" class="w-6 h-6"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tuition</div>
+                                <div class="text-xl font-bold text-slate-900">₦120,000</div>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-2">Graphic Design</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed mb-6">Visual communication, branding, and typography mastery.</p>
+                        <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
+                            Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Special Program: CeTech Pro Launch -->
+                <div class="mt-8 glass-panel p-8 rounded-3xl border-brand-500/30 bg-brand-900 text-white relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="rocket" class="w-32 h-32 -rotate-12"></i>
+                    </div>
+                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-400/20 text-brand-300 text-[10px] font-bold uppercase tracking-widest mb-4">Accelerator Program</div>
+                            <h4 class="text-3xl font-bold mb-2">CeTech Pro Launch</h4>
+                            <p class="text-brand-100/70 max-w-xl">Launch Your Tech Career. Get Clients. Start Earning. The definitive bridge from learning to earning.</p>
+                        </div>
+                        <div class="text-center md:text-right">
+                            <div class="text-[10px] font-bold text-brand-400 uppercase tracking-widest mb-1">Tuition</div>
+                            <div class="text-4xl font-bold mb-6">₦100,000</div>
+                            <a href="login.html" class="duo-btn duo-btn-accent">Join the Cohort</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MENTORS SECTION -->
+    <section id="mentors" class="py-32 px-6 relative z-10 border-t border-white/5 bg-brand-950/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 section-reveal gap-6">
+                <div class="max-w-2xl">
+                    <h2 class="text-brand-400 font-bold tracking-wider text-sm uppercase mb-3">The Faculty</h2>
+                    <h3 class="text-4xl lg:text-5xl font-bold mb-6">Meet the CeTech Team</h3>
+                    <p class="text-gray-300 text-lg">Our team is made up of passionate digital professionals dedicated to helping you gain practical skills, build confidence, and create real opportunities in the digital space.</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start max-w-5xl">
+                <!-- Mentor: Chukwudi Collins -->
+                <div class="group section-reveal stagger-1">
+                    <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6">
+                        <img src="assets/mentor_chukwudi.jpeg" alt="Chukwudi Collins" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent opacity-80"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <div class="glass-panel p-4 rounded-xl border-white/10 backdrop-blur-md">
+                                <h4 class="font-bold text-white text-lg">Chukwudi Collins</h4>
+                                <p class="text-brand-400 text-xs font-bold tracking-wider uppercase">Multi-skilled Digital Professional</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mentor: Nwankwor Chukwudalu Emmanuel -->
+                <div class="group section-reveal stagger-2 md:translate-y-6">
+                    <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6">
+                        <img src="assets/mentor_nwankwor.PNG" alt="Nwankwor Chukwudalu Emmanuel" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent opacity-80"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <div class="glass-panel p-4 rounded-xl border-white/10 backdrop-blur-md">
+                                <h4 class="font-bold text-white text-lg">Nwankwor Chukwudalu Emmanuel</h4>
+                                <p class="text-brand-400 text-xs font-bold tracking-wider uppercase">Visual Creative Professional</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mentor: Obinna John -->
+                <div class="group section-reveal stagger-3 md:translate-y-12">
+                    <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6">
+                        <img src="assets/mentor_obinna.jpeg" alt="Obinna John" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent opacity-80"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <div class="glass-panel p-4 rounded-xl border-white/10 backdrop-blur-md">
+                                <h4 class="font-bold text-white text-lg">Obinna John</h4>
+                                <p class="text-brand-400 text-xs font-bold tracking-wider uppercase">Creative Designer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-16 px-6 border-t border-slate-200 relative z-10 bg-slate-50">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div class="lg:col-span-2">
+                <a href="#" class="flex items-center gap-3 mb-6 group">
+                    <img src="assets/logo.png" alt="CeTech Academy" class="h-12 md:h-18 w-auto object-contain transition-transform duration-300 group-hover:scale-105 footer-logo-img">
+                    <span class="text-2xl font-bold tracking-tight text-slate-900 group-hover:text-brand-900 transition-colors">CeTech Academy</span>
+                </a>
+                <p class="text-slate-500 text-sm mb-8 max-w-sm leading-relaxed">Empowering the next generation of African digital architects. We forge careers through rigorous, tactile mastery.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.facebook.com/share/1JBgGiieXV/?mibextid=wwXIfr" target="_blank" class="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:opacity-90 transition-all shadow-md" aria-label="Follow us on Facebook">
+                        <i data-lucide="facebook" class="w-5 h-5 fill-current"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 hover:bg-brand-500 hover:text-white transition-all" aria-label="Follow us on Twitter">
+                        <i data-lucide="twitter" class="w-4 h-4"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 hover:bg-brand-500 hover:text-white transition-all" aria-label="Connect with us on LinkedIn">
+                        <i data-lucide="linkedin" class="w-4 h-4"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 hover:bg-brand-500 hover:text-white transition-all" aria-label="View our GitHub projects">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="font-bold text-slate-900 mb-6 uppercase tracking-wider text-sm">Navigation</h4>
+                <ul class="space-y-4">
+                    <li><a href="#curriculum" class="text-slate-500 hover:text-brand-600 transition-colors text-sm">Curriculum</a></li>
+                    <li><a href="#pricing" class="text-slate-500 hover:text-brand-600 transition-colors text-sm">Pricing</a></li>
+                    <li><a href="#mentors" class="text-slate-500 hover:text-brand-600 transition-colors text-sm">Faculty</a></li>
+                    <li><a href="login.html" class="text-slate-500 hover:text-brand-600 transition-colors text-sm">Student Login</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-bold text-slate-900 mb-6 uppercase tracking-wider text-sm">Legal</h4>
+                <ul class="space-y-4">
+                    <li><a href="#" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Terms of Service</a></li>
+                    <li><a href="#" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Privacy Policy</a></li>
+                    <li><a href="#" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-slate-200 text-center flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-slate-400 text-sm">&copy; 2026 CeTech Academy. All rights reserved.</p>
+            <div class="text-slate-400 text-sm flex items-center gap-2">
+                Designed with <i data-lucide="heart" class="w-4 h-4 text-brand-500"></i> for the future.
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="main.js"></script>
+    <script type="module" src="AntigravityMount.jsx"></script>
+    <script type="module" src="HeadlineMount.jsx"></script>
+    <script type="module" src="BorderGlowMount.jsx"></script>
+    <script type="module" src="AuroraMount.jsx"></script>
+    <script>
+        lucide.createIcons();
+
+        // Course List Toggle
+        const viewCoursesBtn = document.getElementById('viewCoursesBtn');
+        const courseListSection = document.getElementById('courseListSection');
+
+        if (viewCoursesBtn && courseListSection) {
+            viewCoursesBtn.addEventListener('click', () => {
+                const isHidden = courseListSection.classList.contains('hidden');
+                
+                if (isHidden) {
+                    courseListSection.classList.remove('hidden');
+                    viewCoursesBtn.innerHTML = `
+                        Hide Courses
+                        <i data-lucide="chevron-up" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"></i>
+                    `;
+                    lucide.createIcons();
+                    
+                    // Smooth scroll to content
+                    setTimeout(() => {
+                        courseListSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                } else {
+                    courseListSection.classList.add('hidden');
+                    viewCoursesBtn.innerHTML = `
+                        View Full Courses & Fees
+                        <i data-lucide="chevron-down" class="w-6 h-6 group-hover:translate-y-1 transition-transform"></i>
+                    `;
+                    lucide.createIcons();
+                }
+            });
+        }
+    </script>
+    </main>
+</body>
+</html>
+
+

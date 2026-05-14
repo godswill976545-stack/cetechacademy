@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://js.paystack.co https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.paystack.co;">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="./style.css">
+    <title>Checkout | CeTech Academy</title>
+    <!-- Paystack Checkout Script -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <!-- Supabase for Auth -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      .payment-container {
+        max-width: 500px;
+        margin: 60px auto;
+        background: var(--surface-light);
+        padding: 40px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        text-align: center;
+        border: 1px solid var(--border-color);
+      }
+      .payment-container h2 {
+        margin-bottom: 20px;
+        color: var(--text-primary);
+      }
+      .payment-details {
+        text-align: left;
+        margin-bottom: 30px;
+        background: var(--background-dark);
+        padding: 20px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+      }
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        color: var(--text-secondary);
+      }
+      .detail-row.total {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 1.2rem;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+      }
+      .input-group {
+        text-align: left;
+        margin-bottom: 20px;
+      }
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+      .input-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        background: var(--background-dark);
+        color: var(--text-primary);
+        border-radius: var(--radius-md);
+        font-family: inherit;
+      }
+      .input-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container header-inner">
+        <a href="index.html" class="logo" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+          <img src="../assets/logo.png" alt="CeTech Logo" style="height: 48px; width: auto;">
+          <div>
+            <span class="logo-bold">CeTech</span>
+            <span class="logo-light">ACADEMY</span>
+          </div>
+        </a>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="payment-container">
+        <h2>Complete Enrollment</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">Please enter your details to proceed with the payment.</p>
+        
+        <div class="input-group">
+          <label for="firstname">First Name</label>
+          <input type="text" id="firstname" placeholder="John" required>
+        </div>
+        <div class="input-group">
+          <label for="lastname">Last Name</label>
+          <input type="text" id="lastname" placeholder="Doe" required>
+        </div>
+        <div class="input-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="john@example.com" required>
+        </div>
+
+        <div class="input-group">
+          <label for="course-select">Select Your Course</label>
+          <select id="course-select" class="input-field w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900">
+            <option value="digital-marketing" data-price="130000">Digital Marketing - ₦130,000</option>
+            <option value="ui-ux-design" data-price="150000">UI/UX Design - ₦150,000</option>
+            <option value="software-engineering" data-price="200000">Software Engineering - ₦200,000</option>
+            <option value="ai-automation" data-price="180000">AI Automation - ₦180,000</option>
+            <option value="data-analyst" data-price="200000">Data Analyst - ₦200,000</option>
+            <option value="graphic-design" data-price="120000">Graphic Design - ₦120,000</option>
+            <option value="pro-launch" data-price="100000">CeTech Pro Launch - ₦100,000</option>
+          </select>
+        </div>
+
+        <div class="payment-details">
+          <div class="detail-row">
+            <span>Course Tuition</span>
+            <span id="display-price">₦130,000</span>
+          </div>
+          <div class="detail-row total">
+            <span>Total Due</span>
+            <span id="display-total">₦130,000</span>
+          </div>
+        </div>
+
+        <!-- The button that triggers Paystack -->
+        <button id="pay-btn" class="duo-btn duo-btn-primary w-full">Pay with Paystack</button>
+
+        <div style="margin: 20px 0; display: flex; align-items: center; gap: 10px;">
+          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+          <span style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">OR</span>
+          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+        </div>
+
+        <!-- NOWPayments Crypto Button -->
+        <a href="https://nowpayments.io/payment/?iid=6256773573&source=button" target="_blank" rel="noreferrer noopener" style="display: block;">
+            <img src="https://nowpayments.io/images/embeds/payment-button-white.svg" alt="Cryptocurrency & Bitcoin payment button by NOWPayments" style="width: 100%; max-width: 300px; margin: 0 auto; display: block; border-radius: 8px;">
+        </a>
+      </div>
+    </main>
+
+    <script type="module" src="./payment.js"></script>
+  </body>
+</html>
