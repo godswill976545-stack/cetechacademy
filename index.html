@@ -170,6 +170,8 @@
         #mobileMenu .glass-panel {
             transform: translateY(-20px) scale(0.95);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         #mobileMenu.active .glass-panel {
             transform: translateY(0) scale(1);
@@ -178,40 +180,44 @@
         /* Responsive Design Improvements */
         @media (max-width: 768px) {
             /* Typography */
-            h1 { font-size: 2.5rem !important; line-height: 1.2 !important; }
-            h2 { font-size: 0.875rem !important; }
-            h3 { font-size: 2rem !important; line-height: 1.2 !important; }
-            h4 { font-size: 1.5rem !important; }
-            p { font-size: 1rem !important; }
+            h1 { font-size: 2.5rem; line-height: 1.2; }
+            h2 { font-size: 0.875rem; }
+            h3 { font-size: 2rem; line-height: 1.2; }
+            h4 { font-size: 1.5rem; }
+            p { font-size: 1rem; }
 
             /* Spacing */
-            section { padding-top: 5rem !important; padding-bottom: 5rem !important; }
-            .hero-section { padding-top: 6rem !important; }
+            section { padding-top: 5rem; padding-bottom: 5rem; }
+            .hero-section { padding-top: 6rem; }
             
             /* Component Sizing */
-            .glass-panel { padding: 1.5rem !important; }
+            .glass-panel { padding: 1.5rem; }
             
             /* Hero Adjustments */
             #headline-container { margin-bottom: 1.5rem; text-align: center; }
             #headline-container + p { text-align: center; margin-left: auto; margin-right: auto; }
             .hero-section .flex-wrap { justify-content: center; }
             .animate-float { scale: 0.8; }
-            .hero-section .animate-float:first-of-type { left: -1rem !important; top: 2rem !important; }
-            .hero-section .animate-float:last-of-type { right: -1rem !important; bottom: 4rem !important; }
+            .hero-section .animate-float:first-of-type { left: -1rem; top: 2rem; }
+            .hero-section .animate-float:last-of-type { right: -1rem; bottom: 4rem; }
             
             /* Navbar Logo */
-            .nav-logo-img { height: 4rem !important; } /* Mobile: 64px (Increase from 56px) */
-            .footer-logo-img { height: 3.5rem !important; } /* Mobile: 56px (Increase from 48px) */
+            .nav-logo-img { height: 4rem; } /* Mobile: 64px (Increase from 56px) */
+            .footer-logo-img { height: 3.5rem; } /* Mobile: 56px (Increase from 48px) */
             
             /* Mobile Menu Refinement */
             #mobileMenu .glass-panel { 
-                background: rgba(255, 255, 255, 0.98) !important; 
-                border: 1px solid rgba(0, 123, 255, 0.2) !important;
+                background: white;
+                border: 1px solid rgba(0, 123, 255, 0.1);
             }
-            #mobileMenu a { 
-                color: #1e293b !important; 
-                font-weight: 600 !important;
-                padding: 1rem !important;
+            #mobileMenu a:not(.duo-btn) {
+                color: #0f172a;
+                font-weight: 600;
+                padding: 1rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+            #mobileMenu a:last-child {
+                border-bottom: none;
             }
         }
 
@@ -309,13 +315,19 @@
 
     <!-- Mobile Menu -->
     <div id="mobileMenu" class="fixed inset-0 z-40 hidden md:hidden">
-        <div id="mobileMenuBackdrop" class="absolute inset-0 bg-black/40"></div>
+        <div id="mobileMenuBackdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
         <div class="absolute inset-x-0 top-[72px]">
-        <div class="mx-4 rounded-2xl glass-panel border border-white/10 shadow-2xl overflow-hidden relative">
-            <div class="p-3 flex flex-col">
-                <a href="#pricing" class="rounded-xl px-4 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-accent-400">Pricing</a>
-                <a href="#mentors" class="rounded-xl px-4 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-accent-400">Mentors</a>
-                <div class="p-2 flex flex-col gap-2">
+        <div class="mx-4 rounded-3xl glass-panel border border-white/20 shadow-2xl overflow-hidden relative">
+            <div class="p-4 flex flex-col">
+                <a href="#pricing" class="px-4 py-4 text-sm font-bold text-slate-900 hover:bg-slate-50 flex items-center justify-between group">
+                    Pricing
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-brand-500"></i>
+                </a>
+                <a href="#mentors" class="px-4 py-4 text-sm font-bold text-slate-900 hover:bg-slate-50 flex items-center justify-between group">
+                    Mentors
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-brand-500"></i>
+                </a>
+                <div class="mt-4 p-2 flex flex-col gap-3">
                     <a href="login.html" class="duo-btn duo-btn-secondary auth-guest">Sign In</a>
                     <a href="login.html?mode=signup" class="duo-btn duo-btn-primary auth-guest">Get started</a>
                     <a href="frontend/portal.html" class="duo-btn duo-btn-accent auth-user hidden">Portal</a>
@@ -416,17 +428,29 @@
                 </div>
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Beginner Level -->
-            <div class="glass-panel p-8 rounded-[2.5rem] border-slate-200 hover:border-brand-500/30 transition-all group">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 01</div>
-                <h4 class="text-2xl font-bold text-slate-900 mb-4">Beginner Level (Foundation)</h4>
-                <p class="text-slate-500 text-sm leading-relaxed mb-8">Build a strong understanding of the digital space and develop essential foundational skills. At this stage, you’ll gain clarity, confidence, and the ability to navigate and begin working within the digital world.</p>
-                <a href="login.html" class="duo-btn duo-btn-sm duo-btn-secondary w-full">Start Phase 01</a>
-            </div>
+            <div class="grid lg:grid-cols-3 gap-12 relative">
+                <!-- Timeline Line (Desktop) -->
+                <div class="hidden lg:block absolute top-32 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-brand-100 to-transparent z-0"></div>
+
+                <!-- Timeline Line (Mobile) -->
+                <div class="lg:hidden absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-brand-100 to-transparent z-0 -translate-x-1/2"></div>
+
+                <!-- Beginner Level -->
+                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-slate-200 hover:border-brand-500/30 transition-all group relative z-10 bg-white shadow-sm">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-slate-100 flex items-center justify-center text-slate-400 group-hover:border-brand-500 group-hover:text-brand-500 transition-colors z-20">
+                        <div class="w-2 h-2 rounded-full bg-current"></div>
+                    </div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 01</div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">Beginner Level (Foundation)</h4>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-8">Build a strong understanding of the digital space and develop essential foundational skills. At this stage, you’ll gain clarity, confidence, and the ability to navigate and begin working within the digital world.</p>
+                    <a href="login.html" class="duo-btn duo-btn-sm duo-btn-secondary w-full">Start Phase 01</a>
+                </div>
 
                 <!-- Intermediate Level -->
-                <div class="glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group">
+                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-brand-200 flex items-center justify-center text-brand-500 z-20">
+                        <div class="w-2 h-2 rounded-full bg-current"></div>
+                    </div>
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 02</div>
                     <h4 class="text-2xl font-bold text-slate-900 mb-4">Intermediate Level (Skill Building)</h4>
                     <p class="text-slate-500 text-sm leading-relaxed mb-8">Move from understanding to doing. You’ll develop practical, hands-on skills, work on guided tasks, and begin applying what you’ve learned to real scenarios while improving your confidence and creativity.</p>
@@ -434,7 +458,10 @@
                 </div>
 
                 <!-- Advanced Level -->
-                <div class="glass-panel p-8 rounded-[2.5rem] border-slate-200 hover:border-brand-500/30 transition-all group">
+                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-slate-200 hover:border-brand-500/30 transition-all group relative z-10 bg-white shadow-sm">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-slate-100 flex items-center justify-center text-slate-400 group-hover:border-brand-500 group-hover:text-brand-500 transition-colors z-20">
+                        <div class="w-2 h-2 rounded-full bg-current"></div>
+                    </div>
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 03</div>
                     <h4 class="text-2xl font-bold text-slate-900 mb-4">Advanced Level (Real-World Application)</h4>
                     <p class="text-slate-500 text-sm leading-relaxed mb-8">Bring everything together through real-world projects, portfolio development, and personal positioning. You’ll learn how to turn your skills into value, position yourself professionally, and start creating income opportunities.</p>
@@ -455,7 +482,7 @@
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Card 1 -->
-                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-1 group cursor-pointer hover:border-brand-500/50 shadow-sm">
+                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-1 group cursor-pointer hover:border-brand-500/50 shadow-sm">
                     <div class="w-16 h-16 rounded-2xl bg-brand-500/10 flex items-center justify-center mb-8 text-brand-600 group-hover:scale-110 group-hover:bg-brand-500/20 transition-all duration-300">
                         <i data-lucide="layout" class="w-8 h-8"></i>
                     </div>
@@ -467,7 +494,7 @@
                 </div>
                 
                 <!-- Card 2 -->
-                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-2 group cursor-pointer hover:border-sky-500/50 shadow-sm">
+                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-2 group cursor-pointer hover:border-sky-500/50 shadow-sm">
                     <div class="w-16 h-16 rounded-2xl bg-sky-500/10 flex items-center justify-center mb-8 text-sky-600 group-hover:scale-110 group-hover:bg-sky-500/20 transition-all duration-300">
                         <i data-lucide="terminal" class="w-8 h-8"></i>
                     </div>
@@ -479,7 +506,7 @@
                 </div>
                 
                 <!-- Card 3 -->
-                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-3 group cursor-pointer hover:border-purple-500/50 shadow-sm">
+                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-3 group cursor-pointer hover:border-purple-500/50 shadow-sm">
                     <div class="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-8 text-purple-600 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all duration-300">
                         <i data-lucide="palette" class="w-8 h-8"></i>
                     </div>
@@ -491,37 +518,37 @@
                 </div>
                 
                 <!-- Card 4 -->
-                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-4 group cursor-pointer hover:border-rose-500/50">
-                    <div class="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-8 text-rose-400 group-hover:scale-110 group-hover:bg-rose-500/20 group-hover:shadow-[0_0_30px_rgba(244,63,94,0.3)] transition-all duration-300">
+                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-4 group cursor-pointer hover:border-rose-500/50 shadow-sm">
+                    <div class="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-8 text-rose-600 group-hover:scale-110 group-hover:bg-rose-500/20 transition-all duration-300">
                         <i data-lucide="trending-up" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-2xl font-bold mb-3">Growth Marketing</h4>
-                    <p class="text-gray-300 text-sm leading-relaxed mb-6">Master data-driven strategies, SEO, and campaign engineering to dominate digital landscapes and scale businesses.</p>
-                    <div class="flex items-center text-rose-400 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    <h4 class="text-2xl font-bold mb-3 text-slate-900">Growth Marketing</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Master data-driven strategies, SEO, and campaign engineering to dominate digital landscapes and scale businesses.</p>
+                    <div class="flex items-center text-rose-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                         Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </div>
                 </div>
                 
                 <!-- Card 5 -->
-                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-5 group cursor-pointer hover:border-amber-500/50">
-                    <div class="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-8 text-amber-400 group-hover:scale-110 group-hover:bg-amber-500/20 group-hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all duration-300">
+                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-5 group cursor-pointer hover:border-amber-500/50 shadow-sm">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-8 text-amber-600 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all duration-300">
                         <i data-lucide="database" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-2xl font-bold mb-3">Data Science</h4>
-                    <p class="text-gray-300 text-sm leading-relaxed mb-6">Extract deep, actionable insights from complex data ecosystems using Python, SQL, and predictive modeling.</p>
-                    <div class="flex items-center text-amber-400 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    <h4 class="text-2xl font-bold mb-3 text-slate-900">Data Science</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Extract deep, actionable insights from complex data ecosystems using Python, SQL, and predictive modeling.</p>
+                    <div class="flex items-center text-amber-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                         Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </div>
                 </div>
                 
                 <!-- Card 6 -->
-                <div class="glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-6 group cursor-pointer hover:border-indigo-500/50">
-                    <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-8 text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20 group-hover:shadow-[0_0_30px_rgba(99,102,241,0.3)] transition-all duration-300">
+                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-6 group cursor-pointer hover:border-indigo-500/50 shadow-sm">
+                    <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-8 text-indigo-600 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-300">
                         <i data-lucide="bot" class="w-8 h-8"></i>
                     </div>
-                    <h4 class="text-2xl font-bold mb-3">AI & Automation</h4>
-                    <p class="text-gray-300 text-sm leading-relaxed mb-6">Leverage the power of artificial intelligence and workflow automation to scale productivity and build intelligent tools.</p>
-                    <div class="flex items-center text-indigo-400 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    <h4 class="text-2xl font-bold mb-3 text-slate-900">AI & Automation</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Leverage the power of artificial intelligence and workflow automation to scale productivity and build intelligent tools.</p>
+                    <div class="flex items-center text-indigo-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                         Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </div>
                 </div>
