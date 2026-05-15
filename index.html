@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Search Result & Tab Information -->
+    <meta name="description" content="Master the Digital Craft with CeTech Academy. Gain practical skills in UI/UX, Web Engineering, and more.">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta property="og:title" content="CeTech Academy | Master the Digital Craft">
+    <meta property="og:description" content="Gain practical digital skills, build real-world experience, and position yourself to earn.">
+    <meta property="og:image" content="assets/logo.png">
+    <meta property="og:type" content="website">
+
     <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://js.paystack.co https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co;">
     <title>CeTech Academy | Master the Digital Craft</title>
@@ -301,9 +310,9 @@
                 <a href="#mentors" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Mentors</a>
                 <div id="auth-buttons" class="flex items-center gap-4">
                     <a href="login.html" class="duo-btn duo-btn-sm duo-btn-secondary auth-guest">SIGN IN</a>
-                    <a href="login.html?mode=signup" class="duo-btn duo-btn-sm duo-btn-primary auth-guest">GET STARTED</a>
-                    <a href="frontend/portal.html" class="duo-btn duo-btn-sm duo-btn-accent auth-user hidden">PORTAL</a>
-                    <button id="logoutBtn" class="duo-btn duo-btn-sm duo-btn-destructive auth-user hidden">SIGN OUT</button>
+                    <a href="login.html?mode=signup" class="duo-btn duo-btn-sm duo-btn-secondary auth-guest">GET STARTED</a>
+                    <a href="frontend/portal.html" class="duo-btn duo-btn-sm duo-btn-secondary auth-user hidden">PORTAL</a>
+                    <button id="logoutBtn" class="duo-btn duo-btn-sm duo-btn-secondary auth-user hidden">SIGN OUT</button>
                 </div>
             </div>
             
@@ -329,9 +338,9 @@
                 </a>
                 <div class="mt-4 p-2 flex flex-col gap-3">
                     <a href="login.html" class="duo-btn duo-btn-secondary auth-guest">Sign In</a>
-                    <a href="login.html?mode=signup" class="duo-btn duo-btn-primary auth-guest">Get started</a>
-                    <a href="frontend/portal.html" class="duo-btn duo-btn-accent auth-user hidden">Portal</a>
-                    <button id="logoutBtnMobile" class="duo-btn duo-btn-destructive auth-user hidden">Sign Out</button>
+                    <a href="login.html?mode=signup" class="duo-btn duo-btn-secondary auth-guest">Get started</a>
+                    <a href="frontend/portal.html" class="duo-btn duo-btn-secondary auth-user hidden">Portal</a>
+                    <button id="logoutBtnMobile" class="duo-btn duo-btn-secondary auth-user hidden">Sign Out</button>
                 </div>
             </div>
         </div>
@@ -436,14 +445,14 @@
                 <div class="lg:hidden absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-brand-100 to-transparent z-0 -translate-x-1/2"></div>
 
                 <!-- Beginner Level -->
-                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-slate-200 hover:border-brand-500/30 transition-all group relative z-10 bg-white shadow-sm">
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-slate-100 flex items-center justify-center text-slate-400 group-hover:border-brand-500 group-hover:text-brand-500 transition-colors z-20">
+                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-brand-200 flex items-center justify-center text-brand-500 z-20">
                         <div class="w-2 h-2 rounded-full bg-current"></div>
                     </div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 01</div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 01</div>
                     <h4 class="text-2xl font-bold text-slate-900 mb-4">Beginner Level (Foundation)</h4>
                     <p class="text-slate-500 text-sm leading-relaxed mb-8">Build a strong understanding of the digital space and develop essential foundational skills. At this stage, you’ll gain clarity, confidence, and the ability to navigate and begin working within the digital world.</p>
-                    <a href="login.html" class="duo-btn duo-btn-sm duo-btn-secondary w-full">Start Phase 01</a>
+                    <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary w-full">Start Phase 01</a>
                 </div>
 
                 <!-- Intermediate Level -->
@@ -458,14 +467,14 @@
                 </div>
 
                 <!-- Advanced Level -->
-                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-slate-200 hover:border-brand-500/30 transition-all group relative z-10 bg-white shadow-sm">
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-slate-100 flex items-center justify-center text-slate-400 group-hover:border-brand-500 group-hover:text-brand-500 transition-colors z-20">
+                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-brand-200 flex items-center justify-center text-brand-500 z-20">
                         <div class="w-2 h-2 rounded-full bg-current"></div>
                     </div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 03</div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 text-[10px] font-bold uppercase tracking-widest mb-6">Phase 03</div>
                     <h4 class="text-2xl font-bold text-slate-900 mb-4">Advanced Level (Real-World Application)</h4>
                     <p class="text-slate-500 text-sm leading-relaxed mb-8">Bring everything together through real-world projects, portfolio development, and personal positioning. You’ll learn how to turn your skills into value, position yourself professionally, and start creating income opportunities.</p>
-                    <a href="login.html" class="duo-btn duo-btn-sm duo-btn-secondary w-full">Master Phase 03</a>
+                    <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary w-full">Master Phase 03</a>
                 </div>
             </div>
         </div>
@@ -866,9 +875,9 @@
             <div>
                 <h4 class="font-bold text-slate-900 mb-6 uppercase tracking-wider text-sm">Legal</h4>
                 <ul class="space-y-4">
-                    <li><a href="#" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Terms of Service</a></li>
-                    <li><a href="#" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Privacy Policy</a></li>
-                    <li><a href="#" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Cookie Policy</a></li>
+                    <li><a href="terms.html" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Terms of Service</a></li>
+                    <li><a href="privacy.html" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Privacy Policy</a></li>
+                    <li><a href="cookies.html" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Cookie Policy</a></li>
                 </ul>
             </div>
         </div>
