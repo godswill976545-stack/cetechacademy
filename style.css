@@ -39,6 +39,10 @@ body {
   overflow-x: hidden;
 }
 
+.hidden {
+  display: none !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-primary);
   line-height: 1.1;
@@ -78,7 +82,7 @@ a {
     --btn-shadow: rgba(0, 0, 0, 0.2);
   }
 
-  display: inline-flex !important;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   position: relative;
