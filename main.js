@@ -15,12 +15,38 @@ const supabase = (supabaseLib?.createClient && SUPABASE_URL && SUPABASE_ANON_KEY
     ? supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     : null;
 
+/**
+ * Utility to get public URL for images stored in Supabase Storage.
+ * Falls back to local path if Supabase is not configured or if image not found.
+ */
+const getPublicImageUrl = (path, bucket = 'assets') => {
+    if (!supabase || !SUPABASE_URL) return null;
+    // If it's already a full URL, return it
+    if (path.startsWith('http')) return path;
+
+    // Extract filename if a path was provided
+    const filename = path.split('/').pop();
+    const { data } = supabase.storage.from(bucket).getPublicUrl(filename);
+    return data?.publicUrl || null;
+};
+
 // Allow index.html and login.html to be public
 const currentPage = window.location.pathname;
 const isPublicPage = currentPage.includes('index.html') || currentPage.endsWith('/') || currentPage.includes('login.html');
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('CeTech Academy initialized.');
+
+    // Register Service Worker for Caching
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('SW registered: ', registration);
+            }).catch(registrationError => {
+                console.log('SW registration failed: ', registrationError);
+            });
+        });
+    }
 
     // Mobile menu
     const mobileMenuButton = document.getElementById('mobileMenuButton');
@@ -68,6 +94,29 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') setMobileMenuOpen(false);
     });
+
+    // Update image sources to use Supabase Storage if available
+    const updateImageSources = () => {
+        const images = document.querySelectorAll('img[data-src]');
+        images.forEach(img => {
+            const dataSrc = img.getAttribute('data-src');
+            const supabaseUrl = getPublicImageUrl(dataSrc);
+
+            // Add error handler to fallback to local asset if Supabase load fails
+            img.onerror = () => {
+                if (img.src !== window.location.origin + '/' + dataSrc && !img.getAttribute('data-fallback-tried')) {
+                    console.log(`Failed to load from Supabase, falling back to local: ${dataSrc}`);
+                    img.setAttribute('data-fallback-tried', 'true');
+                    img.src = dataSrc;
+                }
+            };
+
+            // Use Supabase URL if available, otherwise fallback to local asset
+            img.src = supabaseUrl || dataSrc;
+            img.removeAttribute('data-src');
+        });
+    };
+    updateImageSources();
 
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
