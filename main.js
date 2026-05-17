@@ -9,7 +9,7 @@ const getEnv = (key) => {
 };
 
 const SUPABASE_URL = getEnv('VITE_SUPABASE_URL');
-const SUPABASE_ANON_KEY = getEnv('VITE_SUPABASE_ANON_KEY');
+const SUPABASE_ANON_KEY = getEnv('VITE_SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvaGxlZ3Z1bnVtaXd4YmhmYndiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODEyOTcsImV4cCI6MjA5MzA1NzI5N30.1A-ykiNp6KVZ9lfo0kd1xW157KJtukiTe7DUAE6uVf0';
 const supabaseLib = window.supabase;
 const supabase = (supabaseLib?.createClient && SUPABASE_URL && SUPABASE_ANON_KEY)
     ? supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -24,9 +24,13 @@ const getPublicImageUrl = (path, bucket = 'assets') => {
     // If it's already a full URL, return it
     if (path.startsWith('http')) return path;
 
-    // Extract filename if a path was provided
-    const filename = path.split('/').pop();
-    const { data } = supabase.storage.from(bucket).getPublicUrl(filename);
+    // Ensure we don't have double bucket in path if the path already starts with bucket name
+    let cleanPath = path;
+    if (path.startsWith(bucket + '/')) {
+        cleanPath = path.replace(bucket + '/', '');
+    }
+
+    const { data } = supabase.storage.from(bucket).getPublicUrl(cleanPath);
     return data?.publicUrl || null;
 };
 
