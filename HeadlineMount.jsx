@@ -23,6 +23,8 @@ const HeadlineApp = () => {
 const container = document.getElementById('headline-container');
 
 if (container) {
+  // We don't clear innerHTML here to prevent flickering.
+  // createRoot().render() will efficiently replace/hydrate the content.
   const root = createRoot(container);
   root.render(<HeadlineApp />);
 }

@@ -105,6 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateImageSources = () => {
         const images = document.querySelectorAll('img[data-src]');
         images.forEach(img => {
+            // Skip images that should be lazy loaded or are above the fold
+            if (img.closest('.hero-section')) return;
+
             const dataSrc = img.getAttribute('data-src');
             const supabaseUrl = getPublicImageUrl(dataSrc);
 
@@ -209,6 +212,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateAuthUI();
     initIcons();
+
+    // Load critical interactive components immediately to improve LCP/FCP
+    if (document.getElementById('headline-container')) {
+        import('./HeadlineMount.jsx').catch(err => console.error('Failed to load HeadlineMount', err));
+    }
+
+    // Lazy load non-critical background/decorative components
+    const loadLazyMounts = () => {
+        if (document.getElementById('antigravity-container')) {
+            import('./AntigravityMount.jsx').catch(err => console.error('Failed to load AntigravityMount', err));
+        }
+        if (document.getElementById('aurora-bg')) {
+            import('./AuroraMount.jsx').catch(err => console.error('Failed to load AuroraMount', err));
+        }
+        if (document.querySelector('.glow-target')) {
+            import('./BorderGlowMount.jsx').catch(err => console.error('Failed to load BorderGlowMount', err));
+        }
+    };
+
+    // Delay background components slightly to prioritize main content
+    if (window.requestIdleCallback) {
+        window.requestIdleCallback(loadLazyMounts, { timeout: 1000 });
+    } else {
+        setTimeout(loadLazyMounts, 1000);
+    }
 
     // Logout logic
     const handleLogout = async () => {

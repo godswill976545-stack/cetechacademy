@@ -12,8 +12,22 @@ export default defineConfig({
         login: resolve(__dirname, 'login.html'),
         portal: resolve(__dirname, 'frontend/portal.html'),
         payment: resolve(__dirname, 'frontend/payment.html'),
+      },
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('three') || id.includes('@react-three')) {
+              return 'vendor-three';
+            }
+            if (id.includes('lucide')) {
+              return 'vendor-icons';
+            }
+            return 'vendor';
+          }
+        }
       }
-    }
+    },
+    chunkSizeWarningLimit: 1000,
   },
   server: {
     port: 5176,
