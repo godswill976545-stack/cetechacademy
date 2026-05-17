@@ -101,6 +101,16 @@ document.addEventListener('DOMContentLoaded', () => {
         images.forEach(img => {
             const dataSrc = img.getAttribute('data-src');
             const supabaseUrl = getPublicImageUrl(dataSrc);
+
+            // Add error handler to fallback to local asset if Supabase load fails
+            img.onerror = () => {
+                if (img.src !== window.location.origin + '/' + dataSrc && !img.getAttribute('data-fallback-tried')) {
+                    console.log(`Failed to load from Supabase, falling back to local: ${dataSrc}`);
+                    img.setAttribute('data-fallback-tried', 'true');
+                    img.src = dataSrc;
+                }
+            };
+
             // Use Supabase URL if available, otherwise fallback to local asset
             img.src = supabaseUrl || dataSrc;
             img.removeAttribute('data-src');
