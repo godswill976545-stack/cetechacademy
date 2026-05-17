@@ -4,179 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co;">
     <title>Login | CeTech Academy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
-                            200: '#bae0fd',
-                            300: '#7cc7fb',
-                            400: '#38a9f8',
-                            500: '#007bff', // Primary Blue
-                            600: '#0061cc',
-                            700: '#004da3',
-                            800: '#003e85',
-                            900: '#00356e',
-                            950: '#070b10',
-                        },
-                        accent: {
-                            400: '#00d2ff', // Cyan
-                            500: '#00b8e6',
-                        }
-                    },
-                    fontFamily: {
-                        heading: ['Space Grotesk', 'sans-serif'],
-                        body: ['Inter', 'sans-serif'],
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.8s ease-out forwards',
-                        'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'float': 'float 6s ease-in-out infinite',
-                        'pulse-glow': 'pulseGlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(40px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        },
-                        pulseGlow: {
-                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
-                            '50%': { opacity: '0.7', transform: 'scale(1.05)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" as="style">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="src/tailwind.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
-            overflow-x: hidden;
-        }
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Space Grotesk', sans-serif;
-            letter-spacing: -0.02em;
-            color: #020617;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(0, 123, 255, 0.15);
-            box-shadow: 0 20px 40px -10px rgba(0, 53, 110, 0.1);
-        }
-        .input-field {
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(0, 53, 110, 0.1);
-            color: #0f172a;
-            transition: all 0.3s ease;
-        }
-        .input-field:focus {
-            border-color: #007bff;
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
-            outline: none;
-        }
-
-        /* Success & Error States */
-        .auth-btn.success {
-            --btn-face: oklch(0.62 0.17 145);
-        }
-
-        .auth-btn.error {
-            --btn-face: oklch(0.55 0.2 25);
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-
-        .auth-feedback {
-            font-size: 0.875rem;
-            margin-top: 0.75rem;
-            text-align: center;
-            min-height: 1.25rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .auth-feedback.visible {
-            opacity: 1;
-        }
-
-        .auth-feedback.error { color: oklch(0.55 0.2 25); }
-        .auth-feedback.success { color: oklch(0.62 0.17 145); }
-        .ambient-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.2;
-        }
-
-        /* ===== DUOLINGO BUTTONS (DIRECT) ===== */
-        .duo-btn {
-            --btn-face: #007bff;
-            --btn-shadow: #0056b3;
-            --btn-text: #ffffff;
-            --btn-radius: 14px;
-            --btn-depth: 5px;
-
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 12px 24px;
-            background-color: var(--btn-face) !important;
-            color: var(--btn-text) !important;
-            border: none !important;
-            border-bottom: var(--btn-depth) solid var(--btn-shadow) !important;
-            border-radius: var(--btn-radius) !important;
-            font-family: 'Space Grotesk', sans-serif !important;
-            font-weight: 700 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
-            cursor: pointer !important;
-            transition: all 0.1s ease !important;
-            text-decoration: none !important;
-            z-index: 100 !important;
-        }
-
-        .duo-btn:active {
-            transform: translateY(4px) !important;
-            border-bottom-width: 1px !important;
-        }
-
-        .duo-btn-primary { --btn-face: #007bff; --btn-shadow: #0056b3; }
-        .duo-btn-secondary { --btn-face: #ffffff; --btn-shadow: #e2e8f0; --btn-text: #007bff; border: 1px solid #e2e8f0 !important; }
-        .duo-btn-accent { --btn-face: #00d2ff; --btn-shadow: #00b8e6; --btn-text: #020617; }
-        .duo-btn-destructive { --btn-face: #ef4444; --btn-shadow: #b91c1c; }
-    </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
     
@@ -196,7 +29,7 @@
         
         <div class="text-center mb-8">
             <a href="index.html" class="inline-flex items-center justify-center gap-3 mb-6 group">
-                <img src="assets/logo.png" alt="CeTech Academy Logo" class="h-16 md:h-24 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,123,255,0.1)] transition-transform duration-300 group-hover:scale-105">
+                <img src="assets/logo.png" alt="CeTech Academy Logo" width="96" height="96" class="h-16 md:h-24 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,123,255,0.1)] transition-transform duration-300 group-hover:scale-105" fetchpriority="high">
                 <span class="text-3xl font-bold tracking-tight text-slate-900 group-hover:text-[#007bff] transition-colors">CeTech Academy</span>
             </a>
             <h1 class="text-2xl font-bold text-slate-900 mb-2" id="formTitle">Welcome Back</h1>
@@ -297,8 +130,6 @@
     </div>
 
     <script>
-        lucide.createIcons();
-
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
         const eyeIcon = togglePassword.querySelector('i');
@@ -307,7 +138,7 @@
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             eyeIcon.setAttribute('data-lucide', type === 'password' ? 'eye' : 'eye-off');
-            lucide.createIcons();
+            if (window.initIcons) window.initIcons();
         });
 
         // Toggle Login/Sign Up mode
@@ -340,7 +171,7 @@
                 toggleMode.textContent = 'Create Account';
                 btnIcon.setAttribute('data-lucide', 'log-in');
             }
-            lucide.createIcons();
+            if (window.initIcons) window.initIcons();
         }
 
         toggleMode.addEventListener('click', (e) => {
@@ -357,6 +188,7 @@
     </script>
     <script type="module" src="main.js"></script>
     <script type="module" src="BorderGlowMount.jsx"></script>
+    <script type="module" src="AuroraMount.jsx"></script>
 </body>
 </html>
 
