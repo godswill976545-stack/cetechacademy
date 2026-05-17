@@ -11,9 +11,9 @@
   border-radius: var(--border-radius);
   isolation: isolate;
   transform: translate3d(0, 0, 0.01px);
-  display: flex;
-  border: 1px solid transparent; /* Changed to transparent to avoid adding extra outline to buttons */
-  background: var(--card-bg, transparent); /* Changed to transparent */
+  display: block;
+  border: 1px solid transparent;
+  background: var(--card-bg, transparent);
   overflow: visible;
   /* Removed default box shadow so buttons retain their own */
 }
@@ -122,9 +122,3 @@
     0 0 40px 0 var(--glow-color-40, hsl(40deg 80% 80% / 40%));
 }
 
-.border-glow-inner {
-  display: contents; /* Ensure inner elements control the layout naturally */
-  position: relative;
-  overflow: visible;
-  z-index: 1;
-}

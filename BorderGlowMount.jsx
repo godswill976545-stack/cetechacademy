@@ -55,8 +55,17 @@ export function initBorderGlow() {
     // Skip if already processed or if it's inside another glow
     if (btn.closest('.border-glow-card')) return;
 
+    // Refined check: Do NOT wrap elements if their parent is a layout container (Grid or Flex).
+    // This prevents the wrapper from becoming a "child" that breaks the layout flow.
+    const parentStyle = btn.parentElement ? window.getComputedStyle(btn.parentElement) : null;
+    if (parentStyle && (parentStyle.display === 'grid' || parentStyle.display === 'flex' || parentStyle.display === 'inline-grid' || parentStyle.display === 'inline-flex')) {
+       console.log('Skipping border glow for layout item to preserve parent container flow:', btn);
+       return;
+    }
+
     const wrapper = document.createElement('div');
-    // Maintain display flow
+    // We use inline-block by default to wrap tightly around buttons/cards.
+    // Since we now skip children of Flex/Grid, this won't break those layouts.
     const isFullWidth = btn.classList.contains('w-full') || btn.classList.contains('btn-block');
     wrapper.style.display = isFullWidth ? 'block' : 'inline-block';
     if (isFullWidth) wrapper.style.width = '100%';
