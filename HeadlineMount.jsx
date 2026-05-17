@@ -23,6 +23,9 @@ const HeadlineApp = () => {
 const container = document.getElementById('headline-container');
 
 if (container) {
+  // Clear the static h1 before rendering the interactive version
+  // to avoid hydration mismatch if needed, or just replace it.
+  container.innerHTML = '';
   const root = createRoot(container);
   root.render(<HeadlineApp />);
 }

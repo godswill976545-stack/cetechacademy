@@ -105,6 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateImageSources = () => {
         const images = document.querySelectorAll('img[data-src]');
         images.forEach(img => {
+            // Skip images that should be lazy loaded or are above the fold
+            if (img.closest('.hero-section')) return;
+
             const dataSrc = img.getAttribute('data-src');
             const supabaseUrl = getPublicImageUrl(dataSrc);
 
@@ -209,6 +212,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateAuthUI();
     initIcons();
+
+    // Lazy load non-critical components with explicit imports for Vite static analysis
+    const loadLazyMounts = () => {
+        if (document.getElementById('headline-container')) {
+            import('./HeadlineMount.jsx').catch(err => console.error('Failed to load HeadlineMount', err));
+        }
+        if (document.getElementById('antigravity-container')) {
+            import('./AntigravityMount.jsx').catch(err => console.error('Failed to load AntigravityMount', err));
+        }
+        if (document.getElementById('aurora-bg')) {
+            import('./AuroraMount.jsx').catch(err => console.error('Failed to load AuroraMount', err));
+        }
+        if (document.querySelector('.glow-target')) {
+            import('./BorderGlowMount.jsx').catch(err => console.error('Failed to load BorderGlowMount', err));
+        }
+    };
+
+    // Delay non-critical JS to improve TBT and FCP
+    if (window.requestIdleCallback) {
+        window.requestIdleCallback(loadLazyMounts, { timeout: 2000 });
+    } else {
+        setTimeout(loadLazyMounts, 2000);
+    }
 
     // Logout logic
     const handleLogout = async () => {

@@ -21,6 +21,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&family=Space+Grotesk:wght@300..700&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <style>
+        /* Critical CSS for Hero Section */
+        .hero-section { background-color: #fff; min-height: 100vh; display: flex; align-items: center; padding-top: 5rem; position: relative; }
+        .text-gradient { background-clip: text; -webkit-background-clip: text; color: transparent; background-image: linear-gradient(to bottom right, #0f172a, #007bff); }
+        .glass-nav { background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0, 123, 255, 0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+        .animate-slide-up { opacity: 0; transform: translateY(40px); animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUp { 0% { opacity: 0; transform: translateY(40px); } 100% { opacity: 1; transform: translateY(0); } }
+        .font-heading { font-family: 'Space Grotesk', sans-serif; }
+        .font-body { font-family: 'Inter', sans-serif; }
+    </style>
     <link rel="stylesheet" href="src/tailwind.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -52,7 +62,7 @@
             <a href="index.html" class="flex items-center gap-3 group">
                 <div class="relative">
                     <div class="absolute inset-0 bg-white blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <img src="assets/logo.png" alt="CeTech Academy" width="80" height="80" class="h-14 md:h-20 w-auto object-contain relative z-10 transition-transform duration-300 group-hover:scale-105 nav-logo-img" fetchpriority="high">
+                    <img src="assets/logo.png" alt="CeTech Academy" width="80" height="80" class="h-14 md:h-20 w-auto object-contain relative z-10 transition-transform duration-300 group-hover:scale-105 nav-logo-img" fetchpriority="high" loading="eager" decoding="sync">
                 </div>
                 <span class="text-xl font-bold tracking-tight text-slate-900 group-hover:text-brand-900 transition-colors">CeTech Academy</span>
             </a>
@@ -113,7 +123,11 @@
                     Enrollment Open for Q4 2026
                 </div>
                 
-                <div id="headline-container"></div>
+                <div id="headline-container">
+                    <h1 class="text-5xl lg:text-7xl font-bold leading-[1.1] mb-6 text-gradient">
+                        Master the Digital Craft. Build the Future.
+                    </h1>
+                </div>
                 
                 <p class="text-slate-600 text-lg lg:text-xl font-light mb-10 max-w-lg leading-relaxed">
                     Gain practical digital skills, build real-world experience, and position yourself to earn and stand out in today’s digital world.
@@ -546,7 +560,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start max-w-5xl">
                 <!-- Mentor: Chukwudi Collins -->
                 <div class="group section-reveal stagger-1">
-                    <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6">
+                    <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6 bg-slate-100">
                         <img data-src="assets/mentor_chukwudi.jpeg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Chukwudi Collins" width="400" height="500" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent opacity-80"></div>
                         <div class="absolute bottom-6 left-6 right-6">
@@ -560,7 +574,7 @@
 
                 <!-- Mentor: Nwankwor Chukwudalu Emmanuel -->
                 <div class="group section-reveal stagger-2 md:translate-y-6">
-                    <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6">
+                    <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6 bg-slate-100">
                         <img data-src="assets/mentor_nwankwor.PNG" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Nwankwor Chukwudalu Emmanuel" width="400" height="500" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent opacity-80"></div>
                         <div class="absolute bottom-6 left-6 right-6">
@@ -574,7 +588,7 @@
 
                 <!-- Mentor: Obinna John -->
                 <div class="group section-reveal stagger-3 md:translate-y-12">
-                    <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6">
+                    <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6 bg-slate-100">
                         <img data-src="assets/mentor_obinna.jpeg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Obinna John" width="400" height="500" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent opacity-80"></div>
                         <div class="absolute bottom-6 left-6 right-6">
@@ -643,10 +657,6 @@
     </footer>
 
     <script type="module" src="main.js"></script>
-    <script type="module" src="AntigravityMount.jsx"></script>
-    <script type="module" src="HeadlineMount.jsx"></script>
-    <script type="module" src="BorderGlowMount.jsx"></script>
-    <script type="module" src="AuroraMount.jsx"></script>
     <script>
         // Course List Toggle
         const viewCoursesBtn = document.getElementById('viewCoursesBtn');
