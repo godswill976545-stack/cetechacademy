@@ -146,6 +146,11 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('course-videos', 'course-videos', false) -- Private bucket, requires auth
 ON CONFLICT (id) DO NOTHING;
 
+-- Create public assets bucket for images
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('assets', 'assets', true)
+ON CONFLICT (id) DO NOTHING;
+
 -- 3. Row Level Security (RLS) Policies
 
 -- Enable RLS on all tables
@@ -223,6 +228,14 @@ CREATE POLICY "Allow authenticated to read course videos"
 ON storage.objects FOR SELECT
 TO authenticated
 USING ( bucket_id = 'course-videos' );
+
+-- Storage Policies for 'assets' bucket
+-- Public can read assets
+DROP POLICY IF EXISTS "Allow public to read assets" ON storage.objects;
+CREATE POLICY "Allow public to read assets"
+ON storage.objects FOR SELECT
+TO public
+USING ( bucket_id = 'assets' );
 
 
 -- Admins (or service role) would be the ones inserting/updating, so we restrict those:

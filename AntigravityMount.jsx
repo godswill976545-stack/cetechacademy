@@ -14,15 +14,17 @@ function isWebGLAvailable() {
 }
 
 if (container) {
+  const isMobile = window.innerWidth < 768;
+  const isAndroid = /Android/i.test(navigator.userAgent);
+
   if (!isWebGLAvailable()) {
     container.innerHTML = '<div style="width:100%; height:100%; background: linear-gradient(to bottom, #f8fafc, #e2e8f0); opacity: 0.5;"></div>';
   } else {
-    const isMobile = window.innerWidth < 768;
     const root = createRoot(container);
     root.render(
       <div style={{ width: '100%', height: '100%', minHeight: isMobile ? '400px' : '600px', position: 'relative' }}>
         <Antigravity
-          count={isMobile ? 100 : 300}
+          count={isAndroid ? 80 : (isMobile ? 120 : 300)}
           magnetRadius={isMobile ? 4 : 6}
           ringRadius={isMobile ? 5 : 7}
           waveSpeed={0.4}

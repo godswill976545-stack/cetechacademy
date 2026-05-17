@@ -12,6 +12,10 @@
     <meta property="og:image" content="assets/logo.png">
     <meta property="og:type" content="website">
 
+    <link rel="preconnect" href="https://js.paystack.co">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://unpkg.com">
+
     <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://js.paystack.co https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co;">
     <title>CeTech Academy | Master the Digital Craft</title>
@@ -300,7 +304,7 @@
             <a href="index.html" class="flex items-center gap-3 group">
                 <div class="relative">
                     <div class="absolute inset-0 bg-white blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <img src="assets/logo.png" alt="CeTech Academy" class="h-14 md:h-20 w-auto object-contain relative z-10 transition-transform duration-300 group-hover:scale-105 nav-logo-img">
+                    <img src="assets/logo.png" alt="CeTech Academy" class="h-14 md:h-20 w-auto object-contain relative z-10 transition-transform duration-300 group-hover:scale-105 nav-logo-img" fetchpriority="high">
                 </div>
                 <span class="text-xl font-bold tracking-tight text-slate-900 group-hover:text-brand-900 transition-colors">CeTech Academy</span>
             </a>
@@ -795,7 +799,7 @@
                 <!-- Mentor: Chukwudi Collins -->
                 <div class="group section-reveal stagger-1">
                     <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6">
-                        <img src="assets/mentor_chukwudi.jpeg" alt="Chukwudi Collins" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500">
+                        <img src="assets/mentor_chukwudi.jpeg" alt="Chukwudi Collins" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent opacity-80"></div>
                         <div class="absolute bottom-6 left-6 right-6">
                             <div class="glass-panel p-4 rounded-xl border-white/10 backdrop-blur-md">
@@ -809,7 +813,7 @@
                 <!-- Mentor: Nwankwor Chukwudalu Emmanuel -->
                 <div class="group section-reveal stagger-2 md:translate-y-6">
                     <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6">
-                        <img src="assets/mentor_nwankwor.PNG" alt="Nwankwor Chukwudalu Emmanuel" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500">
+                        <img src="assets/mentor_nwankwor.PNG" alt="Nwankwor Chukwudalu Emmanuel" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent opacity-80"></div>
                         <div class="absolute bottom-6 left-6 right-6">
                             <div class="glass-panel p-4 rounded-xl border-white/10 backdrop-blur-md">
@@ -823,7 +827,7 @@
                 <!-- Mentor: Obinna John -->
                 <div class="group section-reveal stagger-3 md:translate-y-12">
                     <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6">
-                        <img src="assets/mentor_obinna.jpeg" alt="Obinna John" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500">
+                        <img src="assets/mentor_obinna.jpeg" alt="Obinna John" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent opacity-80"></div>
                         <div class="absolute bottom-6 left-6 right-6">
                             <div class="glass-panel p-4 rounded-xl border-white/10 backdrop-blur-md">
@@ -842,7 +846,7 @@
         <div class="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div class="lg:col-span-2">
                 <a href="#" class="flex items-center gap-3 mb-6 group">
-                    <img src="assets/logo.png" alt="CeTech Academy" class="h-12 md:h-18 w-auto object-contain transition-transform duration-300 group-hover:scale-105 footer-logo-img">
+                    <img src="assets/logo.png" alt="CeTech Academy" class="h-12 md:h-18 w-auto object-contain transition-transform duration-300 group-hover:scale-105 footer-logo-img" loading="lazy" decoding="async">
                     <span class="text-2xl font-bold tracking-tight text-slate-900 group-hover:text-brand-900 transition-colors">CeTech Academy</span>
                 </a>
                 <p class="text-slate-500 text-sm mb-8 max-w-sm leading-relaxed">Empowering the next generation of African digital architects. We forge careers through rigorous, tactile mastery.</p>

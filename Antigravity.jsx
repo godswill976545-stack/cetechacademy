@@ -177,9 +177,12 @@ const Antigravity = props => {
         alpha: true, 
         antialias: false, // Better performance on mobile
         stencil: false,
-        depth: true
+        depth: true,
+        preserveDrawingBuffer: true, // Sometimes helps with WebGL context stability on mobile
+        failIfMajorPerformanceCaveat: false, // Ensure it at least tries to run
+        precision: 'mediump' // More compatible for some Android devices
       }}
-      dpr={[1, 2]} // Support high-DPI displays but cap at 2 for performance
+      dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 1.5) : 1} // Limit DPR further for mobile performance
     >
       <AntigravityInner {...props} />
     </Canvas>
