@@ -97,13 +97,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update image sources to use Supabase Storage if available
     const updateImageSources = () => {
-        const images = document.querySelectorAll('img[src^="assets/"]');
+        const images = document.querySelectorAll('img[data-src]');
         images.forEach(img => {
-            const currentSrc = img.getAttribute('src');
-            const newSrc = getPublicImageUrl(currentSrc);
-            if (newSrc && newSrc !== currentSrc) {
-                img.src = newSrc;
-            }
+            const dataSrc = img.getAttribute('data-src');
+            const supabaseUrl = getPublicImageUrl(dataSrc);
+            // Use Supabase URL if available, otherwise fallback to local asset
+            img.src = supabaseUrl || dataSrc;
+            img.removeAttribute('data-src');
         });
     };
     updateImageSources();

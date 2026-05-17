@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cetech-academy-v2';
+const CACHE_NAME = 'cetech-academy-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -33,30 +33,24 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+// Stale-While-Revalidate Strategy
 self.addEventListener('fetch', (event) => {
-  // Only cache GET requests
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        return response;
-      }
-      return fetch(event.request).then((fetchResponse) => {
-        // Don't cache if not a successful response
-        if (!fetchResponse || fetchResponse.status !== 200) {
-          return fetchResponse;
-        }
-
-        // Cache both basic and opaque responses (CORS)
-        // Note: Opaque responses (from CDN/Supabase) can be cached but their status can't be checked.
-        // We check status 200 above for basic/cors requests.
-        const responseToCache = fetchResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(event.request).then((cachedResponse) => {
+        const fetchPromise = fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        }).catch(() => {
+            // If network fails and no cache, this will throw
         });
 
-        return fetchResponse;
+        // Return cached response if available, else wait for network
+        return cachedResponse || fetchPromise;
       });
     })
   );
