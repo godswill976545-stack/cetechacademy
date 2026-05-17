@@ -213,11 +213,13 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthUI();
     initIcons();
 
-    // Lazy load non-critical components with explicit imports for Vite static analysis
+    // Load critical interactive components immediately to improve LCP/FCP
+    if (document.getElementById('headline-container')) {
+        import('./HeadlineMount.jsx').catch(err => console.error('Failed to load HeadlineMount', err));
+    }
+
+    // Lazy load non-critical background/decorative components
     const loadLazyMounts = () => {
-        if (document.getElementById('headline-container')) {
-            import('./HeadlineMount.jsx').catch(err => console.error('Failed to load HeadlineMount', err));
-        }
         if (document.getElementById('antigravity-container')) {
             import('./AntigravityMount.jsx').catch(err => console.error('Failed to load AntigravityMount', err));
         }
@@ -229,11 +231,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Delay non-critical JS to improve TBT and FCP
+    // Delay background components slightly to prioritize main content
     if (window.requestIdleCallback) {
-        window.requestIdleCallback(loadLazyMounts, { timeout: 2000 });
+        window.requestIdleCallback(loadLazyMounts, { timeout: 1000 });
     } else {
-        setTimeout(loadLazyMounts, 2000);
+        setTimeout(loadLazyMounts, 1000);
     }
 
     // Logout logic

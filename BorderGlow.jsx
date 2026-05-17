@@ -49,12 +49,12 @@ function animateValue({ start = 0, end = 100, duration = 1000, delay = 0, ease =
 }
 
 const BorderGlow = ({
-  children,
+  targetRef,
   className = '',
   edgeSensitivity = 30,
   glowColor = '40 80 80',
   backgroundColor = '#120F17',
-  borderRadius = 28,
+  borderRadius = 'inherit',
   glowRadius = 40,
   glowIntensity = 1.0,
   coneSpread = 25,
@@ -62,7 +62,7 @@ const BorderGlow = ({
   colors = ['#c084fc', '#f472b6', '#38bdf8'],
   fillOpacity = 0.5,
 }) => {
-  const cardRef = useRef(null);
+  const layerRef = useRef(null);
 
   const getCenterOfElement = useCallback((el) => {
     const { width, height } = el.getBoundingClientRect();
@@ -91,39 +91,45 @@ const BorderGlow = ({
     return degrees;
   }, [getCenterOfElement]);
 
-  const handlePointerMove = useCallback((e) => {
-    const card = cardRef.current;
-    if (!card) return;
+  useEffect(() => {
+    const target = targetRef.current;
+    const layer = layerRef.current;
+    if (!target || !layer) return;
 
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const handlePointerMove = (e) => {
+      const rect = target.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-    const edge = getEdgeProximity(card, x, y);
-    const angle = getCursorAngle(card, x, y);
+      const edge = getEdgeProximity(target, x, y);
+      const angle = getCursorAngle(target, x, y);
 
-    card.style.setProperty('--edge-proximity', `${(edge * 100).toFixed(3)}`);
-    card.style.setProperty('--cursor-angle', `${angle.toFixed(3)}deg`);
-  }, [getEdgeProximity, getCursorAngle]);
+      layer.style.setProperty('--edge-proximity', `${(edge * 100).toFixed(3)}`);
+      layer.style.setProperty('--cursor-angle', `${angle.toFixed(3)}deg`);
+    };
+
+    target.addEventListener('pointermove', handlePointerMove);
+    return () => target.removeEventListener('pointermove', handlePointerMove);
+  }, [targetRef, getEdgeProximity, getCursorAngle]);
 
   useEffect(() => {
-    if (!animated || !cardRef.current) return;
-    const card = cardRef.current;
+    if (!animated || !layerRef.current) return;
+    const layer = layerRef.current;
     const angleStart = 110;
     const angleEnd = 465;
-    card.classList.add('sweep-active');
-    card.style.setProperty('--cursor-angle', `${angleStart}deg`);
+    layer.classList.add('sweep-active');
+    layer.style.setProperty('--cursor-angle', `${angleStart}deg`);
 
-    animateValue({ duration: 500, onUpdate: v => card.style.setProperty('--edge-proximity', v) });
+    animateValue({ duration: 500, onUpdate: v => layer.style.setProperty('--edge-proximity', v) });
     animateValue({ ease: easeInCubic, duration: 1500, end: 50, onUpdate: v => {
-      card.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (v / 100) + angleStart}deg`);
+      layer.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (v / 100) + angleStart}deg`);
     }});
     animateValue({ ease: easeOutCubic, delay: 1500, duration: 2250, start: 50, end: 100, onUpdate: v => {
-      card.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (v / 100) + angleStart}deg`);
+      layer.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (v / 100) + angleStart}deg`);
     }});
     animateValue({ ease: easeInCubic, delay: 2500, duration: 1500, start: 100, end: 0,
-      onUpdate: v => card.style.setProperty('--edge-proximity', v),
-      onEnd: () => card.classList.remove('sweep-active'),
+      onUpdate: v => layer.style.setProperty('--edge-proximity', v),
+      onEnd: () => layer.classList.remove('sweep-active'),
     });
   }, [animated]);
 
@@ -131,9 +137,8 @@ const BorderGlow = ({
 
   return (
     <div
-      ref={cardRef}
-      onPointerMove={handlePointerMove}
-      className={`border-glow-card ${className}`}
+      ref={layerRef}
+      className={`border-glow-layer ${className}`}
       style={{
         '--card-bg': backgroundColor,
         '--edge-sensitivity': edgeSensitivity,
@@ -146,7 +151,6 @@ const BorderGlow = ({
       }}
     >
       <span className="edge-light" />
-      {children}
     </div>
   );
 };
