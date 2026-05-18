@@ -58,8 +58,8 @@
     </div>
 
     <!-- NAVBAR -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <header class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300" id="navbar">
+        <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between" aria-label="Main navigation">
             <a href="index.html" class="flex items-center gap-3 group">
                 <div class="relative">
                     <div class="absolute inset-0 bg-white blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -82,33 +82,33 @@
             <button id="mobileMenuButton" class="md:hidden text-slate-900 p-2 rounded-lg hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-0" type="button" aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu">
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- Mobile Menu -->
-    <div id="mobileMenu" class="fixed inset-0 z-40 hidden md:hidden">
+    <aside id="mobileMenu" class="fixed inset-0 z-40 hidden md:hidden">
         <div id="mobileMenuBackdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
-        <div class="absolute inset-x-0 top-[72px]">
-        <div class="mx-4 rounded-3xl glass-panel border border-white/20 shadow-2xl overflow-hidden relative">
-            <div class="p-4 flex flex-col">
-                <a href="#pricing" class="px-4 py-4 text-sm font-bold text-slate-900 hover:bg-slate-50 flex items-center justify-between group">
-                    Pricing
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-brand-500"></i>
-                </a>
-                <a href="#mentors" class="px-4 py-4 text-sm font-bold text-slate-900 hover:bg-slate-50 flex items-center justify-between group">
-                    Mentors
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-brand-500"></i>
-                </a>
-                <div class="mt-4 p-2 flex flex-col gap-3">
-                    <a href="login.html" class="duo-btn duo-btn-secondary auth-guest">Sign In</a>
-                    <a href="login.html?mode=signup" class="duo-btn duo-btn-secondary auth-guest">Get started</a>
-                    <a href="frontend/portal.html" class="duo-btn duo-btn-secondary auth-user hidden">Portal</a>
-                    <button id="logoutBtnMobile" class="duo-btn duo-btn-secondary auth-user hidden">Sign Out</button>
+        <nav class="absolute inset-x-0 top-[72px]" aria-label="Mobile navigation">
+            <div class="mx-4 rounded-3xl glass-panel border border-white/20 shadow-2xl overflow-hidden relative">
+                <div class="p-4 flex flex-col">
+                    <a href="#pricing" class="px-4 py-4 text-sm font-bold text-slate-900 hover:bg-slate-50 flex items-center justify-between group">
+                        Pricing
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-brand-500"></i>
+                    </a>
+                    <a href="#mentors" class="px-4 py-4 text-sm font-bold text-slate-900 hover:bg-slate-50 flex items-center justify-between group">
+                        Mentors
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-brand-500"></i>
+                    </a>
+                    <div class="mt-4 p-2 flex flex-col gap-3">
+                        <a href="login.html" class="duo-btn duo-btn-secondary auth-guest">Sign In</a>
+                        <a href="login.html?mode=signup" class="duo-btn duo-btn-secondary auth-guest">Get started</a>
+                        <a href="frontend/portal.html" class="duo-btn duo-btn-secondary auth-user hidden">Portal</a>
+                        <button id="logoutBtnMobile" class="duo-btn duo-btn-secondary auth-user hidden">Sign Out</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        </div>
-    </div>
+        </nav>
+    </aside>
 
     <!-- HERO SECTION -->
     <main id="main" class="relative z-10">
@@ -212,7 +212,7 @@
                 <div class="lg:hidden absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-brand-100 to-transparent z-0 -translate-x-1/2"></div>
 
                 <!-- Beginner Level -->
-                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md">
+                <article class="glow-target glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md">
                     <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-brand-200 flex items-center justify-center text-brand-500 z-20">
                         <div class="w-2 h-2 rounded-full bg-current"></div>
                     </div>
@@ -220,10 +220,10 @@
                     <h4 class="text-2xl font-bold text-slate-900 mb-4">Beginner Level (Foundation)</h4>
                     <p class="text-slate-500 text-sm leading-relaxed mb-8">Build a strong understanding of the digital space and develop essential foundational skills. At this stage, you’ll gain clarity, confidence, and the ability to navigate and begin working within the digital world.</p>
                     <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary w-full">Start Phase 01</a>
-                </div>
+                </article>
 
                 <!-- Intermediate Level -->
-                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md">
+                <article class="glow-target glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md">
                     <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-brand-200 flex items-center justify-center text-brand-500 z-20">
                         <div class="w-2 h-2 rounded-full bg-current"></div>
                     </div>
@@ -231,10 +231,10 @@
                     <h4 class="text-2xl font-bold text-slate-900 mb-4">Intermediate Level (Skill Building)</h4>
                     <p class="text-slate-500 text-sm leading-relaxed mb-8">Move from understanding to doing. You’ll develop practical, hands-on skills, work on guided tasks, and begin applying what you’ve learned to real scenarios while improving your confidence and creativity.</p>
                     <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary w-full">Join Phase 02</a>
-                </div>
+                </article>
 
                 <!-- Advanced Level -->
-                <div class="glow-target glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md">
+                <article class="glow-target glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md">
                     <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-brand-200 flex items-center justify-center text-brand-500 z-20">
                         <div class="w-2 h-2 rounded-full bg-current"></div>
                     </div>
@@ -242,7 +242,7 @@
                     <h4 class="text-2xl font-bold text-slate-900 mb-4">Advanced Level (Real-World Application)</h4>
                     <p class="text-slate-500 text-sm leading-relaxed mb-8">Bring everything together through real-world projects, portfolio development, and personal positioning. You’ll learn how to turn your skills into value, position yourself professionally, and start creating income opportunities.</p>
                     <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary w-full">Master Phase 03</a>
-                </div>
+                </article>
             </div>
         </div>
     </section>
@@ -258,7 +258,7 @@
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Card 1 -->
-                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-1 group cursor-pointer hover:border-brand-500/50 shadow-sm">
+                <article class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-1 group cursor-pointer hover:border-brand-500/50 shadow-sm">
                     <div class="w-16 h-16 rounded-2xl bg-brand-500/10 flex items-center justify-center mb-8 text-brand-600 group-hover:scale-110 group-hover:bg-brand-500/20 transition-all duration-300">
                         <i data-lucide="layout" class="w-8 h-8"></i>
                     </div>
@@ -267,10 +267,10 @@
                     <div class="flex items-center text-brand-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                         Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </div>
-                </div>
+                </article>
                 
                 <!-- Card 2 -->
-                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-2 group cursor-pointer hover:border-sky-500/50 shadow-sm">
+                <article class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-2 group cursor-pointer hover:border-sky-500/50 shadow-sm">
                     <div class="w-16 h-16 rounded-2xl bg-sky-500/10 flex items-center justify-center mb-8 text-sky-600 group-hover:scale-110 group-hover:bg-sky-500/20 transition-all duration-300">
                         <i data-lucide="terminal" class="w-8 h-8"></i>
                     </div>
@@ -279,10 +279,10 @@
                     <div class="flex items-center text-sky-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                         Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </div>
-                </div>
+                </article>
                 
                 <!-- Card 3 -->
-                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-3 group cursor-pointer hover:border-purple-500/50 shadow-sm">
+                <article class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-3 group cursor-pointer hover:border-purple-500/50 shadow-sm">
                     <div class="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-8 text-purple-600 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all duration-300">
                         <i data-lucide="palette" class="w-8 h-8"></i>
                     </div>
@@ -291,10 +291,10 @@
                     <div class="flex items-center text-purple-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                         Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </div>
-                </div>
+                </article>
                 
                 <!-- Card 4 -->
-                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-4 group cursor-pointer hover:border-rose-500/50 shadow-sm">
+                <article class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-4 group cursor-pointer hover:border-rose-500/50 shadow-sm">
                     <div class="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-8 text-rose-600 group-hover:scale-110 group-hover:bg-rose-500/20 transition-all duration-300">
                         <i data-lucide="trending-up" class="w-8 h-8"></i>
                     </div>
@@ -303,10 +303,10 @@
                     <div class="flex items-center text-rose-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                         Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </div>
-                </div>
+                </article>
                 
                 <!-- Card 5 -->
-                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-5 group cursor-pointer hover:border-amber-500/50 shadow-sm">
+                <article class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-5 group cursor-pointer hover:border-amber-500/50 shadow-sm">
                     <div class="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-8 text-amber-600 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all duration-300">
                         <i data-lucide="database" class="w-8 h-8"></i>
                     </div>
@@ -315,10 +315,10 @@
                     <div class="flex items-center text-amber-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                         Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </div>
-                </div>
+                </article>
                 
                 <!-- Card 6 -->
-                <div class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-6 group cursor-pointer hover:border-indigo-500/50 shadow-sm">
+                <article class="glow-target glass-panel interactive-card rounded-3xl p-8 section-reveal stagger-6 group cursor-pointer hover:border-indigo-500/50 shadow-sm">
                     <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-8 text-indigo-600 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-300">
                         <i data-lucide="bot" class="w-8 h-8"></i>
                     </div>
@@ -327,7 +327,7 @@
                     <div class="flex items-center text-indigo-600 text-sm font-bold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                         Explore Curriculum <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                     </div>
-                </div>
+                </article>
             </div>
         </div>
     </section>
@@ -417,7 +417,7 @@
             <div id="courseListSection" class="hidden mt-16 animate-slide-up">
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Digital Marketing -->
-                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                    <article class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
                                 <i data-lucide="megaphone" class="w-6 h-6"></i>
@@ -432,10 +432,10 @@
                         <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
                             Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                         </a>
-                    </div>
+                    </article>
 
                     <!-- UI/UX Design -->
-                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                    <article class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
                                 <i data-lucide="layout" class="w-6 h-6"></i>
@@ -450,10 +450,10 @@
                         <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
                             Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                         </a>
-                    </div>
+                    </article>
 
                     <!-- Software Engineering -->
-                    <div class="glass-panel p-8 rounded-3xl border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group">
+                    <article class="glass-panel p-8 rounded-3xl border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center text-brand-600">
                                 <i data-lucide="code-2" class="w-6 h-6"></i>
@@ -468,10 +468,10 @@
                         <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
                             Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                         </a>
-                    </div>
+                    </article>
 
                     <!-- AI Automation -->
-                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                    <article class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
                                 <i data-lucide="bot" class="w-6 h-6"></i>
@@ -486,10 +486,10 @@
                         <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
                             Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                         </a>
-                    </div>
+                    </article>
 
                     <!-- Data Analyst -->
-                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                    <article class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
                                 <i data-lucide="database" class="w-6 h-6"></i>
@@ -504,10 +504,10 @@
                         <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
                             Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                         </a>
-                    </div>
+                    </article>
 
                     <!-- Graphic Design -->
-                    <div class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
+                    <article class="glass-panel p-8 rounded-3xl border-slate-200 hover:border-brand-500/30 transition-all group">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
                                 <i data-lucide="palette" class="w-6 h-6"></i>
@@ -522,7 +522,7 @@
                         <a href="login.html" class="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
                             Enroll Now <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                         </a>
-                    </div>
+                    </article>
                 </div>
 
                 <!-- Special Program: CeTech Pro Launch -->
@@ -550,17 +550,17 @@
     <!-- MENTORS SECTION -->
     <section id="mentors" class="py-32 px-6 relative z-10 border-t border-slate-200 bg-slate-50/50">
         <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 section-reveal gap-6">
+            <header class="flex flex-col md:flex-row justify-between items-end mb-16 section-reveal gap-6">
                 <div class="max-w-2xl">
                     <h2 class="text-brand-600 font-bold tracking-wider text-sm uppercase mb-3">The Faculty</h2>
                     <h3 class="text-4xl lg:text-5xl font-bold mb-6 text-slate-900">Meet the CeTech Team</h3>
                     <p class="text-slate-600 text-lg">Our team is made up of passionate digital professionals dedicated to helping you gain practical skills, build confidence, and create real opportunities in the digital space.</p>
                 </div>
-            </div>
+            </header>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start max-w-5xl">
                 <!-- Mentor: Chukwudi Collins -->
-                <div class="group section-reveal stagger-1">
+                <article class="group section-reveal stagger-1">
                     <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6 bg-slate-100 shadow-xl">
                         <img data-src="assets/mentor_chukwudi.jpeg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Chukwudi Collins" width="400" height="500" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -571,10 +571,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
 
                 <!-- Mentor: Nwankwor Chukwudalu Emmanuel -->
-                <div class="group section-reveal stagger-2 md:translate-y-6">
+                <article class="group section-reveal stagger-2 md:translate-y-6">
                     <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6 bg-slate-100 shadow-xl">
                         <img data-src="assets/mentor_nwankwor.PNG" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Nwankwor Chukwudalu Emmanuel" width="400" height="500" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -585,10 +585,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
 
                 <!-- Mentor: Obinna John -->
-                <div class="group section-reveal stagger-3 md:translate-y-12">
+                <article class="group section-reveal stagger-3 md:translate-y-12">
                     <div class="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6 bg-slate-100 shadow-xl">
                         <img data-src="assets/mentor_obinna.jpeg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Obinna John" width="400" height="500" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -599,7 +599,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
             </div>
         </div>
     </section>
@@ -629,7 +629,7 @@
                 </div>
             </div>
             
-            <div>
+            <nav aria-label="Quick links">
                 <h4 class="font-bold text-slate-900 mb-6 uppercase tracking-wider text-sm">Navigation</h4>
                 <ul class="space-y-4">
                     <li><a href="#curriculum" class="text-slate-500 hover:text-brand-600 transition-colors text-sm">Curriculum</a></li>
@@ -637,16 +637,16 @@
                     <li><a href="#mentors" class="text-slate-500 hover:text-brand-600 transition-colors text-sm">Faculty</a></li>
                     <li><a href="login.html" class="text-slate-500 hover:text-brand-600 transition-colors text-sm">Student Login</a></li>
                 </ul>
-            </div>
+            </nav>
             
-            <div>
+            <nav aria-label="Legal links">
                 <h4 class="font-bold text-slate-900 mb-6 uppercase tracking-wider text-sm">Legal</h4>
                 <ul class="space-y-4">
                     <li><a href="terms.html" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Terms of Service</a></li>
                     <li><a href="privacy.html" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Privacy Policy</a></li>
                     <li><a href="cookies.html" class="text-slate-500 hover:text-slate-900 transition-colors text-sm">Cookie Policy</a></li>
                 </ul>
-            </div>
+            </nav>
         </div>
         
         <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-slate-200 text-center flex flex-col md:flex-row justify-between items-center gap-4">

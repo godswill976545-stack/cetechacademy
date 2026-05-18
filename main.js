@@ -229,6 +229,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.querySelector('.glow-target')) {
             import('./BorderGlowMount.jsx').catch(err => console.error('Failed to load BorderGlowMount', err));
         }
+        if (document.querySelector('#curriculum article') || document.querySelector('#mentors article')) {
+            import('./InteractiveMount.jsx').catch(err => console.error('Failed to load InteractiveMount', err));
+        }
     };
 
     // Delay background components slightly to prioritize main content
