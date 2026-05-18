@@ -56,6 +56,8 @@ const elements = {
 
     // Views
     videoView: document.getElementById('video-view'),
+    youtubeContainer: document.getElementById('youtube-player-container'),
+    youtubePlayer: document.getElementById('youtube-player'),
     quizView: document.getElementById('quiz-view'),
     assignmentView: document.getElementById('assignment-view'),
 
@@ -130,9 +132,9 @@ async function fetchCourseData() {
             id: 'unit-1',
             title: 'UNIT 1: INTRODUCTION',
             lessons: [
-                { id: 'l1', type: 'video', title: '1.1 What is User Experience?', duration: '15 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'An introduction to the fundamental concepts of User Experience design.' },
-                { id: 'l2', type: 'video', title: '1.2 Design Thinking Process', duration: '22 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'Understanding the 5 stages of design thinking: Empathize, Define, Ideate, Prototype, Test.' },
-                { id: 'l3', type: 'video', title: '1.3 Wireframing Basics', duration: '18 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'How to sketch out your digital interfaces quickly and effectively.' },
+                { id: 'l1', type: 'video', title: '1.1 What is User Experience?', duration: '15 mins', youtube_id: '3c9E6D0YvVk', description: 'An introduction to the fundamental concepts of User Experience design.' },
+                { id: 'l2', type: 'video', title: '1.2 Design Thinking Process', duration: '22 mins', youtube_id: 'O64_60_D6YQ', description: 'Understanding the 5 stages of design thinking: Empathize, Define, Ideate, Prototype, Test.' },
+                { id: 'l3', type: 'video', title: '1.3 Wireframing Basics', duration: '18 mins', youtube_id: '9mN410r66vE', description: 'How to sketch out your digital interfaces quickly and effectively.' },
                 {
                     id: 'l-quiz-1',
                     type: 'quiz',
@@ -182,7 +184,7 @@ async function fetchCourseData() {
             id: 'unit-2',
             title: 'UNIT 2: ADVANCED PROTOTYPING',
             lessons: [
-                { id: 'l4', type: 'video', title: '2.1 Interactive Components', duration: '22 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'Learn how to create reusable interactive components in Figma.' },
+                { id: 'l4', type: 'video', title: '2.1 Interactive Components', duration: '22 mins', youtube_id: '4X_T88Kz_9o', description: 'Learn how to create reusable interactive components in Figma.' },
                 {
                     id: 'l-asgn-1',
                     type: 'assignment',
@@ -374,11 +376,34 @@ function loadLesson(unit, lesson) {
 
 function showVideoView(lesson) {
     elements.videoView.classList.remove('hidden');
+
+    // Hide both players initially
+    elements.player.classList.add('hidden');
+    elements.youtubeContainer.classList.add('hidden');
+    elements.youtubePlayer.src = '';
+
     if (lesson.mux_playback_id) {
+        elements.player.classList.remove('hidden');
         elements.player.playbackId = lesson.mux_playback_id;
         elements.player.play().catch(() => {});
+    } else if (lesson.youtube_id) {
+        elements.youtubeContainer.classList.remove('hidden');
+        elements.youtubePlayer.src = `https://www.youtube.com/embed/${lesson.youtube_id}?autoplay=1&mute=1&rel=0`;
+    } else if (lesson.youtube_url) {
+        const id = extractYouTubeId(lesson.youtube_url);
+        if (id) {
+            elements.youtubeContainer.classList.remove('hidden');
+            elements.youtubePlayer.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&rel=0`;
+        }
     }
+
     if (window.lucide) window.lucide.createIcons();
+}
+
+function extractYouTubeId(url) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
 }
 
 function showQuizView(lesson) {
@@ -570,13 +595,13 @@ function updateCompleteBtnUI(completed) {
     if (!elements.completeBtn) return;
     
     if (completed) {
-        elements.completeBtn.textContent = 'Completed ✓';
-        elements.completeBtn.style.opacity = '0.7';
+        elements.completeBtn.textContent = 'COMPLETED ✓';
+        elements.completeBtn.style.opacity = '1';
         elements.completeBtn.style.setProperty('--btn-face', '#10b981');
     } else {
-        elements.completeBtn.textContent = 'Mark Complete';
+        elements.completeBtn.textContent = 'MARK COMPLETE';
         elements.completeBtn.style.opacity = '1';
-        elements.completeBtn.style.setProperty('--btn-face', 'var(--color-primary)');
+        elements.completeBtn.style.setProperty('--btn-face', '#007bff');
     }
 }
 

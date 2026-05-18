@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: http: data: blob: chrome-extension:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://*.mux.com https://unpkg.com https://*.gstatic.com https://*.google.com http://*.gstatic.com http://*.google.com chrome-extension:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: http: https://*.mux.com https://*.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.mux.com https://*.gstatic.com https://*.google.com http://*.gstatic.com http://*.google.com; media-src 'self' https://*.mux.com blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: http: data: blob: chrome-extension:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://*.mux.com https://unpkg.com https://*.gstatic.com https://*.google.com http://*.gstatic.com http://*.google.com chrome-extension:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: http: https://*.mux.com https://*.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.mux.com https://*.gstatic.com https://*.google.com http://*.gstatic.com http://*.google.com; media-src 'self' https://*.mux.com blob:; frame-src 'self' https://www.youtube.com https://youtube.com;">
     <title>Learning Portal | CeTech Academy</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -599,8 +599,8 @@
             <button id="mark-complete-btn" class="duo-btn duo-btn-primary flex items-center gap-2">
               MARK COMPLETE
             </button>
-            <div class="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center overflow-hidden">
-              <i data-lucide="user" class="w-5 h-5 text-blue-400"></i>
+            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-700">
+              <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
             </div>
           </div>
         </header>
@@ -610,14 +610,17 @@
           <div id="video-view" class="video-player-container">
             <mux-player
               id="main-video-player"
-              playback-id="rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy"
+              playback-id=""
               metadata-video-title="Course Video"
               primary-color="#3b82f6"
               secondary-color="#0f172a"
               forward-button="true"
               backward-button="true"
-              style="width: 100%; height: 100%;"
+              class="hidden w-full h-full"
             ></mux-player>
+            <div id="youtube-player-container" class="hidden w-full h-full" style="aspect-ratio: 16/9;">
+               <iframe id="youtube-player" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
           </div>
 
           <!-- Quiz View -->
