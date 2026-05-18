@@ -305,6 +305,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            if (password.length < 8) {
+                showFeedback('Password must be at least 8 characters long.', 'error');
+                return;
+            }
+
+            if (isSignUp && (!fullName || fullName.trim().length < 2)) {
+                showFeedback('Please enter your full name.', 'error');
+                return;
+            }
+
             const originalBtnHtml = submitBtn.innerHTML;
             const originalIcon = btnIcon.getAttribute('data-lucide');
 
