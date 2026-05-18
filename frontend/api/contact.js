@@ -1,38 +1,34 @@
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
+import express from 'express';
+import { helmet, xss, cors, cookieParser, strictLimiter, csrfProtection, errorHandler } from '../../api/middleware/security.js';
+import { validateContact } from '../../api/middleware/validation.js';
 
-  try {
-    const { name, email, program } = req.body ?? {};
+const app = express();
 
-    if (!name || !email || !program) {
-      return res.status(400).json({
-        error: "Missing required fields",
-        message: "Please provide name, email, and program.",
-      });
-    }
+app.use(helmet);
+app.use(xss);
+app.use(cors);
+app.use(cookieParser);
+app.use(express.json());
 
-    const newInquiry = {
-      id: Date.now().toString(),
-      name,
-      email,
-      program,
-      date: new Date().toISOString(),
-    };
+app.post('*', strictLimiter, csrfProtection, validateContact, (req, res) => {
+  const { name, email, program } = req.body;
 
-    // If you later want persistence, save to Supabase / DB here.
-    return res.status(201).json({
-      success: true,
-      message: "Inquiry submitted successfully",
-      data: newInquiry,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      error: "Internal Server Error",
-      message: "Something went wrong processing your inquiry.",
-    });
-  }
-}
+  const newInquiry = {
+    id: Date.now().toString(),
+    name,
+    email,
+    program,
+    date: new Date().toISOString(),
+  };
+
+  return res.status(201).json({
+    success: true,
+    message: "Inquiry submitted successfully",
+    data: newInquiry,
+  });
+});
+
+app.use(errorHandler);
+
+export default app;
 

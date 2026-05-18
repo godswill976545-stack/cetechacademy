@@ -93,6 +93,12 @@ function escapeHTML(str) {
     return div.innerHTML;
 }
 
+// Security Helper: Sanitize Input (Simple)
+function sanitizeInput(str) {
+    if (!str) return '';
+    return str.trim().replace(/[<>]/g, '');
+}
+
 // Initialize Portal
 async function init() {
     try {
@@ -496,8 +502,8 @@ async function finishQuiz() {
 }
 
 async function submitAssignment() {
-    const content = elements.assignmentSubmissionText.value;
-    if (!content.trim()) {
+    const content = sanitizeInput(elements.assignmentSubmissionText.value);
+    if (!content) {
         alert('Please enter your submission before sending.');
         return;
     }
