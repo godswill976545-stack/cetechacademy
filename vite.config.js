@@ -12,6 +12,9 @@ export default defineConfig({
         login: resolve(__dirname, 'login.html'),
         portal: resolve(__dirname, 'frontend/portal.html'),
         payment: resolve(__dirname, 'frontend/payment.html'),
+        privacy: resolve(__dirname, 'privacy.html'),
+        terms: resolve(__dirname, 'terms.html'),
+        cookies: resolve(__dirname, 'cookies.html'),
       },
       output: {
         manualChunks(id) {
