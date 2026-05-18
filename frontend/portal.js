@@ -128,14 +128,15 @@ async function fetchCourseData() {
     const mockUnits = [
         {
             id: 'unit-1',
-            title: 'Foundations of Design',
+            title: 'UNIT 1: INTRODUCTION',
             lessons: [
-                { id: 'l1', type: 'video', title: 'Introduction to UI/UX', duration: '12:45', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'In this introductory lesson, we explore the fundamental differences between User Interface (UI) and User Experience (UX) design.' },
-                { id: 'l2', type: 'video', title: 'Design Principles', duration: '15:20', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'Deep dive into typography, color theory, and layout grids.' },
+                { id: 'l1', type: 'video', title: '1.1 What is User Experience?', duration: '15 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'An introduction to the fundamental concepts of User Experience design.' },
+                { id: 'l2', type: 'video', title: '1.2 Design Thinking Process', duration: '22 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'Understanding the 5 stages of design thinking: Empathize, Define, Ideate, Prototype, Test.' },
+                { id: 'l3', type: 'video', title: '1.3 Wireframing Basics', duration: '18 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'How to sketch out your digital interfaces quickly and effectively.' },
                 {
                     id: 'l-quiz-1',
                     type: 'quiz',
-                    title: 'UI/UX Fundamentals Quiz',
+                    title: '1.4 UI/UX Fundamentals Quiz',
                     duration: '5 Questions',
                     description: 'Test your knowledge on the basics of design thinking and user experience.',
                     quiz: {
@@ -159,6 +160,18 @@ async function fetchCourseData() {
                                 text: 'What is the first stage of the Design Thinking process?',
                                 options: ['Ideate', 'Define', 'Prototype', 'Empathize'],
                                 correct: 3
+                            },
+                            {
+                                id: 'q1-4',
+                                text: 'What is a "Wireframe" in UI design?',
+                                options: ['A high-fidelity mockup', 'A low-fidelity structural sketch', 'A final coded version', 'A user testing report'],
+                                correct: 1
+                            },
+                            {
+                                id: 'q1-5',
+                                text: 'Which tool is most commonly used for collaborative UI design?',
+                                options: ['Adobe Photoshop', 'Figma', 'Microsoft Word', 'Notepad++'],
+                                correct: 1
                             }
                         ]
                     }
@@ -167,13 +180,13 @@ async function fetchCourseData() {
         },
         {
             id: 'unit-2',
-            title: 'Advanced Prototyping',
+            title: 'UNIT 2: ADVANCED PROTOTYPING',
             lessons: [
-                { id: 'l3', type: 'video', title: 'Interactive Components', duration: '22:10', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'Learn how to create reusable interactive components in Figma.' },
+                { id: 'l4', type: 'video', title: '2.1 Interactive Components', duration: '22 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'Learn how to create reusable interactive components in Figma.' },
                 {
                     id: 'l-asgn-1',
                     type: 'assignment',
-                    title: 'Figma Prototype Submission',
+                    title: '2.2 Figma Prototype Submission',
                     duration: 'Assignment',
                     description: 'Create a high-fidelity prototype of a mobile login screen and submit the Figma link for review.'
                 }
@@ -251,7 +264,7 @@ function setupEventListeners() {
     elements.startQuizBtn?.addEventListener('click', startQuiz);
     elements.nextQBtn?.addEventListener('click', nextQuestion);
     elements.retakeQuizBtn?.addEventListener('click', startQuiz);
-    elements.finishQuizBtn?.addEventListener('click', toggleLessonCompletion);
+    elements.finishQuizBtn?.addEventListener('click', () => toggleLessonCompletion(true));
 
     // Assignment Events
     elements.submitAssignmentBtn?.addEventListener('click', submitAssignment);
@@ -453,7 +466,7 @@ function nextQuestion() {
     }
 }
 
-function finishQuiz() {
+async function finishQuiz() {
     let correctCount = 0;
     state.quiz.questions.forEach((q, idx) => {
         if (state.quiz.answers[idx] === q.correct) correctCount++;
@@ -473,6 +486,11 @@ function finishQuiz() {
     elements.quizFeedback.textContent = score >= 70
         ? "Excellent work! You've mastered the concepts in this module."
         : "You didn't reach the passing score of 70%. We recommend reviewing the content and trying again.";
+
+    // Automatically mark as complete if passed
+    if (score >= 70) {
+        await toggleLessonCompletion(true);
+    }
 
     if (window.lucide) window.lucide.createIcons();
 }
@@ -494,7 +512,7 @@ async function submitAssignment() {
     elements.submitAssignmentBtn.classList.add('hidden');
 
     // Also mark as complete
-    await toggleLessonCompletion();
+    await toggleLessonCompletion(true);
 }
 
 function loadInitialLesson() {
@@ -503,11 +521,14 @@ function loadInitialLesson() {
     }
 }
 
-async function toggleLessonCompletion() {
+async function toggleLessonCompletion(forceStatus = null) {
     if (!state.currentLesson) return;
     
     const isCurrentlyCompleted = isLessonCompleted(state.currentLesson.id);
-    const newStatus = !isCurrentlyCompleted;
+    const newStatus = forceStatus !== null ? forceStatus : !isCurrentlyCompleted;
+
+    // If it's already completed and we are trying to mark it complete again (e.g. quiz pass), skip
+    if (forceStatus === true && isCurrentlyCompleted) return;
 
     try {
         await supabase
@@ -532,6 +553,16 @@ async function toggleLessonCompletion() {
         
     } catch (error) {
         console.error('Error updating progress:', error);
+        // Fallback for local testing if Supabase isn't configured
+        const progIdx = state.progress.findIndex(p => p.lesson_id === state.currentLesson.id);
+        if (progIdx > -1) {
+            state.progress[progIdx].completed = newStatus;
+        } else {
+            state.progress.push({ lesson_id: state.currentLesson.id, completed: newStatus });
+        }
+        updateCompleteBtnUI(newStatus);
+        renderCurriculum();
+        updateOverallProgress();
     }
 }
 
