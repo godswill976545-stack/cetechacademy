@@ -291,3 +291,41 @@ VALUES
     3
   )
 ON CONFLICT (id) DO NOTHING;
+
+-- Assignments table
+CREATE TABLE IF NOT EXISTS public.assignments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  lesson_id UUID REFERENCES public.lessons(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  due_date TIMESTAMP WITH TIME ZONE,
+  max_points INTEGER DEFAULT 100,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Assignment Submissions table
+CREATE TABLE IF NOT EXISTS public.assignment_submissions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+  assignment_id UUID REFERENCES public.assignments(id) ON DELETE CASCADE NOT NULL,
+  submission_url TEXT, -- Link to submitted file or work
+  content TEXT, -- For text-based submissions
+  score INTEGER,
+  feedback TEXT,
+  submitted_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(user_id, assignment_id)
+);
+
+-- Enable RLS
+ALTER TABLE public.assignments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.assignment_submissions ENABLE ROW LEVEL SECURITY;
+
+-- Policies
+DROP POLICY IF EXISTS "Allow authenticated to read assignments" ON public.assignments;
+CREATE POLICY "Allow authenticated to read assignments" ON public.assignments FOR SELECT TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "Users can manage own assignment submissions" ON public.assignment_submissions;
+CREATE POLICY "Users can manage own assignment submissions" ON public.assignment_submissions FOR ALL USING (auth.uid() = user_id);
+
+-- Add type to lessons to distinguish them in UI
+ALTER TABLE public.lessons ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'video'; -- 'video', 'quiz', 'assignment'
