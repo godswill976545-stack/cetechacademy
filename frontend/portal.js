@@ -40,7 +40,8 @@ let state = {
 
 // DOM Elements
 const elements = {
-    player: document.getElementById('main-video-player'),
+    youtubeContainer: document.getElementById('youtube-player'),
+    youtubePlaceholder: document.getElementById('youtube-placeholder'),
     lessonTitle: document.getElementById('header-lesson-title'),
     unitTitle: document.getElementById('header-unit-title'),
     curriculumContainer: document.getElementById('curriculum-container'),
@@ -134,11 +135,11 @@ async function fetchCourseData() {
     const mockUnits = [
         {
             id: 'unit-1',
-            title: 'UNIT 1: INTRODUCTION',
+            title: 'UNIT 1: INTRODUCTION TO UI/UX',
             lessons: [
-                { id: 'l1', type: 'video', title: '1.1 What is User Experience?', duration: '15 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'An introduction to the fundamental concepts of User Experience design.' },
-                { id: 'l2', type: 'video', title: '1.2 Design Thinking Process', duration: '22 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'Understanding the 5 stages of design thinking: Empathize, Define, Ideate, Prototype, Test.' },
-                { id: 'l3', type: 'video', title: '1.3 Wireframing Basics', duration: '18 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'How to sketch out your digital interfaces quickly and effectively.' },
+                { id: 'l1', type: 'video', title: '1.1 What is User Experience?', duration: '15 mins', youtube_id: 'SRec6L7TbRE', description: 'An introduction to the fundamental concepts of User Experience design. Learn what UX means and why it matters.' },
+                { id: 'l2', type: 'video', title: '1.2 Design Thinking Process', duration: '22 mins', youtube_id: 'UBVVV0GvK18', description: 'Understanding the 5 stages of design thinking: Empathize, Define, Ideate, Prototype, Test.' },
+                { id: 'l3', type: 'video', title: '1.3 Wireframing Basics', duration: '18 mins', youtube_id: 's3BjaX3xrOA', description: 'How to sketch out your digital interfaces quickly and effectively using wireframes.' },
                 {
                     id: 'l-quiz-1',
                     type: 'quiz',
@@ -186,15 +187,68 @@ async function fetchCourseData() {
         },
         {
             id: 'unit-2',
-            title: 'UNIT 2: ADVANCED PROTOTYPING',
+            title: 'UNIT 2: DESIGN TOOLS & PROTOTYPING',
             lessons: [
-                { id: 'l4', type: 'video', title: '2.1 Interactive Components', duration: '22 mins', mux_playback_id: 'rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy', description: 'Learn how to create reusable interactive components in Figma.' },
+                { id: 'l4', type: 'video', title: '2.1 Getting Started with Figma', duration: '25 mins', youtube_id: 'FTFaQWZBqQ8', description: 'A complete beginner guide to Figma — the industry standard tool for UI design and prototyping.' },
+                { id: 'l5', type: 'video', title: '2.2 Building Interactive Prototypes', duration: '20 mins', youtube_id: 'dTb5uFPxwE0', description: 'Learn how to create clickable, interactive prototypes in Figma to test your designs.' },
                 {
                     id: 'l-asgn-1',
                     type: 'assignment',
-                    title: '2.2 Figma Prototype Submission',
+                    title: '2.3 Figma Prototype Submission',
                     duration: 'Assignment',
                     description: 'Create a high-fidelity prototype of a mobile login screen and submit the Figma link for review.'
+                }
+            ]
+        },
+        {
+            id: 'unit-3',
+            title: 'UNIT 3: UI DESIGN PRINCIPLES',
+            lessons: [
+                { id: 'l6', type: 'video', title: '3.1 Color Theory for UI', duration: '18 mins', youtube_id: 'KkMH0wLhMIQ', description: 'Master color theory and learn how to create beautiful, accessible color palettes for your interfaces.' },
+                { id: 'l7', type: 'video', title: '3.2 Typography in Digital Design', duration: '16 mins', youtube_id: 'hnCmSXCZEpU', description: 'Understanding typefaces, font pairing, and how typography impacts user readability and experience.' },
+                { id: 'l8', type: 'video', title: '3.3 Layout & Spacing Systems', duration: '14 mins', youtube_id: '2xTbLYsFoGg', description: 'Learn about grids, spacing, and visual hierarchy to create clean, balanced layouts.' },
+                {
+                    id: 'l-quiz-2',
+                    type: 'quiz',
+                    title: '3.4 Design Principles Quiz',
+                    duration: '5 Questions',
+                    description: 'Test your understanding of color theory, typography, and layout systems.',
+                    quiz: {
+                        id: 'q2',
+                        title: 'UI Design Principles',
+                        questions: [
+                            {
+                                id: 'q2-1',
+                                text: 'What is the 60-30-10 rule in color theory?',
+                                options: ['A font sizing rule', 'A color distribution guideline', 'A spacing system', 'A grid layout rule'],
+                                correct: 1
+                            },
+                            {
+                                id: 'q2-2',
+                                text: 'What is "leading" in typography?',
+                                options: ['Font weight', 'Space between characters', 'Space between lines of text', 'Font size'],
+                                correct: 2
+                            },
+                            {
+                                id: 'q2-3',
+                                text: 'Which grid system is most commonly used in web design?',
+                                options: ['3-column', '5-column', '12-column', '16-column'],
+                                correct: 2
+                            },
+                            {
+                                id: 'q2-4',
+                                text: 'What is "white space" in design?',
+                                options: ['Empty background color', 'Negative space between elements', 'A white UI theme', 'Blank pages'],
+                                correct: 1
+                            },
+                            {
+                                id: 'q2-5',
+                                text: 'Which font pairing principle creates the best visual contrast?',
+                                options: ['Two serif fonts', 'Two sans-serif fonts', 'Serif + Sans-serif', 'Script + Display'],
+                                correct: 2
+                            }
+                        ]
+                    }
                 }
             ]
         }
@@ -380,10 +434,33 @@ function loadLesson(unit, lesson) {
 
 function showVideoView(lesson) {
     elements.videoView.classList.remove('hidden');
-    if (lesson.mux_playback_id) {
-        elements.player.playbackId = lesson.mux_playback_id;
-        elements.player.play().catch(() => {});
+    
+    if (lesson.youtube_id) {
+        // Hide placeholder, show YouTube iframe
+        if (elements.youtubePlaceholder) {
+            elements.youtubePlaceholder.style.display = 'none';
+        }
+        
+        // Remove existing iframe if any
+        const existingIframe = elements.youtubeContainer.querySelector('iframe');
+        if (existingIframe) existingIframe.remove();
+        
+        // Create YouTube iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${lesson.youtube_id}?rel=0&modestbranding=1`;
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.title = lesson.title;
+        elements.youtubeContainer.appendChild(iframe);
+    } else {
+        // Show placeholder if no video ID
+        if (elements.youtubePlaceholder) {
+            elements.youtubePlaceholder.style.display = 'flex';
+        }
+        const existingIframe = elements.youtubeContainer.querySelector('iframe');
+        if (existingIframe) existingIframe.remove();
     }
+    
     if (window.lucide) window.lucide.createIcons();
 }
 

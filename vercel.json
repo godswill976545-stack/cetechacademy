@@ -9,10 +9,6 @@
     {
       "source": "/payment",
       "destination": "/frontend/payment.html"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api"
     }
   ],
   "headers": [
@@ -57,10 +53,6 @@
     "frontend": {
       "routePrefix": "/",
       "framework": "vite"
-    },
-    "backend": {
-      "entrypoint": "backend",
-      "routePrefix": "/_/backend"
     }
   }
 }

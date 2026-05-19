@@ -19,8 +19,8 @@
 
 .glass-panel {
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
 }
@@ -37,7 +37,7 @@
 }
 .interactive-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06), 0 0 0 2px rgba(0, 123, 255, 0.15);
 }
 
 .text-gradient {
@@ -52,7 +52,7 @@
 .section-reveal {
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .section-reveal.active {
@@ -166,4 +166,70 @@
 /* UTILS */
 .hidden {
   display: none !important;
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .animate-pulse-glow, .section-reveal {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .interactive-card:hover {
+    transform: none !important;
+  }
+}
+/* Focus Visible States */
+button:focus-visible, a:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* ===== EMAIL VERIFICATION ===== */
+
+.verify-banner {
+  background: linear-gradient(135deg, rgba(0,123,255,0.03) 0%, rgba(0,210,255,0.03) 100%);
+  border: 1px solid rgba(0,123,255,0.1);
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-feedback {
+  font-size: 0.875rem;
+  padding: 10px 16px;
+  border-radius: 10px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.auth-feedback.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.auth-feedback.error {
+  background: rgba(239,68,68,0.08);
+  color: #dc2626;
+  border: 1px solid rgba(239,68,68,0.15);
+}
+
+.auth-feedback.success {
+  background: rgba(34,197,94,0.08);
+  color: #16a34a;
+  border: 1px solid rgba(34,197,94,0.15);
 }
