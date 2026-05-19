@@ -352,12 +352,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 let authResponse;
                 if (isSignUp) {
-                    // SIGN UP
-                    authResponse = await supabase.auth.signUp({
+                    // SIGN UP with OTP (sends 6-digit code via email)
+                    authResponse = await supabase.auth.signInWithOtp({
                         email,
-                        password,
                         options: {
-                            data: { full_name: fullName }
+                            data: { full_name: fullName },
+                            shouldCreateUser: true,
                         }
                     });
                 } else {
@@ -367,34 +367,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (authResponse.error) throw authResponse.error;
 
-                const user = authResponse.data.user;
-
                 if (isSignUp) {
-                    // Show verification prompt instead of redirecting
+                    // Show verification code prompt
                     const verifyPrompt = document.getElementById('verifyPrompt');
                     const verifyEmailDisplay = document.getElementById('verifyEmailDisplay');
-                    const loginForm = document.getElementById('loginForm');
-                    const submitBtn = document.getElementById('submitBtn');
                     const formTitle = document.getElementById('formTitle');
                     const formSubtitle = document.getElementById('formSubtitle');
 
                     if (verifyPrompt) verifyPrompt.classList.remove('hidden');
                     if (verifyEmailDisplay) verifyEmailDisplay.textContent = email;
                     if (loginForm) loginForm.classList.add('hidden');
-                    if (formTitle) formTitle.textContent = 'Verify Your Email';
-                    if (formSubtitle) formSubtitle.textContent = 'We sent a verification link to your inbox';
+                    if (formTitle) formTitle.textContent = 'Enter Code';
+                    if (formSubtitle) formSubtitle.textContent = 'We sent a 6-digit code to your email';
 
-                    // Store email in session for resend
+                    // Store email in session for verify/resend
                     sessionStorage.setItem('pendingVerificationEmail', email);
                     sessionStorage.setItem('pendingVerificationName', fullName || '');
 
-                    showFeedback('Verification email sent! Check your inbox.', 'success');
                     setLoading(false);
+                    initIcons();
+                    // Focus first code input
+                    setTimeout(() => document.querySelector('.code-input[data-index="0"]')?.focus(), 100);
                 } else {
                     showFeedback('Welcome back! Redirecting...', 'success');
                     await new Promise(resolve => setTimeout(resolve, 1000));
 
-                    // Check payment status from profiles table
+                    const user = authResponse.data.user;
                     const { data: profile, error: profileError } = await supabase
                         .from('profiles')
                         .select('payment_status')
@@ -419,7 +417,158 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Google OAuth Handler
+    // ===== CODE INPUT HANDLING =====
+    const codeInputs = document.querySelectorAll('.code-input');
+    const fullCodeInput = document.getElementById('fullCode');
+
+    function updateFullCode() {
+        let code = '';
+        codeInputs.forEach(input => { code += input.value; });
+        if (fullCodeInput) fullCodeInput.value = code;
+        return code;
+    }
+
+    codeInputs.forEach((input, index) => {
+        // Only allow digits
+        input.addEventListener('input', (e) => {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            updateFullCode();
+            // Auto-focus next input
+            if (input.value && index < codeInputs.length - 1) {
+                codeInputs[index + 1].focus();
+            }
+        });
+
+        // Handle backspace
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !input.value && index > 0) {
+                codeInputs[index - 1].focus();
+            }
+        });
+
+        // Handle paste
+        input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasteData = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+            const digits = pasteData.split('');
+            codeInputs.forEach((inp, i) => {
+                if (digits[i]) inp.value = digits[i];
+            });
+            updateFullCode();
+            const nextEmpty = Array.from(codeInputs).findIndex(inp => !inp.value);
+            if (nextEmpty !== -1) codeInputs[nextEmpty].focus();
+            else codeInputs[codeInputs.length - 1].focus();
+        });
+    });
+
+    // ===== VERIFY CODE BUTTON =====
+    const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+    if (verifyCodeBtn) {
+        verifyCodeBtn.addEventListener('click', async () => {
+            const code = updateFullCode();
+            const email = sessionStorage.getItem('pendingVerificationEmail');
+            const verifyCodeFeedback = document.getElementById('verifyCodeFeedback');
+
+            if (!email) {
+                verifyCodeFeedback.textContent = 'Session expired. Please sign up again.';
+                verifyCodeFeedback.className = 'mt-3 text-sm text-center text-red-500';
+                verifyCodeFeedback.classList.remove('hidden');
+                return;
+            }
+
+            if (code.length !== 6) {
+                verifyCodeFeedback.textContent = 'Please enter all 6 digits.';
+                verifyCodeFeedback.className = 'mt-3 text-sm text-center text-red-500';
+                verifyCodeFeedback.classList.remove('hidden');
+                return;
+            }
+
+            verifyCodeBtn.disabled = true;
+            verifyCodeBtn.querySelector('span').textContent = 'Verifying...';
+
+            try {
+                const { error } = await supabase.auth.verifyOtp({
+                    email,
+                    token: code,
+                    type: 'signup',
+                });
+
+                if (error) throw error;
+
+                // Success! Show success state
+                verifyCodeFeedback.textContent = 'Email verified! Redirecting...';
+                verifyCodeFeedback.className = 'mt-3 text-sm text-center text-green-600';
+                verifyCodeFeedback.classList.remove('hidden');
+
+                // Redirect to payment after short delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                window.location.href = '/frontend/payment.html';
+
+            } catch (err) {
+                verifyCodeFeedback.textContent = 'Invalid code. Please try again.';
+                verifyCodeFeedback.className = 'mt-3 text-sm text-center text-red-500';
+                verifyCodeFeedback.classList.remove('hidden');
+                // Clear inputs
+                codeInputs.forEach(inp => inp.value = '');
+                updateFullCode();
+                codeInputs[0].focus();
+            }
+
+            verifyCodeBtn.disabled = false;
+            verifyCodeBtn.querySelector('span').textContent = 'Verify Email';
+        });
+    }
+
+    // ===== RESEND CODE BUTTON =====
+    const resendBtn = document.getElementById('resendBtn');
+    if (resendBtn) {
+        resendBtn.addEventListener('click', async () => {
+            const resendFeedback = document.getElementById('resendFeedback');
+            const resendBtnText = document.getElementById('resendBtnText');
+            const email = sessionStorage.getItem('pendingVerificationEmail');
+            const fullName = sessionStorage.getItem('pendingVerificationName') || '';
+
+            if (!email) {
+                resendFeedback.textContent = 'Session expired. Please sign up again.';
+                resendFeedback.className = 'mt-2 text-xs text-red-500';
+                resendFeedback.classList.remove('hidden');
+                return;
+            }
+
+            resendBtn.disabled = true;
+            resendBtnText.textContent = 'Sending...';
+
+            try {
+                const { error } = await supabase.auth.signInWithOtp({
+                    email,
+                    options: {
+                        data: { full_name: fullName },
+                        shouldCreateUser: true,
+                    }
+                });
+
+                if (error) throw error;
+
+                resendFeedback.textContent = 'New code sent! Check your inbox.';
+                resendFeedback.className = 'mt-2 text-xs text-green-600';
+
+                // Clear inputs
+                codeInputs.forEach(inp => inp.value = '');
+                updateFullCode();
+                codeInputs[0].focus();
+
+            } catch (err) {
+                resendFeedback.textContent = 'Failed to send. Try again.';
+                resendFeedback.className = 'mt-2 text-xs text-red-500';
+            }
+
+            resendFeedback.classList.remove('hidden');
+            resendBtnText.textContent = 'Resend Code';
+            resendBtn.disabled = false;
+        });
+    }
+
+    // ===== GOOGLE OAUTH HANDLER =====
     const googleAuthBtn = document.getElementById('googleAuthBtn');
     if (googleAuthBtn) {
         googleAuthBtn.addEventListener('click', async () => {
@@ -442,104 +591,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // Resend Verification Email Handler (uses Supabase built-in resend)
-    const resendBtn = document.getElementById('resendBtn');
-    if (resendBtn) {
-        resendBtn.addEventListener('click', async () => {
-            const resendFeedback = document.getElementById('resendFeedback');
-            const resendBtnText = document.getElementById('resendBtnText');
-            const email = sessionStorage.getItem('pendingVerificationEmail');
-
-            if (!email) {
-                resendFeedback.textContent = 'Session expired. Please sign up again.';
-                resendFeedback.className = 'mt-3 text-sm text-red-500';
-                resendFeedback.classList.remove('hidden');
-                return;
-            }
-
-            resendBtn.disabled = true;
-            resendBtnText.textContent = 'Sending...';
-
-            try {
-                const { error } = await supabase.auth.resend({
-                    type: 'signup',
-                    email: email,
-                });
-
-                if (error) throw error;
-
-                resendFeedback.textContent = 'Verification email sent! Check your inbox.';
-                resendFeedback.className = 'mt-3 text-sm text-green-600';
-            } catch (err) {
-                resendFeedback.textContent = 'Failed to send. Please try again.';
-                resendFeedback.className = 'mt-3 text-sm text-red-500';
-            }
-
-            resendFeedback.classList.remove('hidden');
-            resendBtnText.textContent = 'Resend Verification Email';
-            resendBtn.disabled = false;
-        });
-    }
-
-    // Handle verified=true redirect from email link
-    if (urlParams.get('verified') === 'true' && urlParams.get('email')) {
-        const verifiedEmail = urlParams.get('email');
-        sessionStorage.setItem('pendingVerificationEmail', verifiedEmail);
-
-        const vFormTitle = document.getElementById('formTitle');
-        const vFormSubtitle = document.getElementById('formSubtitle');
-        const vVerifyPrompt = document.getElementById('verifyPrompt');
-        const vVerifyEmailDisplay = document.getElementById('verifyEmailDisplay');
-
-        if (loginForm) loginForm.classList.add('hidden');
-        if (vVerifyPrompt) vVerifyPrompt.classList.remove('hidden');
-        if (vVerifyEmailDisplay) vVerifyEmailDisplay.textContent = verifiedEmail;
-        if (vFormTitle) vFormTitle.textContent = 'Email Verified!';
-        if (vFormSubtitle) vFormSubtitle.textContent = 'Your email has been verified. You can now sign in.';
-
-        const verifyBanner = document.querySelector('.verify-banner');
-        if (verifyBanner) {
-            verifyBanner.innerHTML = `
-                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-50 flex items-center justify-center">
-                    <i data-lucide="check-circle" class="w-8 h-8 text-green-500"></i>
-                </div>
-                <h3 class="text-lg font-bold text-slate-900 mb-2">Email Verified!</h3>
-                <p class="text-sm text-slate-500 mb-4">Your email <strong>${verifiedEmail}</strong> has been verified successfully.</p>
-                <button type="button" id="proceedToSignIn" class="duo-btn duo-btn-primary w-full">Continue to Sign In</button>
-            `;
-            initIcons();
-
-            document.getElementById('proceedToSignIn')?.addEventListener('click', () => {
-                isSignUp = false;
-                updateModeUI();
-                if (loginForm) loginForm.classList.remove('hidden');
-                if (vVerifyPrompt) vVerifyPrompt.classList.add('hidden');
-                if (vFormTitle) vFormTitle.textContent = 'Welcome Back';
-                if (vFormSubtitle) vFormSubtitle.textContent = 'Sign in to continue your learning journey';
-                const emailInput = document.getElementById('email');
-                if (emailInput) emailInput.value = verifiedEmail;
-            });
-        }
-    }
-
-    // Listen for auth state changes (handles Supabase email confirmation callback)
-    supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-            const user = session.user;
-            if (user.email_confirmed_at) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('payment_status')
-                    .eq('id', user.id)
-                    .single();
-
-                if (profile?.payment_status === 'paid') {
-                    window.location.href = '/frontend/portal.html';
-                } else {
-                    window.location.href = '/frontend/payment.html';
-                }
-            }
-        }
-    });
 });

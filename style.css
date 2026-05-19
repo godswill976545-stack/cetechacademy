@@ -233,3 +233,59 @@ button:focus-visible, a:focus-visible {
   color: #16a34a;
   border: 1px solid rgba(34,197,94,0.15);
 }
+
+/* ===== CODE INPUT ===== */
+
+.code-input-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 auto;
+}
+
+.code-input {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Space Grotesk', monospace;
+  color: #1e293b;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.2s ease;
+  caret-color: #007bff;
+}
+
+.code-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+  background: #fff;
+}
+
+.code-input.filled {
+  border-color: #007bff;
+  background: #eff6ff;
+}
+
+.code-separator {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  user-select: none;
+  margin: 0 2px;
+}
+
+@media (max-width: 400px) {
+  .code-input {
+    width: 40px;
+    height: 48px;
+    font-size: 1.25rem;
+  }
+  .code-input-group {
+    gap: 5px;
+  }
+}
