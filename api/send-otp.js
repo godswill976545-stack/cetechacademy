@@ -1,17 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import nodemailer from 'nodemailer';
-
-const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.VITE_SUPABASE_ANON_KEY);
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
 
 export default async (req, res) => {
   if (req.method !== 'POST') {
@@ -24,6 +11,9 @@ export default async (req, res) => {
       return res.status(400).json({ error: 'Missing fields' });
     }
 
+    const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.VITE_SUPABASE_ANON_KEY);
+    if (!process.env.VITE_SUPABASE_URL) console.error('Missing VITE_SUPABASE_URL');
+
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
@@ -31,6 +21,17 @@ export default async (req, res) => {
       .from('verification_codes')
       .upsert({ user_id: userId, code: otpCode, expires_at: expiresAt }, { onConflict: 'user_id' });
     if (dbError) throw dbError;
+
+    const nodemailer = await import('nodemailer');
+    const transporter = nodemailer.default.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    });
 
     await transporter.sendMail({
       from: process.env.SMTP_FROM || 'CeTech Academy <info@cetechacademy.com>',
