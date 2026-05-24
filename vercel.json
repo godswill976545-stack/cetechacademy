@@ -1,1 +1,9 @@
-{"framework": "vite"}
+{
+  "framework": "vite",
+  "functions": {
+    "api/send-otp.js": {
+      "memory": 128,
+      "maxDuration": 10
+    }
+  }
+}
