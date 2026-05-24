@@ -16,8 +16,9 @@ function getTransporter() {
 }
 
 export default async (req, res) => {
+    console.log('send-otp called with method:', req.method, 'url:', req.url);
     if (req.method === 'OPTIONS') return res.status(200).end();
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed. Received: ' + req.method });
     try {
         const { userId, email } = req.body;
         if (!userId || !email) return res.status(400).json({ error: 'Missing fields' });
