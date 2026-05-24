@@ -41,6 +41,9 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   full_name TEXT,
   avatar_url TEXT,
   payment_status TEXT DEFAULT 'unpaid', -- 'unpaid', 'paid', 'pending'
+  is_verified BOOLEAN DEFAULT false,
+  verification_code TEXT,
+  verification_expires_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

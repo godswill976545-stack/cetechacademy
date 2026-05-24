@@ -25,15 +25,16 @@
     "@react-three/fiber": "^9.6.1",
     "@supabase/supabase-js": "^2.105.4",
     "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
     "express": "^4.18.2",
     "lucide": "^1.16.0",
     "lucide-react": "^1.16.0",
     "motion": "^12.38.0",
+    "nodemailer": "^8.0.8",
     "ogl": "^1.0.11",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.2",
-    "resend": "^6.12.3",
     "three": "^0.184.0"
   }
 }

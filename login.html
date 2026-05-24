@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth bg-brand-950 text-slate-200">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,84 +11,84 @@
     <link rel="stylesheet" href="src/tailwind.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    
+<body class="antialiased bg-brand-950 text-slate-200 selection:bg-accent-400/30 selection:text-white min-h-screen flex items-center justify-center p-4">
+
     <!-- Aurora background (animated gradient) -->
     <div class="fixed inset-0 pointer-events-none z-0 opacity-70">
         <div id="aurora-bg" class="absolute inset-0"></div>
-        <div class="absolute inset-0 bg-white/40"></div>
+        <div class="absolute inset-0 bg-brand-950/40"></div>
     </div>
 
     <!-- Ambient Background Lighting -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="ambient-orb bg-[#007bff]/10 w-[600px] h-[600px] -top-48 -left-24 animate-pulse-glow"></div>
-        <div class="ambient-orb bg-[#00d2ff]/5 w-[800px] h-[800px] -bottom-48 -right-24"></div>
+        <div class="ambient-orb bg-brand-400/10 w-[600px] h-[600px] -top-48 -left-24 animate-pulse-glow"></div>
+        <div class="ambient-orb bg-accent-200/5 w-[800px] h-[800px] -bottom-48 -right-24"></div>
     </div>
 
-    <main class="glass-card rounded-3xl p-8 w-full max-w-md relative animate-fade-in">
-        
+    <main class="glass-panel rounded-3xl p-8 w-full max-w-md relative animate-fade-in border-slate-800 shadow-2xl">
+
         <header class="text-center mb-8">
             <a href="index.html" class="inline-flex items-center justify-center gap-3 mb-6 group">
                 <img src="assets/logo.png" alt="CeTech Academy Logo" width="96" height="96" class="h-16 md:h-24 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,123,255,0.1)] transition-transform duration-300 group-hover:scale-105" fetchpriority="high">
-                <span class="text-3xl font-bold tracking-tight text-slate-900 group-hover:text-[#007bff] transition-colors">CeTech Academy</span>
+                <span class="text-3xl font-bold tracking-tight text-white group-hover:text-accent-400 transition-colors">CeTech Academy</span>
             </a>
-            <h1 class="text-2xl font-bold text-slate-900 mb-2" id="formTitle">Welcome Back</h1>
-            <p class="text-slate-500 text-sm" id="formSubtitle">Sign in to continue your learning journey</p>
+            <h1 class="text-2xl font-bold text-white mb-2" id="formTitle">Welcome Back</h1>
+            <p class="text-slate-400 text-sm" id="formSubtitle">Sign in to continue your learning journey</p>
         </header>
 
         <form id="loginForm" class="space-y-5">
             <div id="nameField" class="hidden">
-                <label for="fullName" class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+                <label for="fullName" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Full Name</label>
                 <div class="relative">
-                    <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
-                    <input 
-                        type="text" 
+                    <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"></i>
+                    <input
+                        type="text"
                         id="fullName"
                         placeholder="John Doe"
-                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl text-slate-900 placeholder-slate-400"
+                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:border-brand-500 transition-all outline-none"
                     >
                 </div>
             </div>
             <div>
-                <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+                <label for="email" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
                 <div class="relative">
-                    <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
-                    <input 
-                        type="email" 
+                    <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"></i>
+                    <input
+                        type="email"
                         id="email"
                         placeholder="you@example.com"
                         required
-                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl text-slate-900 placeholder-slate-400"
+                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:border-brand-500 transition-all outline-none"
                     >
                 </div>
             </div>
 
             <div>
-                <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+                <label for="password" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Password</label>
                 <div class="relative">
-                    <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
-                    <input 
-                        type="password" 
+                    <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"></i>
+                    <input
+                        type="password"
                         id="password"
                         placeholder="Enter your password"
                         required
-                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl text-slate-900 placeholder-slate-400"
+                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:border-brand-500 transition-all outline-none"
                     >
-                    <button type="button" id="togglePassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-600 transition-colors" aria-label="Toggle password visibility">
+                    <button type="button" id="togglePassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-brand-400 transition-colors" aria-label="Toggle password visibility">
                         <i data-lucide="eye" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>
 
             <div class="flex items-center justify-between">
-                <label for="rememberMe" class="flex items-center gap-2 cursor-pointer">
-                    <input id="rememberMe" type="checkbox" class="w-4 h-4 rounded border-slate-300 bg-transparent text-brand-600 focus:ring-brand-500 focus:ring-offset-0">
-                    <span class="text-sm text-slate-500">Remember me</span>
+                <label for="rememberMe" class="flex items-center gap-2 cursor-pointer group">
+                    <input id="rememberMe" type="checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-brand-600 focus:ring-brand-500 focus:ring-offset-0">
+                    <span class="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">Remember me</span>
                 </label>
-                <button type="button" class="text-sm text-brand-600 hover:text-brand-700 transition-colors bg-transparent border-none cursor-pointer p-0">Forgot password?</button>
+                <button type="button" class="text-sm text-brand-400 hover:text-brand-300 transition-colors bg-transparent border-none cursor-pointer p-0 font-medium">Forgot password?</button>
             </div>
 
-            <button type="submit" id="submitBtn" class="duo-btn duo-btn-primary w-full" aria-live="polite">
+            <button type="submit" id="submitBtn" class="duo-btn duo-btn-primary w-full py-4 rounded-xl text-white font-bold uppercase tracking-widest" aria-live="polite">
                 <i data-lucide="log-in" class="w-5 h-5 transition-transform" id="btnIcon"></i>
                 <span id="btnText">Sign In</span>
             </button>
@@ -96,52 +96,52 @@
 
         <!-- Email Verification Code Prompt (shown after signup) -->
         <div id="verifyPrompt" class="hidden mt-4">
-            <div class="verify-banner rounded-2xl p-6">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-50 flex items-center justify-center">
-                    <i data-lucide="mail-check" class="w-8 h-8 text-[#007bff]"></i>
+            <div class="verify-banner rounded-2xl p-6 bg-slate-900/50 border border-slate-800">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-brand-500/10 flex items-center justify-center">
+                    <i data-lucide="mail-check" class="w-8 h-8 text-brand-400"></i>
                 </div>
-                <h3 class="text-lg font-bold text-slate-900 mb-1 text-center">Enter verification code</h3>
-                <p class="text-sm text-slate-500 text-center mb-1">We sent a 6-digit code to</p>
-                <p class="text-sm font-semibold text-slate-900 text-center mb-5" id="verifyEmailDisplay">you@example.com</p>
+                <h3 class="text-lg font-bold text-white mb-1 text-center">Enter verification code</h3>
+                <p class="text-sm text-slate-400 text-center mb-1">We sent a 6-digit code to</p>
+                <p class="text-sm font-semibold text-white text-center mb-5" id="verifyEmailDisplay">you@example.com</p>
 
                 <!-- 6-digit code input -->
                 <div class="code-input-group">
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input" data-index="0" autocomplete="off">
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input" data-index="1" autocomplete="off">
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input" data-index="2" autocomplete="off">
-                    <span class="code-separator">-</span>
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input" data-index="3" autocomplete="off">
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input" data-index="4" autocomplete="off">
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input" data-index="5" autocomplete="off">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input bg-slate-800 border-slate-700 text-white" data-index="0" autocomplete="off">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input bg-slate-800 border-slate-700 text-white" data-index="1" autocomplete="off">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input bg-slate-800 border-slate-700 text-white" data-index="2" autocomplete="off">
+                    <span class="code-separator text-slate-600">-</span>
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input bg-slate-800 border-slate-700 text-white" data-index="3" autocomplete="off">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input bg-slate-800 border-slate-700 text-white" data-index="4" autocomplete="off">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-input bg-slate-800 border-slate-700 text-white" data-index="5" autocomplete="off">
                 </div>
                 <input type="hidden" id="fullCode" name="code">
 
-                <button type="button" id="verifyCodeBtn" class="duo-btn duo-btn-primary w-full mt-5">
+                <button type="button" id="verifyCodeBtn" class="duo-btn duo-btn-primary w-full mt-5 py-3 rounded-xl text-white font-bold uppercase tracking-widest">
                     <span>Verify Email</span>
                 </button>
 
-                <div id="verifyCodeFeedback" class="mt-3 text-sm text-center hidden"></div>
+                <div id="verifyCodeFeedback" class="mt-3 text-sm text-center hidden text-slate-400"></div>
 
-                <div class="mt-4 pt-4 border-t border-slate-100 text-center">
-                    <p class="text-xs text-slate-400 mb-2">Didn't receive the code?</p>
-                    <button type="button" id="resendBtn" class="text-sm text-[#007bff] hover:text-[#0056b3] font-medium bg-transparent border-none cursor-pointer">
+                <div class="mt-4 pt-4 border-t border-slate-800 text-center">
+                    <p class="text-xs text-slate-500 mb-2">Didn't receive the code?</p>
+                    <button type="button" id="resendBtn" class="text-sm text-brand-400 hover:text-brand-300 font-medium bg-transparent border-none cursor-pointer">
                         <span id="resendBtnText">Resend Code</span>
                     </button>
-                    <div id="resendFeedback" class="mt-2 text-xs hidden"></div>
+                    <div id="resendFeedback" class="mt-2 text-xs hidden text-slate-400"></div>
                 </div>
             </div>
         </div>
 
             <div class="relative py-4">
                 <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-slate-200"></div>
+                    <div class="w-full border-t border-slate-800"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white/80 backdrop-blur-sm text-slate-500">Or continue with</span>
+                    <span class="px-2 bg-brand-950 text-slate-500">Or continue with</span>
                 </div>
             </div>
 
-            <button type="button" id="googleAuthBtn" class="duo-btn duo-btn-secondary w-full flex items-center justify-center gap-3">
+            <button type="button" id="googleAuthBtn" class="duo-btn duo-btn-secondary w-full flex items-center justify-center gap-3 py-3.5 rounded-xl text-brand-600 font-bold uppercase tracking-widest">
                 <svg class="w-5 h-5" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -153,14 +153,14 @@
         </form>
 
         <div class="mt-8 text-center">
-            <p class="text-slate-500 text-sm">
-                <span id="toggleText">Don't have an account?</span> 
-                <a href="#" id="toggleMode" class="text-brand-600 hover:text-brand-700 font-medium transition-colors">Create Account</a>
+            <p class="text-slate-400 text-sm">
+                <span id="toggleText">Don't have an account?</span>
+                <a href="#" id="toggleMode" class="text-brand-400 hover:text-brand-300 font-medium transition-colors">Create Account</a>
             </p>
         </div>
 
-        <div class="mt-6 pt-6 border-t border-slate-100">
-            <a href="index.html" class="flex items-center justify-center gap-2 text-slate-400 hover:text-brand-600 transition-colors text-sm">
+        <div class="mt-6 pt-6 border-t border-slate-800">
+            <a href="index.html" class="flex items-center justify-center gap-2 text-slate-500 hover:text-brand-400 transition-colors text-sm font-medium">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 Back to Home
             </a>
@@ -231,4 +231,3 @@
     <script type="module" src="AuroraMount.jsx"></script>
 </body>
 </html>
-

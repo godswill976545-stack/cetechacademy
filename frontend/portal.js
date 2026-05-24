@@ -103,26 +103,33 @@ function sanitizeInput(str) {
 // Initialize Portal
 async function init() {
     try {
-        // 1. Check Auth (Mocked or Real)
+        // 1. Security Guard: Check for OTP Verification
+        if (localStorage.getItem('user_verified') !== 'true') {
+            console.warn('User not verified, redirecting to verification page');
+            window.location.href = '../verify.html';
+            return;
+        }
+
+        // 2. Check Auth
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) {
             console.warn('User not authenticated, redirecting to login');
-            // window.location.href = '/login.html';
-            // return;
+            window.location.href = '../login.html';
+            return;
         }
-        state.user = user || { id: 'mock-user-id' };
+        state.user = user;
 
-        // 2. Fetch Course Data
+        // 3. Fetch Course Data
         await fetchCourseData();
         
-        // 3. Setup Listeners
+        // 4. Setup Listeners
         setupEventListeners();
         
-        // 4. Initial Render
+        // 5. Initial Render
         renderCurriculum();
         updateOverallProgress();
         
-        // 5. Load Initial Lesson
+        // 6. Load Initial Lesson
         loadInitialLesson();
 
     } catch (error) {

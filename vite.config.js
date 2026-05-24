@@ -15,6 +15,8 @@ export default defineConfig({
         privacy: resolve(__dirname, 'privacy.html'),
         terms: resolve(__dirname, 'terms.html'),
         cookies: resolve(__dirname, 'cookies.html'),
+        verify: resolve(__dirname, 'verify.html'),
+        about: resolve(__dirname, 'about.html'),
       },
       output: {
         manualChunks(id) {
@@ -34,7 +36,13 @@ export default defineConfig({
   },
   server: {
     port: 5176,
-    strictPort: true
+    strictPort: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true
+      }
+    }
   }
 });
 

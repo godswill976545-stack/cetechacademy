@@ -1,9 +1,12 @@
-const { Resend } = require('resend');
+import { createClient } from '@supabase/supabase-js';
+import { sendEmail } from './_lib/email.js';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const supabase = createClient(
+  process.env.SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
+);
 
-module.exports = async (req, res) => {
-  // CORS headers
+export default async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -23,10 +26,27 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'CeTech Academy <noreply@cetechacademy.com>',
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 30);
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        verification_code: verificationCode,
+        verification_expires_at: expiresAt.toISOString()
+      })
+      .eq('email', email);
+
+    if (updateError) {
+      console.error('Supabase update error:', updateError);
+      return res.status(500).json({ error: 'Failed to save verification code' });
+    }
+
+    await sendEmail({
       to: email,
-      subject: 'Verify your email — CeTech Academy',
+      subject: 'Your Verification Code — CeTech Academy',
       html: `
         <!DOCTYPE html>
         <html>
@@ -53,23 +73,22 @@ module.exports = async (req, res) => {
                         Welcome${fullName ? ', ' + fullName : ''}!
                       </h2>
                       <p style="margin:0; font-size:16px; line-height:1.6; color:#64748b;">
-                        Thanks for signing up. Please verify your email address to activate your account and start your learning journey.
+                        Thank you for joining CeTech Academy. Please use the verification code below to activate your account.
                       </p>
                     </td>
                   </tr>
                   <tr>
                     <td style="text-align:center; padding:32px 0;">
-                      <a href="${process.env.VERCEL_URL || 'https://cetechacademy.com'}/login.html?verified=true&email=${encodeURIComponent(email)}"
-                         style="display:inline-block; padding:16px 40px; background:#007bff; color:#ffffff; text-decoration:none; border-radius:12px; font-size:16px; font-weight:600;">
-                        Verify My Email
-                      </a>
+                      <div style="display:inline-block; padding:20px 40px; background:#f1f5f9; color:#007bff; border-radius:12px; font-size:32px; font-weight:700; letter-spacing:8px; border:2px dashed #007bff;">
+                        ${verificationCode}
+                      </div>
+                      <p style="margin-top:16px; font-size:14px; color:#64748b;">This code expires in 30 minutes.</p>
                     </td>
                   </tr>
                   <tr>
                     <td style="padding-top:24px; border-top:1px solid #e2e8f0;">
                       <p style="margin:0; font-size:13px; line-height:1.5; color:#94a3b8;">
-                        If you didn't create an account, you can safely ignore this email.<br>
-                        This link will expire in 24 hours.
+                        If you didn't create an account, you can safely ignore this email.
                       </p>
                     </td>
                   </tr>
@@ -89,12 +108,7 @@ module.exports = async (req, res) => {
       `,
     });
 
-    if (error) {
-      console.error('Resend error:', error);
-      return res.status(500).json({ error: 'Failed to send verification email' });
-    }
-
-    return res.status(200).json({ success: true, message: 'Verification email sent' });
+    return res.status(200).json({ success: true, message: 'Verification code sent' });
   } catch (err) {
     console.error('Server error:', err);
     return res.status(500).json({ error: 'Internal server error' });

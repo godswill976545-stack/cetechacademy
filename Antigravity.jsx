@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 const AntigravityInner = ({
@@ -73,27 +73,37 @@ const AntigravityInner = ({
     const mesh = meshRef.current;
     if (!mesh) return;
 
-    const { viewport: v, pointer: m } = state;
+    const { viewport: v } = state;
+    const m = state.pointer || state.mouse;
 
-    const mouseDist = Math.sqrt(Math.pow(m.x - lastMousePos.current.x, 2) + Math.pow(m.y - lastMousePos.current.y, 2));
+    const mX = (m && typeof m.x === 'number' && !isNaN(m.x)) ? m.x : 0;
+    const mY = (m && typeof m.y === 'number' && !isNaN(m.y)) ? m.y : 0;
 
-    if (mouseDist > 0.001) {
+    const vWidth = (v && typeof v.width === 'number' && !isNaN(v.width)) ? v.width : 100;
+    const vHeight = (v && typeof v.height === 'number' && !isNaN(v.height)) ? v.height : 100;
+
+    const mouseDist = Math.sqrt(Math.pow(mX - lastMousePos.current.x, 2) + Math.pow(mY - lastMousePos.current.y, 2));
+
+    if (!isNaN(mouseDist) && mouseDist > 0.001) {
       lastMouseMoveTime.current = Date.now();
-      lastMousePos.current = { x: m.x, y: m.y };
+      lastMousePos.current = { x: mX, y: mY };
     }
 
-    let destX = (m.x * v.width) / 2;
-    let destY = (m.y * v.height) / 2;
+    let destX = (mX * vWidth) / 2;
+    let destY = (mY * vHeight) / 2;
 
     if (autoAnimate && Date.now() - lastMouseMoveTime.current > 2000) {
       const time = state.clock.getElapsedTime();
-      destX = Math.sin(time * 0.5) * (v.width / 4);
-      destY = Math.cos(time * 0.5 * 2) * (v.height / 4);
+      destX = Math.sin(time * 0.5) * (vWidth / 4);
+      destY = Math.cos(time * 0.5 * 2) * (vHeight / 4);
     }
 
     const smoothFactor = 0.05;
     virtualMouse.current.x += (destX - virtualMouse.current.x) * smoothFactor;
     virtualMouse.current.y += (destY - virtualMouse.current.y) * smoothFactor;
+
+    if (isNaN(virtualMouse.current.x)) virtualMouse.current.x = 0;
+    if (isNaN(virtualMouse.current.y)) virtualMouse.current.y = 0;
 
     const targetX = virtualMouse.current.x;
     const targetY = virtualMouse.current.y;
@@ -158,7 +168,7 @@ const AntigravityInner = ({
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
+    <instancedMesh ref={meshRef} args={[undefined, undefined, count]} frustumCulled={false}>
       {particleShape === 'capsule' && <capsuleGeometry args={[0.1, 0.4, 4, 8]} />}
       {particleShape === 'sphere' && <sphereGeometry args={[0.2, 16, 16]} />}
       {particleShape === 'box' && <boxGeometry args={[0.3, 0.3, 0.3]} />}
@@ -170,11 +180,12 @@ const AntigravityInner = ({
 
 const Antigravity = props => {
   return (
-    <Canvas 
+    <Canvas
+      style={{ touchAction: 'none' }}
       camera={{ position: [0, 0, 50], fov: 35 }}
-      gl={{ 
-        powerPreference: 'high-performance', 
-        alpha: true, 
+      gl={{
+        powerPreference: 'high-performance',
+        alpha: true,
         antialias: false, // Better performance on mobile
         stencil: false,
         depth: true,

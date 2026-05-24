@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
 @theme {
   --color-brand-50: #f0f7ff;
   --color-brand-100: #e0effe;
@@ -45,34 +50,39 @@
 /* Custom Base Styles */
 @layer base {
   body {
-    @apply font-body bg-slate-50 text-slate-900 overflow-x-hidden;
+    @apply font-body bg-brand-950 text-slate-200 overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight text-slate-900;
+    @apply font-heading tracking-tight text-white;
   }
 }
 
 /* Glassmorphism Utilities */
 @layer components {
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-2xl border border-brand-500/15 shadow-sm;
+    @apply bg-brand-950/60 backdrop-blur-2xl border border-brand-500/20 shadow-sm;
   }
 
   .glass-nav {
-    @apply bg-white/90 backdrop-blur-xl border-b border-brand-500/10;
+    @apply bg-brand-950/80 backdrop-blur-xl border-b border-brand-500/20;
   }
 
   .interactive-card {
-    @apply transition-all duration-200 bg-white border border-brand-500/15 hover:-translate-y-2 hover:border-brand-500/40 hover:shadow-xl;
+    @apply transition-transform duration-300 ease-out bg-brand-950/40 border border-brand-500/20;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .interactive-card:hover {
+      @apply -translate-y-2 border-brand-500/40 shadow-xl;
+    }
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-slate-900 to-brand-500;
+    color: oklch(0.98 0.005 250);
   }
 
   .text-gradient-mint {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-accent-400 to-brand-500;
+    color: var(--color-accent-400);
   }
 
   .ambient-orb {
@@ -87,7 +97,8 @@
     --btn-radius: 14px;
     --btn-depth: 5px;
 
-    @apply inline-flex items-center justify-center relative px-6 py-3 font-heading font-bold uppercase tracking-wider cursor-pointer transition-all duration-100 no-underline z-[100];
+    @apply inline-flex items-center justify-center relative px-6 py-3 font-heading font-bold uppercase tracking-wider cursor-pointer duration-100 no-underline z-[100];
+    transition: transform 100ms var(--ease-out-expo), filter 200ms ease, border-width 100ms ease;
     background-color: var(--btn-face) !important;
     color: var(--btn-text) !important;
     border: none !important;
@@ -103,12 +114,12 @@
 
   .duo-btn-primary { --btn-face: var(--color-brand-500); --btn-shadow: var(--color-brand-700); }
   .duo-btn-secondary {
-    --btn-face: white;
-    --btn-shadow: var(--color-slate-200);
-    --btn-text: var(--color-brand-500);
+    --btn-face: rgba(7, 11, 16, 0.8);
+    --btn-shadow: rgba(0, 0, 0, 0.5);
+    --btn-text: #ffffff;
     border-width: 1px !important;
     border-style: solid !important;
-    border-color: var(--color-slate-200) !important;
+    border-color: rgba(0, 123, 255, 0.3) !important;
   }
   .duo-btn-accent { --btn-face: var(--color-accent-400); --btn-shadow: var(--color-accent-500); --btn-text: var(--color-slate-950); }
   .duo-btn-destructive { --btn-face: #ef4444; --btn-shadow: #b91c1c; }
@@ -124,7 +135,7 @@
     @apply opacity-100 pointer-events-auto;
   }
   #mobileMenu .glass-panel {
-    @apply -translate-y-5 scale-[0.95] transition-transform duration-500 bg-white/95 shadow-2xl;
+    @apply -translate-y-5 scale-[0.95] transition-transform duration-500 transition-discrete bg-brand-950/95 shadow-2xl;
   }
   #mobileMenu.active .glass-panel {
     @apply translate-y-0 scale-100;
@@ -154,11 +165,11 @@
   .auth-feedback.success { @apply text-green-500; }
 
   .input-field {
-    @apply bg-white/50 border border-slate-200 text-slate-900 transition-all duration-300 placeholder-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:outline-none;
+    @apply bg-brand-950/50 border border-slate-700 text-slate-200 transition-all duration-300 placeholder-slate-500 focus:border-brand-500 focus:bg-brand-950 focus:ring-4 focus:ring-brand-500/10 focus:outline-none;
   }
 
   .glass-card {
-    @apply bg-white/80 backdrop-blur-2xl border border-brand-500/15 shadow-2xl;
+    @apply bg-brand-950/80 backdrop-blur-2xl border border-brand-500/15 shadow-2xl;
   }
 }
 
@@ -202,6 +213,6 @@
   .footer-logo-img { @apply h-14; }
 
   #mobileMenu a:not(.duo-btn) {
-    @apply text-slate-900 font-semibold p-4 border-b border-black/5;
+    @apply text-white font-semibold p-4 border-b border-white/5;
   }
 }

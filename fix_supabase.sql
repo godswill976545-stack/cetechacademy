@@ -1,14 +1,22 @@
 -- Fix: Run this in your Supabase SQL Editor (https://supabase.com/dashboard/project/kohlegvunumiwxbhfbwb/sql/new)
 
--- 1. Make sure the profiles table exists
+-- 1. Make sure the profiles table exists with verification columns
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
   email TEXT,
   full_name TEXT,
   avatar_url TEXT,
   payment_status TEXT DEFAULT 'unpaid',
+  is_verified BOOLEAN DEFAULT false,
+  verification_code TEXT,
+  verification_expires_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- In case the table already existed, ensure columns are added
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT false;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS verification_code TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS verification_expires_at TIMESTAMP WITH TIME ZONE;
 
 -- 2. Create or replace the trigger function
 CREATE OR REPLACE FUNCTION public.handle_new_user()

@@ -13,6 +13,12 @@ import {
   Bot,
   Check,
   Sparkles,
+  Calendar,
+  Users,
+  Monitor,
+  GraduationCap,
+  Target,
+  Award,
   ChevronDown,
   ChevronUp,
   Megaphone,
@@ -26,6 +32,7 @@ import {
   LogIn,
   Loader2,
   UserPlus,
+  Briefcase,
   X
 } from 'lucide';
 
@@ -45,6 +52,12 @@ export const initIcons = () => {
       Bot,
       Check,
       Sparkles,
+      Calendar,
+      Users,
+      Monitor,
+      GraduationCap,
+      Target,
+      Award,
       ChevronDown,
       ChevronUp,
       Megaphone,
@@ -58,10 +71,10 @@ export const initIcons = () => {
       LogIn,
       Loader2,
       UserPlus,
+      Briefcase,
       X
     }
   });
 };
 
-// Make it available globally if needed for dynamic updates
 window.initIcons = initIcons;
