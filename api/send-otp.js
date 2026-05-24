@@ -17,9 +17,10 @@ export default async (req, res) => {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
+    await supabase.from('verification_codes').delete().eq('user_id', userId);
     const { error: dbError } = await supabase
       .from('verification_codes')
-      .upsert({ user_id: userId, code: otpCode, expires_at: expiresAt }, { onConflict: 'user_id' });
+      .insert({ user_id: userId, code: otpCode, expires_at: expiresAt });
     if (dbError) throw dbError;
 
     const nodemailer = await import('nodemailer');
