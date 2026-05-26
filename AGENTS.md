@@ -20,16 +20,14 @@
  - `convex/courses/` — Course data queries (listCourses, getCourse, getLessonsByUnit) 
  - `convex/progress/` — User progress tracking (updateProgress, getUserProgress) 
  - `convex/enrollments/` — Enrollment management (createEnrollment, checkEnrollment) 
- - `convex/email/` — Bird.com email action (sendOTP) 
+ - `convex/email.ts` — Resend email actions (sendOTP, sendContactEmail)
  - `convex/users/` — User profile mutations and queries 
  - `convex/http.ts` — HTTP endpoints (health check, contact form, webhooks) 
  - `convex/structure/` — Seed data initialization 
  
- ## Bird.com Configuration 
- - Set `BIRD_API_KEY`, `BIRD_WORKSPACE_ID`, and `BIRD_REGION` in `.env` 
- - Bird.com endpoint: `https://email.{region}.api.bird.com/api/workspaces/{workspaceId}/reach/transmissions` 
- - Auth: `Authorization: Bearer <api_key>` 
- - The sendOTP action in `convex/email/sendOTP.ts` sends 6-digit codes for email verification 
+ ## Resend Configuration
+ - Set `RESEND_API_KEY` in Convex environment variables
+ - The `sendOTP` action in `convex/email.ts` sends 6-digit codes for email verification
  
  ## Deployment 
  - Any push to the `master` branch automatically triggers a full production build and deployment pipeline on Vercel; verify all code changes pass local testing before merging to `master` to avoid deployment failures 

@@ -28,6 +28,8 @@ let currentUser = null;
 const getPublicImageUrl = (path) => {
     if (!path) return null;
     if (path.startsWith('http')) return path;
+    // Vite serves content from /public at the root /
+    if (path.startsWith('assets/')) return '/' + path;
     return path;
 };
 
@@ -199,9 +201,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('logoutBtnMobile')?.addEventListener('click', handleLogout);
 
     // Login/Sign-up form
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
+    const authForm = document.getElementById('authForm') || document.getElementById('loginForm');
+    if (authForm) {
+        authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -209,7 +211,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const submitBtn = document.getElementById('submitBtn');
             const authFeedback = document.getElementById('authFeedback');
                 const btnTextEl = document.getElementById('btnText');
-                const isSignUp = btnTextEl ? btnTextEl.textContent.toLowerCase().includes('create') : (window.location.search.includes('mode=signup'));
+                const isSignUp = btnTextEl ? btnTextEl.textContent.toLowerCase().includes('create') : (window.location.pathname.includes('signup.html'));
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
