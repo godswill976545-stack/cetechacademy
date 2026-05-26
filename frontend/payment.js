@@ -1,15 +1,55 @@
-// Set up Paystack integration
+const getEnv = (key) => {
+    try {
+        if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+            return import.meta.env[key];
+        }
+    } catch (e) {}
+    return '';
+};
+
+const CONVEX_URL = getEnv('VITE_CONVEX_URL') || '';
+
+let convexClient = null;
+
+async function getConvex() {
+    if (convexClient) return convexClient;
+    if (!CONVEX_URL) return null;
+    const { ConvexClient } = await import('convex/browser');
+    convexClient = new ConvexClient(CONVEX_URL);
+    return convexClient;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const payBtn = document.getElementById('pay-btn');
   const emailInput = document.getElementById('email');
   const firstNameInput = document.getElementById('firstname');
   const lastNameInput = document.getElementById('lastname');
 
-  // Supabase Configuration
-  const supabaseUrl = 'https://kohlegvunumiwxbhfbwb.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvaGxlZ3Z1bnVtaXd4YmhmYndiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODEyOTcsImV4cCI6MjA5MzA1NzI5N30.1A-ykiNp6KVZ9lfo0kd1xW157KJtukiTe7DUAE6uVf0';
-  
-  const supabase = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
+  const client = await getConvex();
+  const storedUser = localStorage.getItem('cetech_user');
+  let currentUser = null;
+
+  if (storedUser) {
+    try {
+      currentUser = JSON.parse(storedUser);
+    } catch (e) {}
+  }
+
+  if (client && currentUser) {
+    try {
+      const user = await client.query('auth/queries:getUser', { userId: currentUser._id });
+      if (user && emailInput) {
+        emailInput.value = user.email;
+        if (user.fullName) {
+          const names = user.fullName.split(' ');
+          if (firstNameInput) firstNameInput.value = names[0] || '';
+          if (lastNameInput) lastNameInput.value = names.slice(1).join(' ') || '';
+        }
+      }
+    } catch (e) {
+      console.warn('Could not fetch user profile', e);
+    }
+  }
 
   const courseSelect = document.getElementById('course-select');
   const displayPrice = document.getElementById('display-price');
@@ -25,24 +65,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   courseSelect?.addEventListener('change', updatePrice);
 
-  if (supabase) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user && emailInput) {
-      emailInput.value = user.email;
-      // Pre-fill names from profile if available
-      const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single();
-      if (profile?.full_name) {
-        const names = profile.full_name.split(' ');
-        if (firstNameInput) firstNameInput.value = names[0] || '';
-        if (lastNameInput) lastNameInput.value = names.slice(1).join(' ') || '';
-      }
-    }
-  }
-  
   if (payBtn) {
-    payBtn.addEventListener('click', (e) => {
+    payBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      
+
       const firstname = firstNameInput.value.trim();
       const lastname = lastNameInput.value.trim();
       const email = emailInput.value.trim();
@@ -61,57 +87,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      // Initialize Paystack Inline
       const handler = PaystackPop.setup({
-        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // Replace with real Paystack Public Key
+        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
         email: email,
-        amount: amount * 100, // Amount in kobo (Naira * 100)
+        amount: amount * 100,
         currency: 'NGN',
-        ref: 'CET-' + Math.floor((Math.random() * 1000000000) + 1), // Generate random reference
+        ref: 'CET-' + Math.floor((Math.random() * 1000000000) + 1),
         metadata: {
           custom_fields: [
-            {
-              display_name: "First Name",
-              variable_name: "first_name",
-              value: firstname
-            },
-            {
-              display_name: "Last Name",
-              variable_name: "last_name",
-              value: lastname
-            },
-            {
-              display_name: "Course",
-              variable_name: "course_name",
-              value: courseName
-            }
+            { display_name: "First Name", variable_name: "first_name", value: firstname },
+            { display_name: "Last Name", variable_name: "last_name", value: lastname },
+            { display_name: "Course", variable_name: "course_name", value: courseName }
           ]
         },
         callback: async function(response) {
           console.log('Payment Successful! Reference: ' + response.reference);
-          
-          // In a real app, you would verify the transaction on the backend via webhook
-          // For this implementation, we'll update the profile directly (stubbing the webhook behavior)
-          if (supabase) {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-              await supabase
-                .from('profiles')
-                .update({ payment_status: 'paid' })
-                .eq('id', user.id);
-              
-              // Create enrollment record
-              await supabase
-                .from('enrollments')
-                .upsert({
-                  user_id: user.id,
-                  course_id: selectedOption.value, // Use the selected course value as ID (or map to real UUID)
-                  payment_status: 'paid',
-                  paystack_reference: response.reference
-                }, { onConflict: 'user_id,course_id' });
+
+          if (client && currentUser) {
+            const courseId = selectedOption.value;
+            try {
+              await client.mutation('enrollments/mutations:createEnrollment', {
+                userId: currentUser._id,
+                courseId,
+                paymentStatus: 'paid',
+                paystackReference: response.reference,
+              });
+            } catch (e) {
+              console.error('Failed to create enrollment', e);
             }
           }
-          
+
           alert('Payment successful! Redirecting to your portal...');
           window.location.href = '/frontend/portal.html';
         },

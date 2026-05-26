@@ -4,8 +4,7 @@ const ASSETS_TO_CACHE = [
   '/frontend/portal.js',
   '/style.css',
   '/assets/logo.png',
-  'https://unpkg.com/lucide@latest',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  'https://unpkg.com/lucide@latest'
 ];
 
 self.addEventListener('install', (event) => {

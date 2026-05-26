@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
 import { initIcons } from './src/icons';
 
 const getEnv = (key) => {
@@ -9,22 +8,27 @@ const getEnv = (key) => {
     }
 };
 
-const SUPABASE_URL = getEnv('VITE_SUPABASE_URL') || 'https://kohlegvunumiwxbhfbwb.supabase.co';
-const SUPABASE_ANON_KEY = getEnv('VITE_SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvaGxlZ3Z1bnVtaXd4YmhmYndiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODEyOTcsImV4cCI6MjA5MzA1NzI5N30.1A-ykiNp6KVZ9lfo0kd1xW157KJtukiTe7DUAE6uVf0';
+const CONVEX_URL = getEnv('VITE_CONVEX_URL') || '';
 
-const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY)
-    ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    : null;
+let convexClient = null;
 
-const getPublicImageUrl = (path, bucket = 'assets') => {
-    if (!supabase || !SUPABASE_URL) return null;
-    if (path.startsWith('http')) return path;
-    let cleanPath = path;
-    if (path.startsWith(bucket + '/')) {
-        cleanPath = path.replace(bucket + '/', '');
+async function getConvex() {
+    if (convexClient) return convexClient;
+    if (!CONVEX_URL) {
+        console.warn('VITE_CONVEX_URL not set');
+        return null;
     }
-    const { data } = supabase.storage.from(bucket).getPublicUrl(cleanPath);
-    return data?.publicUrl || null;
+    const { ConvexClient } = await import('convex/browser');
+    convexClient = new ConvexClient(CONVEX_URL);
+    return convexClient;
+}
+
+let currentUser = null;
+
+const getPublicImageUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    return path;
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -36,9 +40,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Auth State Handling
-    const handleAuthState = async (user) => {
-        if (!supabase) return;
+    const client = await getConvex();
+    const storedUser = localStorage.getItem('cetech_user');
+    if (storedUser) {
+        try {
+            currentUser = JSON.parse(storedUser);
+        } catch (e) {
+            localStorage.removeItem('cetech_user');
+        }
+    }
+
+    const handleAuthState = (user) => {
         const guestEls = document.querySelectorAll('.auth-guest');
         const userEls = document.querySelectorAll('.auth-user');
 
@@ -52,31 +64,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             guestEls.forEach(el => el.classList.remove('hidden'));
             userEls.forEach(el => el.classList.add('hidden'));
         }
-
-        if (user && !localStorage.getItem('user_verified') && !window.location.pathname.includes('verify.html')) {
-            try {
-                const otpResponse = await fetch('/api/send-otp', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: user.id, email: user.email })
-                });
-                if (otpResponse.ok) {
-                    localStorage.setItem('pending_user_id', user.id);
-                    localStorage.setItem('pending_user_email', user.email);
-                    localStorage.setItem('otp_sent', 'true');
-                    window.location.href = 'verify.html';
-                }
-            } catch (e) { console.error('Auth Verification Error:', e); }
-        }
     };
 
-    if (supabase) {
-        supabase.auth.onAuthStateChange((event, session) => {
-            handleAuthState(session?.user);
-        });
+    handleAuthState(currentUser);
 
-        const { data: { session } } = await supabase.auth.getSession();
-        handleAuthState(session?.user);
+    // Only redirect if we explicitly have a pending verification from a recent login/signup action
+    const isPendingVerification = currentUser && !localStorage.getItem('user_verified');
+    const hasSentOTP = localStorage.getItem('otp_sent') === 'true';
+    const isNotOnVerifyPage = !window.location.pathname.includes('verify.html');
+
+    if (isPendingVerification && hasSentOTP && isNotOnVerifyPage) {
+        localStorage.setItem('pending_user_id', currentUser._id);
+        localStorage.setItem('pending_user_email', currentUser.email);
+        window.location.href = 'verify.html';
+    } else if (isPendingVerification && !hasSentOTP && isNotOnVerifyPage) {
+        // Ghost session from deleted database? Clear local state to allow fresh start.
+        localStorage.removeItem('cetech_user');
+        localStorage.removeItem('user_verified');
+        currentUser = null;
+        handleAuthState(null);
     }
 
     // Mobile menu
@@ -125,14 +131,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         images.forEach(img => {
             if (img.closest('.hero-section')) return;
             const dataSrc = img.getAttribute('data-src');
-            const supabaseUrl = getPublicImageUrl(dataSrc);
+            const url = getPublicImageUrl(dataSrc);
             img.onerror = () => {
                 if (!img.getAttribute('data-fallback-tried')) {
                     img.setAttribute('data-fallback-tried', 'true');
                     img.src = dataSrc;
                 }
             };
-            img.src = supabaseUrl || dataSrc;
+            img.src = url || dataSrc;
             img.removeAttribute('data-src');
         });
     };
@@ -180,8 +186,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Logout
     const handleLogout = async () => {
         try {
-            if (supabase) await supabase.auth.signOut();
+            currentUser = null;
         } catch (e) { console.error('Logout error:', e); }
+        localStorage.removeItem('cetech_user');
         localStorage.removeItem('user_verified');
         localStorage.removeItem('pending_user_id');
         localStorage.removeItem('pending_user_email');
@@ -201,54 +208,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             const fullName = document.getElementById('fullName')?.value;
             const submitBtn = document.getElementById('submitBtn');
             const authFeedback = document.getElementById('authFeedback');
-            const isSignUp = document.getElementById('btnText').textContent.toLowerCase().includes('create');
+                const btnTextEl = document.getElementById('btnText');
+                const isSignUp = btnTextEl ? btnTextEl.textContent.toLowerCase().includes('create') : (window.location.search.includes('mode=signup'));
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
             authFeedback.classList.remove('visible', 'error', 'success');
 
-            try {
-                if (!supabase) throw new Error('Auth unavailable');
-                let authResponse;
-                if (isSignUp) {
-                    const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } });
-                    if (error) throw error;
-                    authResponse = { data: { user: data.user } };
-                } else {
-                    authResponse = await supabase.auth.signInWithPassword({ email, password });
-                }
-                if (authResponse.error) throw authResponse.error;
-                const user = authResponse.data.user;
-                const otpResponse = await fetch('/api/send-otp', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: user.id, email: user.email })
-                });
-                if (!otpResponse.ok) throw new Error('Failed to send verification code');
-                localStorage.setItem('pending_user_id', user.id);
-                localStorage.setItem('pending_user_email', user.email);
-                localStorage.setItem('otp_sent', 'true');
-                window.location.href = 'verify.html';
-            } catch (error) {
-                authFeedback.textContent = error.message;
-                authFeedback.classList.add('visible', 'error');
-                submitBtn.disabled = false;
-                submitBtn.textContent = isSignUp ? 'Create Account' : 'Sign In';
-            }
-        });
-    }
+                try {
+                    const c = await getConvex();
+                    if (!c) throw new Error('Auth unavailable');
 
-    // Google OAuth
-    const googleAuthBtn = document.getElementById('googleAuthBtn');
-    if (googleAuthBtn) {
-        googleAuthBtn.addEventListener('click', async () => {
-            if (!supabase) return;
-            try {
-                await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: { redirectTo: window.location.origin }
-                });
-            } catch (error) { alert('Google Sign-In failed: ' + error.message); }
+                    let result;
+                    if (isSignUp) {
+                        result = await c.action('auth/actions:registerUser', { email, password, fullName });
+                    } else {
+                        result = await c.action('auth/actions:loginUser', { email, password });
+                    }
+
+                    if (!result.success) throw new Error(result.error || 'Authentication failed');
+
+                    currentUser = {
+                        _id: result.userId,
+                        email: result.email,
+                    };
+                    localStorage.setItem('cetech_user', JSON.stringify(currentUser));
+
+                    localStorage.setItem('pending_user_id', result.userId);
+                    localStorage.setItem('pending_user_email', result.email);
+                    localStorage.setItem('otp_sent', 'true');
+                    window.location.href = 'verify.html';
+                } catch (error) {
+                    authFeedback.textContent = error.message || error.toString();
+                    authFeedback.classList.add('visible', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = isSignUp ? 'Create Account' : 'Sign In';
+                }
         });
     }
 

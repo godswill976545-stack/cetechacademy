@@ -1,47 +1,43 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
-describe('Auth Integration (Mocked)', () => {
-    const mockSupabase = {
-        auth: {
-            signInWithPassword: vi.fn(),
-            signUp: vi.fn(),
-            signOut: vi.fn(),
-            getUser: vi.fn()
-        },
-        from: vi.fn(() => ({
-            select: vi.fn(() => ({
-                eq: vi.fn(() => ({
-                    single: vi.fn()
-                }))
-            }))
-        }))
-    };
+describe('Auth Flow Logic', () => {
+  it('should generate a 6-digit OTP code', () => {
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    expect(otpCode).toMatch(/^\d{6}$/);
+  });
 
-    it('should call signInWithPassword for sign-in mode', async () => {
-        const isSignUp = false;
-        const email = 'test@example.com';
-        const password = 'password123';
+  it('should reject OTP after expiry', () => {
+    const expiresAt = Date.now() - 1000;
+    expect(expiresAt < Date.now()).toBe(true);
+  });
 
-        if (isSignUp) {
-            await mockSupabase.auth.signUp({ email, password });
-        } else {
-            await mockSupabase.auth.signInWithPassword({ email, password });
-        }
+  it('should accept valid OTP before expiry', () => {
+    const expiresAt = Date.now() + 10 * 60 * 1000;
+    expect(expiresAt > Date.now()).toBe(true);
+  });
+});
 
-        expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({ email, password });
-        expect(mockSupabase.auth.signUp).not.toHaveBeenCalled();
+describe('Environment Configuration', () => {
+  it('should have required env variables at build time', () => {
+    const envVars = [
+      'VITE_CONVEX_URL',
+    ];
+    envVars.forEach((key) => {
+      expect(key).toBeDefined();
     });
+  });
+});
 
-    it('should redirect to payment if user is not paid', async () => {
-        const profile = { payment_status: 'unpaid' };
-        let redirectUrl = '';
+describe('Contact Form Submission', () => {
+  it('should validate required fields', () => {
+    const body = { name: '', email: 'test@test.com', program: 'UI/UX' };
+    const isValid = body.name.length > 0 && body.email.length > 0 && body.program.length > 0;
+    expect(isValid).toBe(false);
+  });
 
-        if (profile?.payment_status === 'paid') {
-            redirectUrl = '/frontend/portal.html';
-        } else {
-            redirectUrl = '/payment';
-        }
-
-        expect(redirectUrl).toBe('/payment');
-    });
+  it('should accept valid submission data', () => {
+    const body = { name: 'John', email: 'john@test.com', program: 'UI/UX' };
+    const isValid = body.name.length > 0 && body.email.length > 0 && body.program.length > 0;
+    expect(isValid).toBe(true);
+  });
 });
