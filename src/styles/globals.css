@@ -92,11 +92,18 @@
   }
 
   .text-gradient {
-    color: oklch(0.98 0.005 250);
+    background: linear-gradient(to bottom right, #ffffff, var(--color-accent-400));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.3));
   }
 
   .text-gradient-mint {
-    color: var(--color-accent-400);
+    background: linear-gradient(to bottom right, var(--color-accent-400), #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .ambient-orb {

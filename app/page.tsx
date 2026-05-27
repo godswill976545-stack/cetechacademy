@@ -269,13 +269,13 @@ export default function Home() {
                 { phase: '03', title: 'Advanced Level (Real-World Application)', desc: 'Bring everything together through real-world projects, portfolio development, and positioning.', btn: 'Master Phase 03' }
               ].map((p, i) => (
                 <SectionReveal key={i} stagger={i + 1}>
-                  <article className="glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md h-full">
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-950 border-4 border-brand-200 flex items-center justify-center text-brand-500 z-20">
-                      <div className="w-2 h-2 rounded-full bg-current"></div>
+                  <article className="glass-panel p-8 rounded-[2.5rem] border-brand-500/20 transition-all group relative z-10 shadow-md h-full flex flex-col">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-950 border-4 border-brand-500 flex items-center justify-center text-brand-500 z-20 shadow-[0_0_15px_rgba(0,123,255,0.5)]">
+                      <div className="w-2 h-2 rounded-full bg-current animate-pulse"></div>
                     </div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 text-[10px] font-bold uppercase tracking-widest mb-6">Phase {p.phase}</div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-[10px] font-bold uppercase tracking-widest mb-6 w-fit border border-brand-500/20">Phase {p.phase}</div>
                     <h4 className="text-2xl font-bold text-white mb-4">{p.title}</h4>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-8">{p.desc}</p>
+                    <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow">{p.desc}</p>
                     <Link href="/login" className="duo-btn duo-btn-sm duo-btn-primary w-full">{p.btn}</Link>
                   </article>
                 </SectionReveal>
@@ -296,21 +296,21 @@ export default function Home() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 { icon: Layout, title: 'UI/UX Design', desc: 'Map immersive digital interfaces. Master Figma, user research, and interactive prototyping.', color: 'brand' },
-                { icon: Terminal, title: 'Web Engineering', desc: 'Build the architecture of the web. From semantic HTML/CSS to advanced React.', color: 'sky' },
-                { icon: Palette, title: 'Brand Identity', desc: 'Visual storytelling redefined. Learn color theory, typography, and cohesive identities.', color: 'purple' },
-                { icon: TrendingUp, title: 'Growth Marketing', desc: 'Master data-driven strategies, SEO, and campaign engineering to dominate landscapes.', color: 'rose' },
-                { icon: Database, title: 'Data Science', desc: 'Extract deep, actionable insights from complex ecosystems using Python and SQL.', color: 'amber' },
-                { icon: Bot, title: 'AI & Automation', desc: 'Leverage AI and workflow automation to scale productivity and build intelligent tools.', color: 'indigo' }
+                { icon: Terminal, title: 'Web Engineering', desc: 'Build the architecture of the web. From semantic HTML/CSS to advanced React.', color: 'brand' },
+                { icon: Palette, title: 'Brand Identity', desc: 'Visual storytelling redefined. Learn color theory, typography, and cohesive identities.', color: 'brand' },
+                { icon: TrendingUp, title: 'Growth Marketing', desc: 'Master data-driven strategies, SEO, and campaign engineering to dominate landscapes.', color: 'brand' },
+                { icon: Database, title: 'Data Science', desc: 'Extract deep, actionable insights from complex ecosystems using Python and SQL.', color: 'brand' },
+                { icon: Bot, title: 'AI & Automation', desc: 'Leverage AI and workflow automation to scale productivity and build intelligent tools.', color: 'brand' }
               ].map((c, i) => (
                 <SectionReveal key={i} stagger={i % 3}>
-                  <article className={`glass-panel interactive-card rounded-3xl group cursor-pointer overflow-hidden shadow-sm relative border-t-2 border-t-${c.color}-500/50 h-full`}>
+                  <article className={`glass-panel interactive-card rounded-3xl group cursor-pointer overflow-hidden shadow-sm relative border-t-2 border-brand-500/30 h-full`}>
                     <div className="p-8">
-                      <div className={`w-14 h-14 rounded-2xl bg-${c.color}-500/10 flex items-center justify-center mb-8 text-${c.color}-500 border border-${c.color}-500/20 shadow-inner`}>
+                      <div className={`w-14 h-14 rounded-2xl bg-brand-500/10 flex items-center justify-center mb-8 text-brand-500 border border-brand-500/20 shadow-inner`}>
                         <c.icon className="w-7 h-7" />
                       </div>
                       <h4 className="text-2xl font-bold mb-3 text-white">{c.title}</h4>
                       <p className="text-slate-400 text-sm leading-relaxed mb-6">{c.desc}</p>
-                      <span className="inline-flex items-center text-brand-500 text-sm font-bold group-hover:translate-x-2 transition-transform duration-300">
+                      <span className="inline-flex items-center text-brand-400 text-sm font-bold group-hover:translate-x-2 transition-transform duration-300">
                         Explore Curriculum <ArrowRight className="w-4 h-4 ml-2" />
                       </span>
                     </div>
