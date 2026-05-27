@@ -81,11 +81,15 @@ export default function PortalPage() {
   // Convex Data
   const courses = useQuery(api.courses.queries.listCourses);
   const courseId = courses?.[0]?._id;
-  const course = useQuery(api.courses.queries.getCourse, courseId ? { courseId } : 'skip');
+  const course = useQuery(api.courses.queries.getCourse, courseId ? { courseId } : undefined);
 
-  const storedUser = typeof window !== 'undefined' ? localStorage.getItem('cetech_user') : null;
-  const user = storedUser ? JSON.parse(storedUser) : null;
-  const progress = useQuery(api.progress.queries.getUserProgress, user?._id ? { userId: user._id } : 'skip');
+  const [user, setUser] = useState<any>(null);
+  useEffect(() => {
+    const storedUser = localStorage.getItem('cetech_user');
+    if (storedUser) setUser(JSON.parse(storedUser));
+  }, []);
+
+  const progress = useQuery(api.progress.queries.getUserProgress, user?._id ? { userId: user._id } : undefined);
   const updateProgress = useMutation(api.progress.mutations.updateProgress);
 
   // Fallback Mock Data if Convex is empty

@@ -6,6 +6,12 @@ import Image from 'next/image';
 import Aurora from '@/components/Aurora';
 import Script from 'next/script';
 
+declare global {
+  interface Window {
+    PaystackPop: any;
+  }
+}
+
 export default function PaymentPage() {
   const [firstName, setFirstname] = useState('');
   const [lastName, setLastname] = useState('');
@@ -34,7 +40,6 @@ export default function PaymentPage() {
       return;
     }
 
-    // @ts-ignore
     const handler = window.PaystackPop.setup({
       key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // Replace with actual key
       email: email,
