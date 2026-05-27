@@ -1,0 +1,22 @@
+
+> dev
+> next dev
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 585ms
+
+○ Compiling / ...
+ GET / 200 in 11.1s (next.js: 9.8s, application-code: 1314ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /login 200 in 1768ms (next.js: 1676ms, application-code: 91ms)
+ GET /signup 200 in 2.6s (next.js: 2.5s, application-code: 129ms)
+○ Compiling /signup ...
+ GET /about 200 in 1736ms (next.js: 1537ms, application-code: 199ms)
+[browser] Image with src "/assets/mentor_chukwudi.jpeg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/assets/mentor_nwankwor.PNG" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/assets/mentor_obinna.jpeg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /portal 200 in 1841ms (next.js: 1563ms, application-code: 277ms)
+[browser] [CONVEX FATAL ERROR] Couldn't parse deployment name placeholder
+[browser] Uncaught Error: [CONVEX FATAL ERROR] Couldn't parse deployment name placeholder

@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+
+  --color-primary: #007bff;
+  --color-primary-dark: #0056b3;
+  --color-primary-light: #3395ff;
+  --color-accent: #00d2ff;
+  --color-text-main: oklch(0.95 0.008 250);
+  --color-text-muted: oklch(0.65 0.015 250);
+
+  --font-primary: 'Space Grotesk', sans-serif;
+  --font-secondary: 'Inter', sans-serif;
+
+  --border-radius-sm: 8px;
+  --border-radius-md: 16px;
+  --border-radius-lg: 24px;
+}
+
+@theme {
+  --color-brand-50: #f0f7ff;
+  --color-brand-100: #e0effe;
+  --color-brand-200: #bae0fd;
+  --color-brand-300: #7cc7fb;
+  --color-brand-400: #38a9f8;
+  --color-brand-500: #007bff; /* Primary Blue */
+  --color-brand-600: #0061cc;
+  --color-brand-700: #004da3;
+  --color-brand-800: #003e85;
+  --color-brand-900: #00356e;
+  --color-brand-950: #070b10;
+
+  --color-accent-400: #00d2ff; /* Cyan */
+  --color-accent-500: #00b8e6;
+
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --animate-fade-in: fadeIn 0.8s ease-out forwards;
+  --animate-slide-up: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-glow: pulseGlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes slideUp {
+    0% { opacity: 0; transform: translateY(40px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+  }
+}
+
+/* Custom Base Styles */
+@layer base {
+  body {
+    @apply font-body bg-brand-950 text-slate-200 overflow-x-hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight text-white;
+  }
+}
+
+/* Glassmorphism Utilities */
+@layer components {
+  .glass-panel {
+    @apply bg-brand-950/60 backdrop-blur-2xl border border-brand-500/20 shadow-sm;
+  }
+
+  .glass-nav {
+    @apply bg-brand-950/80 backdrop-blur-xl border-b border-brand-500/20;
+  }
+
+  .interactive-card {
+    @apply transition-transform duration-300 ease-out bg-brand-950/40 border border-brand-500/20;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .interactive-card:hover {
+      @apply -translate-y-2 border-brand-500/40 shadow-xl;
+    }
+  }
+
+  .text-gradient {
+    color: oklch(0.98 0.005 250);
+  }
+
+  .text-gradient-mint {
+    color: var(--color-accent-400);
+  }
+
+  .ambient-orb {
+    @apply absolute rounded-full blur-[100px] -z-10 pointer-events-none opacity-15;
+  }
+
+  /* DUOLINGO BUTTONS */
+  .duo-btn {
+    --btn-face: #007bff;
+    --btn-shadow: #0056b3;
+    --btn-text: #ffffff;
+    --btn-radius: 14px;
+    --btn-depth: 5px;
+
+    @apply inline-flex items-center justify-center relative px-6 py-3 font-heading font-bold uppercase tracking-wider cursor-pointer duration-100 no-underline z-[10];
+    transition: transform 100ms var(--ease-out-expo), filter 200ms ease, border-width 100ms ease;
+    background-color: var(--btn-face) !important;
+    color: var(--btn-text) !important;
+    border: none !important;
+    border-bottom: var(--btn-depth) solid var(--btn-shadow) !important;
+    border-radius: var(--btn-radius) !important;
+    font-size: 0.875rem;
+  }
+
+  .duo-btn:active {
+    @apply translate-y-[4px];
+    border-bottom-width: 1px !important;
+  }
+
+  .duo-btn-primary { --btn-face: var(--color-brand-500); --btn-shadow: var(--color-brand-700); }
+  .duo-btn-secondary {
+    --btn-face: rgba(7, 11, 16, 0.8);
+    --btn-shadow: rgba(0, 0, 0, 0.5);
+    --btn-text: #ffffff;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: rgba(0, 123, 255, 0.3) !important;
+  }
+  .duo-btn-accent { --btn-face: var(--color-accent-400); --btn-shadow: var(--color-accent-500); --btn-text: var(--color-slate-950); }
+  .duo-btn-destructive { --btn-face: #ef4444; --btn-shadow: #b91c1c; }
+
+  .duo-btn-sm { @apply px-4 py-2 text-[0.75rem]; --btn-depth: 3px; }
+  .duo-btn-lg { @apply px-8 py-4 text-base; --btn-depth: 6px; }
+
+  .auth-btn.success {
+    --btn-face: #22c55e;
+    --btn-shadow: #16a34a;
+  }
+
+  .auth-btn.error {
+    --btn-face: #ef4444;
+    --btn-shadow: #dc2626;
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  }
+
+  .auth-feedback {
+    @apply text-sm mt-3 text-center min-h-[1.25rem] opacity-0 transition-opacity duration-300;
+  }
+
+  .auth-feedback.visible {
+    @apply opacity-100;
+  }
+
+  .auth-feedback.error { @apply text-red-500; }
+  .auth-feedback.success { @apply text-green-500; }
+
+  .input-field {
+    @apply bg-brand-950/50 border border-slate-700 text-slate-200 transition-all duration-300 placeholder-slate-500 focus:border-brand-500 focus:bg-brand-950 focus:ring-4 focus:ring-brand-500/10 focus:outline-none;
+  }
+
+  .glass-card {
+    @apply bg-brand-950/80 backdrop-blur-2xl border border-brand-500/15 shadow-2xl;
+  }
+
+  .section-reveal {
+    @apply opacity-0 translate-y-10 transition-all duration-700;
+  }
+
+  .section-reveal.active {
+    @apply opacity-100 translate-y-0;
+  }
+
+  /* CODE INPUT */
+  .code-input-group {
+    @apply flex items-center justify-center gap-2 mx-auto;
+  }
+
+  .code-input {
+    @apply w-12 h-14 text-center text-2xl font-bold font-heading text-slate-900 bg-slate-50 border-2 border-slate-200 rounded-xl outline-none transition-all duration-200;
+  }
+
+  .code-input:focus {
+    @apply border-brand-500 ring-4 ring-brand-500/15 bg-white;
+  }
+
+  .code-input.filled {
+    @apply border-brand-500 bg-blue-50;
+  }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  h1 { @apply text-[2.5rem] leading-[1.2]; }
+  h2 { @apply text-sm; }
+  h3 { @apply text-[2rem] leading-[1.2]; }
+  h4 { @apply text-2xl; }
+  p { @apply text-base; }
+
+  section { @apply py-20; }
+}
