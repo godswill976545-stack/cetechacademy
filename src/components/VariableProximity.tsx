@@ -81,12 +81,15 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
   const isInView = useRef(false);
 
   useEffect(() => {
-    if (!containerRef?.current) return;
+    if (!containerRef?.current) {
+      isInView.current = true;
+      return;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         isInView.current = entry.isIntersecting;
       },
-      { threshold: 0.1 }
+      { threshold: 0 }
     );
     observer.observe(containerRef.current);
     return () => observer.disconnect();
@@ -204,7 +207,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
     >
       {words.map((word: string, wordIndex: number) => (
         <span key={wordIndex} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
-          {word.split("").map((letter: string, letterIndex: number) => {
+          {word.split("").map((letter: string) => {
             const currentLetterIndex = letterIndex++;
             return (
               <motion.span
