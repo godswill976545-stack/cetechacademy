@@ -7,9 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "dev:static": "npx --yes http-server -p 5175",
-    "dev:frontend": "npm --prefix frontend run dev",
-    "build:frontend": "npm --prefix frontend run build"
+    "dev:static": "npx --yes http-server -p 5175"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
