@@ -192,7 +192,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
   });
 
   const words = label.split(' ');
-  let letterIndex = 0;
+  let globalLetterIndex = 0;
 
   return (
     <span
@@ -204,8 +204,8 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
     >
       {words.map((word: string, wordIndex: number) => (
         <span key={wordIndex} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
-          {word.split("").map((letter: string, letterIndex: number) => {
-            const currentLetterIndex = letterIndex++;
+          {word.split("").map((letter: string) => {
+            const currentLetterIndex = globalLetterIndex++;
             return (
               <motion.span
                 key={currentLetterIndex}

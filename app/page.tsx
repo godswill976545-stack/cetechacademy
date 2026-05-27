@@ -95,9 +95,9 @@ export default function Home() {
               </p>
 
               <div className="flex flex-wrap items-center gap-8">
-                <Link href="#pricing" className="duo-btn duo-btn-lg duo-btn-primary">
+                <Link href="#pricing" className="duo-btn duo-btn-lg duo-btn-primary group">
                   Secure Your Spot
-                  <ArrowRight className="w-5 h-5 ml-3" />
+                  <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>
@@ -259,8 +259,8 @@ export default function Home() {
             </SectionReveal>
 
             <div className="grid lg:grid-cols-3 gap-12 relative">
-              <div className="hidden lg:block absolute top-32 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-brand-100 to-transparent z-0"></div>
-              <div className="lg:hidden absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-brand-100 to-transparent z-0 -translate-x-1/2"></div>
+              <div className="hidden lg:block absolute top-32 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-brand-500/30 to-transparent z-0"></div>
+              <div className="lg:hidden absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-brand-500/30 to-transparent z-0 -translate-x-1/2"></div>
 
               {/* Phases */}
               {[
@@ -269,14 +269,17 @@ export default function Home() {
                 { phase: '03', title: 'Advanced Level (Real-World Application)', desc: 'Bring everything together through real-world projects, portfolio development, and positioning.', btn: 'Master Phase 03' }
               ].map((p, i) => (
                 <SectionReveal key={i} stagger={i + 1}>
-                  <article className="glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md h-full">
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-950 border-4 border-brand-200 flex items-center justify-center text-brand-500 z-20">
-                      <div className="w-2 h-2 rounded-full bg-current"></div>
+                  <article className="glass-panel interactive-card p-8 rounded-[2.5rem] transition-all group relative z-10 shadow-md h-full">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-950 border-4 border-brand-500/30 flex items-center justify-center text-brand-400 z-20">
+                      <div className="w-2 h-2 rounded-full bg-current animate-pulse"></div>
                     </div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 text-[10px] font-bold uppercase tracking-widest mb-6">Phase {p.phase}</div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-[10px] font-bold uppercase tracking-widest mb-6 border border-brand-500/20">Phase {p.phase}</div>
                     <h4 className="text-2xl font-bold text-white mb-4">{p.title}</h4>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-8">{p.desc}</p>
-                    <Link href="/login" className="duo-btn duo-btn-sm duo-btn-primary w-full">{p.btn}</Link>
+                    <p className="text-slate-400 text-sm leading-relaxed mb-8">{p.desc}</p>
+                    <Link href="/login" className="duo-btn duo-btn-sm duo-btn-primary w-full group">
+                      {p.btn}
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
                   </article>
                 </SectionReveal>
               ))}
@@ -296,11 +299,11 @@ export default function Home() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 { icon: Layout, title: 'UI/UX Design', desc: 'Map immersive digital interfaces. Master Figma, user research, and interactive prototyping.', color: 'brand' },
-                { icon: Terminal, title: 'Web Engineering', desc: 'Build the architecture of the web. From semantic HTML/CSS to advanced React.', color: 'sky' },
-                { icon: Palette, title: 'Brand Identity', desc: 'Visual storytelling redefined. Learn color theory, typography, and cohesive identities.', color: 'purple' },
-                { icon: TrendingUp, title: 'Growth Marketing', desc: 'Master data-driven strategies, SEO, and campaign engineering to dominate landscapes.', color: 'rose' },
-                { icon: Database, title: 'Data Science', desc: 'Extract deep, actionable insights from complex ecosystems using Python and SQL.', color: 'amber' },
-                { icon: Bot, title: 'AI & Automation', desc: 'Leverage AI and workflow automation to scale productivity and build intelligent tools.', color: 'indigo' }
+                { icon: Terminal, title: 'Web Engineering', desc: 'Build the architecture of the web. From semantic HTML/CSS to advanced React.', color: 'brand' },
+                { icon: Palette, title: 'Brand Identity', desc: 'Visual storytelling redefined. Learn color theory, typography, and cohesive identities.', color: 'accent' },
+                { icon: TrendingUp, title: 'Growth Marketing', desc: 'Master data-driven strategies, SEO, and campaign engineering to dominate landscapes.', color: 'brand' },
+                { icon: Database, title: 'Data Science', desc: 'Extract deep, actionable insights from complex ecosystems using Python and SQL.', color: 'accent' },
+                { icon: Bot, title: 'AI & Automation', desc: 'Leverage AI and workflow automation to scale productivity and build intelligent tools.', color: 'brand' }
               ].map((c, i) => (
                 <SectionReveal key={i} stagger={i % 3}>
                   <article className={`glass-panel interactive-card rounded-3xl group cursor-pointer overflow-hidden shadow-sm relative border-t-2 border-t-${c.color}-500/50 h-full`}>
@@ -349,15 +352,18 @@ export default function Home() {
               </SectionReveal>
 
               <SectionReveal stagger={2}>
-                <div className="glass-panel p-10 rounded-[3rem] border-brand-500/20 bg-brand-900 text-white text-center relative overflow-hidden h-full flex flex-col justify-center">
-                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LCAyNTUsIDI1NSwgMC4wNSkiLz48L3N2Zz4=')] opacity-30"></div>
+                <div className="glass-panel p-10 rounded-[3rem] border-brand-500/30 text-white text-center relative overflow-hidden h-full flex flex-col justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-brand-500/10 to-transparent"></div>
                   <div className="relative z-10">
-                    <div className="w-20 h-20 rounded-2xl bg-brand-950/10 flex items-center justify-center mx-auto mb-8">
+                    <div className="w-20 h-20 rounded-2xl bg-brand-500/10 flex items-center justify-center mx-auto mb-8 border border-brand-500/20 shadow-inner">
                       <Sparkles className="w-10 h-10 text-brand-400" />
                     </div>
                     <h4 className="text-3xl font-bold mb-4">Start Your Journey</h4>
-                    <p className="text-brand-100/70 mb-10 text-lg">No experience needed. Just your willingness to learn and grow.</p>
-                    <Link href="/login" className="duo-btn duo-btn-accent">Secure Your Spot</Link>
+                    <p className="text-slate-400 mb-10 text-lg">No experience needed. Just your willingness to learn and grow.</p>
+                    <Link href="/login" className="duo-btn duo-btn-accent group">
+                      Secure Your Spot
+                      <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
                   </div>
                 </div>
               </SectionReveal>
@@ -377,10 +383,13 @@ export default function Home() {
             <div className="flex justify-center">
               <button
                 onClick={() => setShowCourses(!showCourses)}
-                className="duo-btn duo-btn-secondary"
+                className="duo-btn duo-btn-secondary group"
               >
                 {showCourses ? 'Hide Courses' : 'View Full Courses & Fees'}
-                {showCourses ? <ChevronUp className="w-6 h-6 ml-3" /> : <ChevronDown className="w-6 h-6 ml-3" />}
+                {showCourses ?
+                  <ChevronUp className="w-6 h-6 ml-3 group-hover:-translate-y-1 transition-transform" /> :
+                  <ChevronDown className="w-6 h-6 ml-3 group-hover:translate-y-1 transition-transform" />
+                }
               </button>
             </div>
 
@@ -394,39 +403,43 @@ export default function Home() {
                   { icon: Database, title: 'Data Analyst', price: '₦200,000', desc: 'Python, SQL, and data visualization for business intelligence.' },
                   { icon: Palette, title: 'Graphic Design', price: '₦120,000', desc: 'Visual communication, branding, and typography mastery.' }
                 ].map((c, i) => (
-                  <article key={i} className={`glass-panel p-8 rounded-3xl border-slate-800 transition-all group ${c.featured ? 'border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10' : 'hover:border-brand-500/30'}`}>
+                  <article key={i} className={`glass-panel interactive-card p-8 rounded-3xl transition-all group ${c.featured ? 'border-brand-500/50' : ''}`}>
                     <div className="flex justify-between items-start mb-6">
-                      <div className={`w-12 h-12 rounded-xl bg-brand-500/${c.featured ? '20' : '10'} flex items-center justify-center text-brand-600`}>
+                      <div className="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-500 border border-brand-500/20">
                         <c.icon className="w-6 h-6" />
                       </div>
                       <div className="text-right">
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tuition</div>
+                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Tuition</div>
                         <div className="text-xl font-bold text-white">{c.price}</div>
                       </div>
                     </div>
                     <h4 className="text-xl font-bold text-white mb-2">{c.title}</h4>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-6">{c.desc}</p>
-                    <Link href="/login" className="duo-btn duo-btn-sm duo-btn-primary group-hover:translate-x-1 transition-transform">
-                      Enroll Now <ArrowRight className="w-4 h-4 ml-2" />
+                    <p className="text-slate-400 text-sm leading-relaxed mb-6">{c.desc}</p>
+                    <Link href="/login" className="duo-btn duo-btn-sm duo-btn-primary w-full">
+                      Enroll Now <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </article>
                 ))}
 
                 {/* Special Program */}
-                <div className="md:col-span-2 lg:col-span-3 mt-8 glass-panel p-8 rounded-3xl border-brand-500/30 bg-brand-900 text-white relative overflow-hidden group">
+                <div className="md:col-span-2 lg:col-span-3 mt-8 glass-panel p-8 rounded-3xl border-brand-500/40 text-white relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-brand-500/5 to-transparent"></div>
                   <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
                     <Rocket className="w-32 h-32 -rotate-12" />
                   </div>
                   <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div>
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-400/20 text-brand-300 text-[10px] font-bold uppercase tracking-widest mb-4">Accelerator Program</div>
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-[10px] font-bold uppercase tracking-widest mb-4 border border-brand-500/20">Accelerator Program</div>
                       <h4 className="text-3xl font-bold mb-2">CeTech Pro Launch</h4>
-                      <p className="text-brand-100/70 max-w-xl">Launch Your Tech Career. Get Clients. Start Earning. The definitive bridge from learning to earning.</p>
+                      <p className="text-slate-400 max-w-xl">Launch Your Tech Career. Get Clients. Start Earning. The definitive bridge from learning to earning.</p>
                     </div>
                     <div className="text-center md:text-right">
-                      <div className="text-[10px] font-bold text-brand-400 uppercase tracking-widest mb-1">Tuition</div>
+                      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Tuition</div>
                       <div className="text-4xl font-bold mb-6">₦100,000</div>
-                      <Link href="/login" className="duo-btn duo-btn-accent">Join the Cohort</Link>
+                      <Link href="/login" className="duo-btn duo-btn-accent group">
+                        Join the Cohort
+                        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -449,7 +462,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start max-w-5xl">
               {[
                 { name: 'Chukwudi Collins', role: 'Multi-skilled Digital Professional', desc: 'Full-stack expertise spanning design, development, and digital strategy.', img: '/assets/mentor_chukwudi.jpeg', color: 'brand' },
-                { name: 'Nwankwor Chukwudalu E.', role: 'Visual Creative Professional', desc: 'Expert in visual storytelling, brand aesthetics, and creative direction.', img: '/assets/mentor_nwankwor.PNG', color: 'accent', offset: 'md:translate-y-6' },
+                { name: 'Nwankwor Chukwudalu E.', role: 'Visual Creative Professional', desc: 'Expert in visual storytelling, brand aesthetics, and creative direction.', img: '/assets/mentor_nwankwor.PNG', color: 'brand', offset: 'md:translate-y-6' },
                 { name: 'Obinna John', role: 'Creative Designer', desc: 'Crafting compelling visual experiences with a keen eye for detail.', img: '/assets/mentor_obinna.jpeg', color: 'brand', offset: 'md:translate-y-12' }
               ].map((m, i) => (
                 <SectionReveal key={i} stagger={i + 1} className={m.offset}>
