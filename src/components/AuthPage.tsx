@@ -3,9 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useAction } from 'convex/react';
-import { api } from '@/../convex/_generated/api';
 import { useRouter } from 'next/navigation';
+import { useSignUp, useSignIn } from '@clerk/nextjs';
 import Aurora from '@/components/Aurora';
 
 export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
@@ -15,9 +14,9 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ message: '', type: '' });
 
-  const loginAction = useAction(api.auth.actions.loginUser);
-  const registerAction = useAction(api.auth.actions.registerUser);
   const router = useRouter();
+  const { signUp, errors: signUpErrors } = useSignUp();
+  const { signIn, errors: signInErrors } = useSignIn();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,27 +24,74 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
     setFeedback({ message: '', type: '' });
 
     try {
-      let result;
       if (type === 'signup') {
-        result = await registerAction({ email, password, fullName });
+        if (!signUp) throw new Error('Auth not ready');
+
+        const nameParts = fullName.trim().split(/\s+/);
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+
+        const params: Record<string, string> = {
+          emailAddress: email,
+          password,
+        };
+        if (firstName) params.firstName = firstName;
+        if (lastName) params.lastName = lastName;
+
+        const { error } = await signUp.create(params);
+
+        if (error) throw error;
+
+        // If email verification is needed, send the code
+        if (signUp.status === 'missing_requirements') {
+          const { error: verifyError } = await signUp.verifications.sendEmailCode();
+          if (verifyError) throw verifyError;
+          localStorage.setItem('pending_user_email', email);
+          router.push('/verify');
+          return;
+        }
+
+        // If sign-up is complete, finalize the session
+        if (signUp.status === 'complete') {
+          await signUp.finalize();
+          router.push('/portal');
+          return;
+        }
       } else {
-        result = await loginAction({ email, password });
+        if (!signIn) throw new Error('Auth not ready');
+
+        const { error } = await signIn.create({
+          identifier: email,
+          password,
+        });
+
+        if (error) throw error;
+
+        // Check if sign-in is complete
+        if (signIn.status === 'complete') {
+          await signIn.finalize();
+          router.push('/portal');
+          return;
+        }
+
+        // If email code verification is needed
+        if (signIn.status === 'needs_first_factor') {
+          const { error: codeError } = await signIn.emailCode.sendCode();
+          if (codeError) throw codeError;
+          localStorage.setItem('pending_user_email', email);
+          router.push('/verify');
+          return;
+        }
       }
-
-      if (!result.success) throw new Error(result.error || 'Authentication failed');
-
-      const currentUser = {
-        _id: result.userId,
-        email: result.email,
-      };
-      localStorage.setItem('cetech_user', JSON.stringify(currentUser));
-      localStorage.setItem('pending_user_id', result.userId);
-      localStorage.setItem('pending_user_email', result.email);
-      localStorage.setItem('otp_sent', 'true');
-
-      router.push('/verify');
     } catch (error: any) {
-      setFeedback({ message: error.message || error.toString(), type: 'error' });
+      let errorMessage = 'Authentication failed';
+      if (error?.errors?.[0]?.message) {
+        errorMessage = error.errors[0].message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      setFeedback({ message: errorMessage, type: 'error' });
+    } finally {
       setLoading(false);
     }
   };
@@ -107,6 +153,8 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
                 required
               />
             </div>
+
+            <div id="clerk-captcha" className="clerk-captcha" />
 
             <button
               type="submit"

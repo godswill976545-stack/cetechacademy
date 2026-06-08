@@ -1,31 +1,3 @@
-# Project Brief: cetech-academy 
- 
- ## Tech Stack 
- - **Frontend:** Next.js 15 (App Router) with TypeScript (utilizing `.tsx` and Tailwind CSS v4)
- - **Backend:** Next.js API Routes
- - **Database & Auth:** Supabase
- - **Email Service:** Resend
- - **Hosting:** Vercel 
- 
- ## Rules & Conventions 
- - **Main Branch:** The official production branch is permanently set to `master`; all production-ready code must be merged to this branch only 
- - **Styling:** Implement all UI styling using Tailwind CSS v4. The primary CSS entry point is `src/styles/globals.css`.
- - **Architecture:** Enforce strict separation of concerns by maintaining the frontend application within the `app/` directory (Next.js App Router) and all backend logic within the `app/api/` directory
- - **Environment Variables:** Retrieve all local secrets and configuration values exclusively from the `.env.local` file; never hardcode API keys, credentials, or sensitive environment values directly in source code 
- - **Supabase Client:** Use `@/lib/supabase/server` for server-side operations and `@/lib/supabase/client` for client-side operations. For administrative tasks, use `@supabase/supabase-js` with the `SUPABASE_SERVICE_ROLE_KEY`.
- 
- ## Supabase Structure 
- - `supabase/migrations/` — Database schema and RLS policies
- - `src/lib/supabase/` — Supabase client configurations
- - `app/api/` — Backend API endpoints
- 
- ## Resend Configuration
- - Set `RESEND_API_KEY` in environment variables
- - OTP and contact emails are sent via Resend integration in API routes
- 
- ## Deployment 
- - Any push to the `master` branch automatically triggers a full production build and deployment pipeline on Vercel; verify all code changes pass local testing before merging to `master` to avoid deployment failures
-
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 

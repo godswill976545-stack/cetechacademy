@@ -20,7 +20,6 @@
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.184.1",
     "@vitejs/plugin-react": "^6.0.1",
-    "autoprefixer": "^10.5.0",
     "jsdom": "^29.1.1",
     "postcss": "^8.5.14",
     "tailwindcss": "^4.3.0",
@@ -29,9 +28,11 @@
     "vitest": "^4.1.6"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.4.3",
     "@react-three/fiber": "^9.6.1",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.49.4",
     "bcryptjs": "^3.0.3",
-    "convex": "^1.39.1",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^4.18.2",
@@ -41,9 +42,11 @@
     "next": "16.2.6",
     "nodemailer": "^8.0.8",
     "ogl": "^1.0.11",
+    "posthog-js": "^1.382.0",
+    "posthog-node": "^5.36.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.14.2",
+    "svix": "^1.95.1",
     "three": "^0.184.0"
   }
 }

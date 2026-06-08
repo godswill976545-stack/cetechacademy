@@ -17,22 +17,19 @@ import {
   Lock,
   Send,
   Award,
-  MessageSquare
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useQuery, useMutation } from 'convex/react';
-import { api } from '@/../convex/_generated/api';
+import { useUser } from '@clerk/nextjs';
+import { createClient } from '@/lib/supabase/client';
 import Aurora from '@/components/Aurora';
 
-// Types
 type LessonType = 'video' | 'quiz' | 'assignment';
 
 interface Question {
   _id: string;
   text: string;
   options: string[];
-  correct: number;
 }
 
 interface Quiz {
@@ -64,8 +61,12 @@ export default function PortalPage() {
   const [currentUnit, setCurrentUnit] = useState<Unit | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>({});
+  const [courses, setCourses] = useState<any[]>([]);
+  const [course, setCourse] = useState<any>(null);
+  const [progress, setProgress] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [supabaseUserId, setSupabaseUserId] = useState<string | null>(null);
 
-  // Quiz state
   const [quizState, setQuizState] = useState({
     active: false,
     currentQuestionIndex: 0,
@@ -74,25 +75,71 @@ export default function PortalPage() {
     score: 0
   });
 
-  // Assignment state
   const [assignmentSubmission, setAssignmentSubmission] = useState('');
   const [assignmentSubmitted, setAssignmentSubmitted] = useState(false);
 
-  // Convex Data
-  const courses = useQuery(api.courses.queries.listCourses);
-  const courseId = courses?.[0]?._id;
-  const course = useQuery(api.courses.queries.getCourse, courseId ? { courseId } : undefined);
+  const { user, isSignedIn } = useUser();
+  const supabase = createClient();
 
-  const [user, setUser] = useState<any>(null);
+  // Resolve Clerk user to Supabase user ID
   useEffect(() => {
-    const storedUser = localStorage.getItem('cetech_user');
-    if (storedUser) setUser(JSON.parse(storedUser));
+    if (!isSignedIn) return;
+
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.supabaseUserId) {
+          setSupabaseUserId(data.supabaseUserId);
+        }
+      })
+      .catch(err => console.error('Failed to resolve user:', err));
+  }, [isSignedIn]);
+
+  // Fetch courses
+  useEffect(() => {
+    supabase.from('courses').select('*').order('created_at', { ascending: false }).then(({ data }) => {
+      if (data) setCourses(data);
+    });
   }, []);
 
-  const progress = useQuery(api.progress.queries.getUserProgress, user?._id ? { userId: user._id } : undefined);
-  const updateProgress = useMutation(api.progress.mutations.updateProgress);
+  const courseId = courses?.[0]?.id;
 
-  // Fallback Mock Data if Convex is empty
+  // Fetch course with units and lessons
+  useEffect(() => {
+    if (!courseId) return;
+    supabase.from('courses').select(`
+      *,
+      units (
+        *,
+        lessons (*)
+      )
+    `).eq('id', courseId).order('order_index', { referencedTable: 'units', ascending: true }).single().then(({ data }) => {
+      if (data) {
+        setCourse({
+          ...data,
+          _id: data.id,
+          units: (data.units || []).map((u: any) => ({
+            ...u,
+            _id: u.id,
+            lessons: (u.lessons || []).map((l: any) => ({
+              ...l,
+              _id: l.id,
+              quiz: undefined,
+            })),
+          })),
+        });
+      }
+    });
+  }, [courseId]);
+
+  // Fetch user progress
+  useEffect(() => {
+    if (!supabaseUserId) return;
+    supabase.from('user_progress').select('*').eq('user_id', supabaseUserId).then(({ data }) => {
+      if (data) setProgress(data);
+    });
+  }, [supabaseUserId]);
+
   const mockUnits = [
     {
       _id: 'unit-1',
@@ -132,16 +179,27 @@ export default function PortalPage() {
   }, [units, currentLesson]);
 
   const isCompleted = (lessonId: string) => {
-    return (progress as any)?.some((p: any) => p.lessonId === lessonId && p.completed) || false;
+    return (progress as any)?.some((p: any) => (p.lessonId === lessonId || p.lesson_id === lessonId) && p.completed) || false;
   };
 
   const handleToggleComplete = async () => {
-    if (!currentLesson || !user) return;
+    if (!currentLesson || !supabaseUserId) return;
     const newStatus = !isCompleted(currentLesson._id);
-    await updateProgress({
-      userId: user._id,
-      lessonId: currentLesson._id,
-      completed: newStatus
+    const sb = createClient();
+    await sb.from('user_progress').upsert({
+      user_id: supabaseUserId,
+      lesson_id: currentLesson._id,
+      completed: newStatus,
+      completed_at: newStatus ? new Date().toISOString() : null,
+    }, { onConflict: 'user_id, lesson_id' });
+    setProgress((prev: any[]) => {
+      const idx = prev.findIndex((p: any) => p.lesson_id === currentLesson._id);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], completed: newStatus };
+        return updated;
+      }
+      return [...prev, { user_id: supabaseUserId, lesson_id: currentLesson._id, completed: newStatus }];
     });
   };
 
@@ -191,31 +249,59 @@ export default function PortalPage() {
 
   const finishQuiz = async () => {
     if (!currentLesson?.quiz) return;
-    let correct = 0;
-    currentLesson.quiz.questions.forEach((q, i) => {
-      if (quizState.answers[i] === q.correct) correct++;
-    });
-    const score = Math.round((correct / currentLesson.quiz.questions.length) * 100);
-    setQuizState(prev => ({ ...prev, finished: true, score }));
 
-    if (score >= 70 && user) {
-      await updateProgress({
-        userId: user._id,
-        lessonId: currentLesson._id,
-        completed: true
+    setLoading(true);
+    try {
+      const res = await fetch('/api/quiz/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lessonId: currentLesson._id,
+          answers: quizState.answers,
+        }),
       });
+
+      const result = await res.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to submit quiz');
+      }
+
+      setQuizState((prev) => ({
+        ...prev,
+        finished: true,
+        score: result.score,
+      }));
+
+      if (result.passed && supabaseUserId) {
+        setProgress((prev: any[]) => {
+          const exists = prev.some((p: any) => p.lesson_id === currentLesson._id);
+          if (exists) {
+            return prev.map((p: any) =>
+              p.lesson_id === currentLesson._id ? { ...p, completed: true } : p
+            );
+          }
+          return [...prev, { user_id: supabaseUserId, lesson_id: currentLesson._id, completed: true }];
+        });
+      }
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleAssignmentSubmit = async () => {
     if (!assignmentSubmission.trim()) return;
     setAssignmentSubmitted(true);
-    if (user && currentLesson) {
-      await updateProgress({
-        userId: user._id,
-        lessonId: currentLesson._id,
-        completed: true
-      });
+    if (supabaseUserId && currentLesson) {
+      const sb = createClient();
+      await sb.from('user_progress').upsert({
+        user_id: supabaseUserId,
+        lesson_id: currentLesson._id,
+        completed: true,
+        completed_at: new Date().toISOString(),
+      }, { onConflict: 'user_id, lesson_id' });
+      setProgress((prev: any[]) => [...prev, { user_id: supabaseUserId, lesson_id: currentLesson._id, completed: true }]);
     }
   };
 
@@ -317,7 +403,11 @@ export default function PortalPage() {
               </button>
             )}
             <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center overflow-hidden">
-              <User className="w-5 h-5 text-blue-400" />
+              {user?.imageUrl ? (
+                <img src={user.imageUrl} alt={user.firstName || 'User'} className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-5 h-5 text-blue-400" />
+              )}
             </div>
           </div>
         </header>

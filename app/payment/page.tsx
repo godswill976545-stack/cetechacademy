@@ -40,20 +40,21 @@ export default function PaymentPage() {
       return;
     }
 
-    const handler = window.PaystackPop.setup({
-      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // Replace with actual key
-      email: email,
-      amount: price * 100,
-      currency: 'NGN',
-      callback: function(response: any) {
-        alert('Payment successful! Transaction reference: ' + response.reference);
-        window.location.href = '/portal';
-      },
-      onClose: function() {
-        alert('Transaction cancelled');
-      }
-    });
-    handler.openIframe();
+     const handler = window.PaystackPop.setup({
+       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!,
+       email: email,
+       amount: price * 100,
+       currency: 'NGN',
+       callback: function(response: any) {
+         alert('Payment successful! Transaction reference: ' + response.reference);
+         window.location.href = '/portal';
+       },
+       onClose: function() {
+         alert('Transaction cancelled');
+       },
+     });
+     handler.openIframe();
+
   };
 
   return (

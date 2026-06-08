@@ -4,37 +4,26 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, ChevronRight } from 'lucide-react';
+import { useUser, useClerk } from '@clerk/nextjs';
+import posthog from 'posthog-js';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const { user, isSignedIn } = useUser();
+  const { signOut } = useClerk();
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
-
-    const storedUser = localStorage.getItem('cetech_user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        localStorage.removeItem('cetech_user');
-      }
-    }
-
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('cetech_user');
-    localStorage.removeItem('user_verified');
-    localStorage.removeItem('pending_user_id');
-    localStorage.removeItem('pending_user_email');
-    localStorage.removeItem('otp_sent');
-    setUser(null);
+  const handleLogout = async () => {
+    await signOut();
+    posthog.reset();
     window.location.href = '/';
   };
 
@@ -65,7 +54,7 @@ export default function Navbar() {
           <Link href="#pricing" className="text-sm font-medium text-slate-300 hover:text-accent-400 transition-colors">Pricing</Link>
           <Link href="#mentors" className="text-sm font-medium text-slate-300 hover:text-accent-400 transition-colors">Mentors</Link>
           <div className="flex items-center gap-4">
-            {!user ? (
+            {!isSignedIn ? (
               <>
                 <Link href="/login" className="duo-btn duo-btn-sm duo-btn-secondary">SIGN IN</Link>
                 <Link href="/signup" className="duo-btn duo-btn-sm duo-btn-secondary">GET STARTED</Link>
@@ -113,7 +102,7 @@ export default function Navbar() {
                 <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-accent-400" />
               </Link>
               <div className="mt-4 p-2 flex flex-col gap-3">
-                {!user ? (
+                {!isSignedIn ? (
                   <>
                     <Link href="/login" onClick={() => setIsOpen(false)} className="duo-btn duo-btn-secondary">Sign In</Link>
                     <Link href="/signup" onClick={() => setIsOpen(false)} className="duo-btn duo-btn-secondary">Get started</Link>

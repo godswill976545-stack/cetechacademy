@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMutation } from 'convex/react';
-import { api } from '@/../convex/_generated/api';
 import { ShieldCheck, ArrowLeft } from 'lucide-react';
+import { useSignUp, useSignIn } from '@clerk/nextjs';
 import Aurora from '@/components/Aurora';
 
 export default function VerifyPage() {
@@ -15,16 +14,14 @@ export default function VerifyPage() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
 
-  const verifyOTP = useMutation(api.auth.mutations.verifyOTP);
-  const resendOTP = useMutation(api.auth.mutations.resendOTP);
+  const { signUp } = useSignUp();
+  const { signIn } = useSignIn();
 
   useEffect(() => {
-    // Focus first input on mount
     inputRefs.current[0]?.focus();
 
-    // Check if user session exists
-    const userId = localStorage.getItem('pending_user_id');
-    if (!userId) {
+    const pendingEmail = localStorage.getItem('pending_user_email');
+    if (!pendingEmail) {
       router.push('/login');
     }
   }, [router]);
@@ -58,65 +55,77 @@ export default function VerifyPage() {
     inputRefs.current[nextIndex]?.focus();
   };
 
-  const handleVerify = async () => {
+  const handleVerify = useCallback(async () => {
     const fullCode = code.join('');
     if (fullCode.length !== 6) return;
 
-    const userId = localStorage.getItem('pending_user_id');
-    if (!userId) {
-      router.push('/login');
-      return;
-    }
-
     setLoading(true);
     try {
-      const result = await verifyOTP({ userId: userId as any, code: fullCode });
-      if (result.success) {
-        localStorage.setItem('user_verified', 'true');
-        router.push('/portal');
-      } else {
-        alert(result.error || 'Invalid code. Please try again.');
+      // Try signup verification first
+      if (signUp) {
+        const { error } = await signUp.verifications.verifyEmailCode({ code: fullCode });
+        if (error) throw error;
+
+        if (signUp.status === 'complete') {
+          await signUp.finalize();
+          localStorage.removeItem('pending_user_email');
+          router.push('/portal');
+          return;
+        }
       }
+
+      // Try login verification
+      if (signIn) {
+        const { error } = await signIn.emailCode.verifyCode({ code: fullCode });
+        if (error) throw error;
+
+        if (signIn.status === 'complete') {
+          await signIn.finalize();
+          localStorage.removeItem('pending_user_email');
+          router.push('/portal');
+          return;
+        }
+      }
+
+      alert('Invalid code. Please try again.');
     } catch (error: any) {
-      alert(error.message || 'Verification failed');
+      const msg = error?.errors?.[0]?.message || error?.message || 'Verification failed';
+      alert(msg);
     } finally {
       setLoading(false);
     }
-  };
+  }, [code, router, signUp, signIn]);
 
   const handleResend = async () => {
-    const userId = localStorage.getItem('pending_user_id');
-    if (!userId) return;
-
     setResending(true);
     try {
-      const result = await resendOTP({ userId: userId as any });
-      if (result.success) {
+      if (signUp) {
+        const { error } = await signUp.verifications.sendEmailCode();
+        if (error) throw error;
+        alert('A new verification code has been sent to your email.');
+      } else if (signIn) {
+        const { error } = await signIn.emailCode.sendCode();
+        if (error) throw error;
         alert('A new verification code has been sent to your email.');
       } else {
-        alert('Failed to resend code.');
+        alert('Unable to resend code. Please try signing in again.');
       }
     } catch (error) {
-      alert('Network error.');
+      alert('Failed to resend code.');
     } finally {
       setResending(false);
     }
   };
 
   const handleCancel = () => {
-    localStorage.removeItem('cetech_user');
-    localStorage.removeItem('user_verified');
-    localStorage.removeItem('pending_user_id');
     localStorage.removeItem('pending_user_email');
-    localStorage.removeItem('otp_sent');
   };
 
-  // Auto-submit when code is complete
   useEffect(() => {
     if (code.every(digit => digit !== '') && code.join('').length === 6) {
       handleVerify();
     }
-  }, [code]);
+  }, [code, handleVerify]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-brand-950 relative overflow-hidden">

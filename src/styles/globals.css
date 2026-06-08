@@ -1,45 +1,34 @@
+@layer theme, base, clerk, components, utilities;
 @import "tailwindcss";
 
 :root {
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
-
-  --color-primary: #007bff;
-  --color-primary-dark: #0056b3;
-  --color-primary-light: #3395ff;
-  --color-accent: #00d2ff;
-  --color-text-main: oklch(0.95 0.008 250);
-  --color-text-muted: oklch(0.65 0.015 250);
-
-  --font-primary: 'Space Grotesk', sans-serif;
-  --font-secondary: 'Inter', sans-serif;
-
-  --border-radius-sm: 8px;
-  --border-radius-md: 16px;
-  --border-radius-lg: 24px;
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 @theme {
-  --color-brand-50: #f0f7ff;
-  --color-brand-100: #e0effe;
-  --color-brand-200: #bae0fd;
-  --color-brand-300: #7cc7fb;
-  --color-brand-400: #38a9f8;
-  --color-brand-500: #007bff; /* Primary Blue */
-  --color-brand-600: #0061cc;
-  --color-brand-700: #004da3;
-  --color-brand-800: #003e85;
-  --color-brand-900: #00356e;
-  --color-brand-950: #070b10;
+  --color-brand-50: oklch(0.95 0.008 260);
+  --color-brand-100: oklch(0.9 0.018 260);
+  --color-brand-200: oklch(0.82 0.04 258);
+  --color-brand-300: oklch(0.72 0.09 258);
+  --color-brand-400: oklch(0.65 0.17 255);
+  --color-brand-500: oklch(0.55 0.22 255);
+  --color-brand-600: oklch(0.45 0.2 255);
+  --color-brand-700: oklch(0.35 0.16 258);
+  --color-brand-800: oklch(0.22 0.1 260);
+  --color-brand-900: oklch(0.12 0.05 260);
+  --color-brand-950: oklch(0.045 0.006 260);
 
-  --color-accent-400: #00d2ff; /* Cyan */
-  --color-accent-500: #00b8e6;
+  --color-accent-400: oklch(0.78 0.14 210);
+  --color-accent-500: oklch(0.68 0.17 210);
+  --color-accent-600: oklch(0.58 0.18 210);
 
   --font-heading: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
 
   --animate-fade-in: fadeIn 0.8s ease-out forwards;
-  --animate-slide-up: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-up: slideUp 0.8s var(--ease-out-expo) forwards;
   --animate-float: float 6s ease-in-out infinite;
   --animate-pulse-glow: pulseGlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
@@ -61,38 +50,52 @@
   }
 }
 
-/* Custom Base Styles */
 @layer base {
   body {
     @apply font-body bg-brand-950 text-slate-200 overflow-x-hidden;
   }
-
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading tracking-tight text-white;
   }
 }
 
-/* Glassmorphism Utilities */
 @layer components {
-  .glass-panel {
-    @apply bg-brand-950/60 backdrop-blur-2xl border border-brand-500/20 shadow-sm;
+  .surface-panel {
+    background: oklch(0.09 0.03 260 / 0.7);
+    border: 1px solid oklch(0.2 0.08 260 / 0.35);
+    box-shadow: 0 4px 24px oklch(0 0 0 / 0.25);
+  }
+
+  .surface-panel-inset {
+    background: oklch(0.09 0.03 260 / 0.7);
+    border: 1px solid oklch(0.2 0.08 260 / 0.35);
+    box-shadow: inset 0 1px 0 oklch(1 1 0 / 0.04), 0 4px 24px oklch(0 0 0 / 0.25);
   }
 
   .glass-nav {
-    @apply bg-brand-950/80 backdrop-blur-xl border-b border-brand-500/20;
+    background: oklch(0.045 0.006 260 / 0.8);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid oklch(0.55 0.22 255 / 0.12);
   }
 
   .interactive-card {
-    @apply transition-transform duration-300 ease-out bg-brand-950/40 border border-brand-500/20;
+    transition: transform 300ms var(--ease-out-strong), box-shadow 300ms var(--ease-out-strong);
+    background: oklch(0.08 0.025 260 / 0.65);
+    border: 1px solid oklch(0.2 0.08 260 / 0.3);
   }
   @media (hover: hover) and (pointer: fine) {
     .interactive-card:hover {
-      @apply -translate-y-2 border-brand-500/40 shadow-xl;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px oklch(0 0 0 / 0.35);
+      border-color: oklch(0.55 0.22 255 / 0.3);
     }
+  }
+  .interactive-card:active {
+    transform: scale(0.98);
   }
 
   .text-gradient {
-    color: oklch(0.98 0.005 250);
+    color: oklch(0.98 0.005 260);
   }
 
   .text-gradient-mint {
@@ -103,97 +106,156 @@
     @apply absolute rounded-full blur-[100px] -z-10 pointer-events-none opacity-15;
   }
 
-  /* DUOLINGO BUTTONS */
   .duo-btn {
-    --btn-face: #007bff;
-    --btn-shadow: #0056b3;
-    --btn-text: #ffffff;
+    --btn-face: oklch(0.55 0.22 255);
+    --btn-shadow: oklch(0.4 0.2 255);
+    --btn-text: oklch(0.98 0 0);
     --btn-radius: 14px;
     --btn-depth: 5px;
 
-    @apply inline-flex items-center justify-center relative px-6 py-3 font-heading font-bold uppercase tracking-wider cursor-pointer duration-100 no-underline z-[10];
-    transition: transform 100ms var(--ease-out-expo), filter 200ms ease, border-width 100ms ease;
-    background-color: var(--btn-face) !important;
-    color: var(--btn-text) !important;
-    border: none !important;
-    border-bottom: var(--btn-depth) solid var(--btn-shadow) !important;
-    border-radius: var(--btn-radius) !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0.75rem 1.5rem;
     font-size: 0.875rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    z-index: 1;
+    background: var(--btn-face);
+    color: var(--btn-text);
+    border: none;
+    border-radius: var(--btn-radius);
+    transform: translateY(0);
+    transition: transform 160ms var(--ease-out-strong);
+    text-decoration: none;
+  }
+
+  .duo-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--btn-radius);
+    background: var(--btn-shadow);
+    z-index: -1;
+    transform: translateY(var(--btn-depth));
   }
 
   .duo-btn:active {
-    @apply translate-y-[4px];
-    border-bottom-width: 1px !important;
+    transform: translateY(4px) scale(0.97);
   }
 
   .duo-btn-primary { --btn-face: var(--color-brand-500); --btn-shadow: var(--color-brand-700); }
-  .duo-btn-secondary {
-    --btn-face: rgba(7, 11, 16, 0.8);
-    --btn-shadow: rgba(0, 0, 0, 0.5);
-    --btn-text: #ffffff;
-    border-width: 1px !important;
-    border-style: solid !important;
-    border-color: rgba(0, 123, 255, 0.3) !important;
-  }
-  .duo-btn-accent { --btn-face: var(--color-accent-400); --btn-shadow: var(--color-accent-500); --btn-text: var(--color-slate-950); }
-  .duo-btn-destructive { --btn-face: #ef4444; --btn-shadow: #b91c1c; }
 
-  .duo-btn-sm { @apply px-4 py-2 text-[0.75rem]; --btn-depth: 3px; }
-  .duo-btn-lg { @apply px-8 py-4 text-base; --btn-depth: 6px; }
+  .duo-btn-secondary {
+    --btn-face: oklch(0.08 0.008 260);
+    --btn-shadow: oklch(0.03 0.005 260);
+    --btn-text: oklch(0.98 0 0);
+    border: 1px solid oklch(0.55 0.22 255 / 0.25);
+  }
+
+  .duo-btn-accent {
+    --btn-face: var(--color-accent-400);
+    --btn-shadow: var(--color-accent-600);
+    --btn-text: oklch(0.05 0 260);
+  }
+
+  .duo-btn-destructive {
+    --btn-face: oklch(0.55 0.22 30);
+    --btn-shadow: oklch(0.35 0.18 30);
+  }
+
+  .duo-btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    --btn-depth: 3px;
+  }
+
+  .duo-btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    --btn-depth: 6px;
+  }
 
   .auth-btn.success {
-    --btn-face: #22c55e;
-    --btn-shadow: #16a34a;
+    --btn-face: oklch(0.55 0.18 145);
+    --btn-shadow: oklch(0.4 0.16 145);
   }
 
   .auth-btn.error {
-    --btn-face: #ef4444;
-    --btn-shadow: #dc2626;
+    --btn-face: oklch(0.55 0.22 30);
+    --btn-shadow: oklch(0.35 0.18 30);
     animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
   }
 
   .auth-feedback {
     @apply text-sm mt-3 text-center min-h-[1.25rem] opacity-0 transition-opacity duration-300;
   }
-
   .auth-feedback.visible {
     @apply opacity-100;
   }
-
-  .auth-feedback.error { @apply text-red-500; }
-  .auth-feedback.success { @apply text-green-500; }
-
-  .input-field {
-    @apply bg-brand-950/50 border border-slate-700 text-slate-200 transition-all duration-300 placeholder-slate-500 focus:border-brand-500 focus:bg-brand-950 focus:ring-4 focus:ring-brand-500/10 focus:outline-none;
+  .auth-feedback.error {
+    color: oklch(0.55 0.2 30);
+  }
+  .auth-feedback.success {
+    color: oklch(0.55 0.18 145);
   }
 
-  .glass-card {
-    @apply bg-brand-950/80 backdrop-blur-2xl border border-brand-500/15 shadow-2xl;
+  .input-field {
+    transition: all 300ms var(--ease-out-strong);
+    background: oklch(0.045 0.006 260 / 0.5);
+    border: 1px solid oklch(0.3 0.02 260);
+    color: oklch(0.85 0.01 260);
+  }
+  .input-field::placeholder {
+    color: oklch(0.45 0.01 260);
+  }
+  .input-field:focus {
+    border-color: var(--color-brand-500);
+    background: oklch(0.045 0.006 260);
+    box-shadow: 0 0 0 4px oklch(0.55 0.22 255 / 0.1);
+    outline: none;
   }
 
   .section-reveal {
-    @apply opacity-0 translate-y-10 transition-all duration-700;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 600ms var(--ease-out-expo), transform 600ms var(--ease-out-expo);
   }
-
   .section-reveal.active {
-    @apply opacity-100 translate-y-0;
+    opacity: 1;
+    transform: translateY(0);
   }
 
-  /* CODE INPUT */
   .code-input-group {
     @apply flex items-center justify-center gap-2 mx-auto;
   }
 
   .code-input {
-    @apply w-12 h-14 text-center text-2xl font-bold font-heading text-slate-900 bg-slate-50 border-2 border-slate-200 rounded-xl outline-none transition-all duration-200;
+    width: 3rem;
+    height: 3.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    outline: none;
+    transition: all 200ms var(--ease-out-strong);
+    background: oklch(0.95 0.005 260);
+    border: 2px solid oklch(0.85 0.01 260);
+    border-radius: 0.75rem;
+    color: oklch(0.15 0.06 260);
   }
-
   .code-input:focus {
-    @apply border-brand-500 ring-4 ring-brand-500/15 bg-white;
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 4px oklch(0.55 0.22 255 / 0.15);
+    background: white;
   }
-
   .code-input.filled {
-    @apply border-brand-500 bg-blue-50;
+    border-color: var(--color-brand-500);
+    background: oklch(0.9 0.03 255);
   }
 }
 
@@ -209,11 +271,9 @@
 }
 
 @media (max-width: 768px) {
-  h1 { @apply text-[2.5rem] leading-[1.2]; }
-  h2 { @apply text-sm; }
-  h3 { @apply text-[2rem] leading-[1.2]; }
-  h4 { @apply text-2xl; }
-  p { @apply text-base; }
-
-  section { @apply py-20; }
+  h1 { font-size: 2.5rem; line-height: 1.2; }
+  h3 { font-size: 2rem; line-height: 1.2; }
+  h4 { font-size: 1.5rem; }
+  p { font-size: 1rem; }
+  section { padding-top: 5rem; padding-bottom: 5rem; }
 }

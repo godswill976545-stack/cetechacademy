@@ -18,9 +18,10 @@ describe('Auth Flow Logic', () => {
 });
 
 describe('Environment Configuration', () => {
-  it('should have required env variables at build time', () => {
+  it('should have Supabase env variables configured', () => {
     const envVars = [
-      'VITE_CONVEX_URL',
+      'NEXT_PUBLIC_SUPABASE_URL',
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY',
     ];
     envVars.forEach((key) => {
       expect(key).toBeDefined();

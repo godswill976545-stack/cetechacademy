@@ -30,10 +30,11 @@ describe('Authentication Flow Logic', () => {
     it('should have correct redirection paths', () => {
         const paths = {
             payment: '/payment',
-            portal: '/frontend/portal.html',
-            home: '/index.html'
+            portal: '/portal',
+            home: '/'
         };
         expect(paths.payment).toBe('/payment');
-        expect(paths.home).toBe('/index.html');
+        expect(paths.portal).toBe('/portal');
+        expect(paths.home).toBe('/');
     });
 });

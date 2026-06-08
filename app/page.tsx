@@ -3,7 +3,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'motion/react';
 import {
+
   ArrowRight,
   Code2,
   CheckCircle,
@@ -39,6 +41,7 @@ import VariableProximity from '@/components/VariableProximity';
 import BorderGlow from '@/components/BorderGlow';
 import SectionReveal from '@/components/SectionReveal';
 
+
 export default function Home() {
   const [showCourses, setShowCourses] = useState(false);
   const headlineRef = React.useRef(null);
@@ -68,16 +71,31 @@ export default function Home() {
         {/* HERO SECTION */}
         <section className="hero-section min-h-screen relative flex items-center pt-20 overflow-hidden bg-transparent">
           <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
-            <div className="animate-slide-up z-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-accent-400/30 text-accent-400 text-xs font-bold tracking-wider uppercase mb-8 shadow-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="z-10"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full surface-panel border-accent-400/30 text-accent-400 text-xs font-bold tracking-wider uppercase mb-8 shadow-sm"
+              >
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-500"></span>
                 </span>
                 Enrollment Open for Q4 2026
-              </div>
+              </motion.div>
 
-              <div ref={headlineRef}>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                ref={headlineRef}
+              >
                 <h1 className="text-5xl lg:text-7xl font-bold leading-[1.1] mb-6 text-gradient">
                   <VariableProximity
                     label="Master the Digital Craft. Build the Future."
@@ -88,23 +106,33 @@ export default function Home() {
                     falloff="gaussian"
                   />
                 </h1>
-              </div>
+              </motion.div>
 
-              <p className="text-slate-400 text-lg lg:text-xl font-light mb-10 max-w-lg leading-relaxed">
+              <motion.p 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="text-slate-400 text-lg lg:text-xl font-light mb-10 max-w-lg leading-relaxed"
+              >
                 Gain practical digital skills, build real-world experience, and position yourself to earn and stand out in today’s digital world.
-              </p>
+              </motion.p>
 
-              <div className="flex flex-wrap items-center gap-8">
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+                className="flex flex-wrap items-center gap-8"
+              >
                 <Link href="#pricing" className="duo-btn duo-btn-lg duo-btn-primary">
                   Secure Your Spot
                   <ArrowRight className="w-5 h-5 ml-3" />
                 </Link>
-              </div>
-            </div>
+</motion.div>
+            </motion.div>
 
-            <div className="relative animate-slide-up h-[500px] lg:h-[600px] flex items-center justify-center" style={{ animationDelay: '200ms' }}>
+            <div className="relative h-[500px] lg:h-[600px] flex items-center justify-center">
               <div className="absolute inset-0 bg-gradient-to-tr from-brand-500/10 to-transparent rounded-[3rem] rotate-3 scale-105 blur-lg"></div>
-              <div className="glass-panel rounded-[2.5rem] p-2 relative z-10 w-full h-full min-h-[500px]">
+              <div className="surface-panel rounded-[2.5rem] p-2 relative z-10 w-full h-full min-h-[500px]">
                 <div className="rounded-[2rem] overflow-hidden relative bg-slate-900/30 border border-slate-800 w-full h-full flex items-center justify-center">
                   <div className="absolute inset-0">
                     <Antigravity
@@ -116,7 +144,11 @@ export default function Home() {
                     />
                   </div>
 
-                  <div className="absolute top-8 -left-8 glass-panel px-6 py-4 rounded-2xl flex items-center gap-4 border-accent-400/20 shadow-lg animate-float">
+                  <motion.div 
+                    className="absolute top-8 -left-8 surface-panel px-6 py-4 rounded-2xl flex items-center gap-4 border-accent-400/20 shadow-lg"
+                    animate={{ y: [0, -12, 0] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                  >
                     <div className="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-600">
                       <Code2 className="w-6 h-6" />
                     </div>
@@ -124,9 +156,13 @@ export default function Home() {
                       <div className="text-sm text-slate-500 font-medium">Weekly Challenge</div>
                       <div className="font-bold text-white">Frontend Architecture</div>
                     </div>
-                  </div>
+                  </motion.div>
 
-                  <div className="absolute bottom-12 -right-6 glass-panel px-6 py-4 rounded-2xl flex items-center gap-4 border-brand-500/20 shadow-lg animate-float" style={{ animationDelay: '-4s' }}>
+                  <motion.div 
+                    className="absolute bottom-12 -right-6 surface-panel px-6 py-4 rounded-2xl flex items-center gap-4 border-brand-500/20 shadow-lg"
+                    animate={{ y: [0, 12, 0] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                  >
                     <div className="w-12 h-12 rounded-xl bg-accent-500/10 flex items-center justify-center text-accent-600">
                       <CheckCircle className="w-6 h-6" />
                     </div>
@@ -134,7 +170,7 @@ export default function Home() {
                       <div className="text-sm text-slate-500 font-medium">Task Completed</div>
                       <div className="font-bold text-white">UI/UX Wireframing</div>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </div>
@@ -145,7 +181,7 @@ export default function Home() {
         <section id="about" className="py-32 px-6 relative z-10 bg-brand-950">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
             <SectionReveal>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-brand-500/30 text-brand-400 text-xs font-bold tracking-wider uppercase mb-8 shadow-sm">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full surface-panel border-brand-500/30 text-brand-400 text-xs font-bold tracking-wider uppercase mb-8 shadow-sm">
                 Our Story
               </div>
               <h2 className="text-4xl lg:text-6xl font-bold leading-tight mb-6 text-white">
@@ -176,7 +212,7 @@ export default function Home() {
               </div>
             </SectionReveal>
             <SectionReveal stagger={1}>
-              <div className="glass-panel rounded-[3rem] p-12 border-brand-500/20 relative overflow-hidden shadow-2xl">
+              <div className="surface-panel-inset rounded-[3rem] p-12 relative overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-500/20 rounded-full blur-3xl"></div>
                 <div className="relative z-10">
                   <div className="text-brand-400 font-bold uppercase tracking-widest text-xs mb-4">The Philosophy</div>
@@ -211,7 +247,7 @@ export default function Home() {
             </SectionReveal>
 
             <SectionReveal stagger={1} className="mb-16 max-w-3xl mx-auto">
-              <div className="glass-panel rounded-[2rem] p-8 md:p-10 border-brand-500/15 relative overflow-hidden">
+              <div className="surface-panel-inset rounded-[2rem] p-8 md:p-10 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                 <div className="relative z-10 grid md:grid-cols-2 gap-8">
                   <div className="space-y-6">
@@ -269,7 +305,7 @@ export default function Home() {
                 { phase: '03', title: 'Advanced Level (Real-World Application)', desc: 'Bring everything together through real-world projects, portfolio development, and positioning.', btn: 'Master Phase 03' }
               ].map((p, i) => (
                 <SectionReveal key={i} stagger={i + 1}>
-                  <article className="glass-panel p-8 rounded-[2.5rem] border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md h-full">
+                  <article className="surface-panel p-8 rounded-[2.5rem] border-brand-500/20 ring-1 ring-brand-500/10 transition-all group relative z-10 shadow-md h-full">
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-950 border-4 border-brand-200 flex items-center justify-center text-brand-500 z-20">
                       <div className="w-2 h-2 rounded-full bg-current"></div>
                     </div>
@@ -294,29 +330,47 @@ export default function Home() {
             </SectionReveal>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                { icon: Layout, title: 'UI/UX Design', desc: 'Map immersive digital interfaces. Master Figma, user research, and interactive prototyping.', color: 'brand' },
-                { icon: Terminal, title: 'Web Engineering', desc: 'Build the architecture of the web. From semantic HTML/CSS to advanced React.', color: 'sky' },
-                { icon: Palette, title: 'Brand Identity', desc: 'Visual storytelling redefined. Learn color theory, typography, and cohesive identities.', color: 'purple' },
-                { icon: TrendingUp, title: 'Growth Marketing', desc: 'Master data-driven strategies, SEO, and campaign engineering to dominate landscapes.', color: 'rose' },
-                { icon: Database, title: 'Data Science', desc: 'Extract deep, actionable insights from complex ecosystems using Python and SQL.', color: 'amber' },
-                { icon: Bot, title: 'AI & Automation', desc: 'Leverage AI and workflow automation to scale productivity and build intelligent tools.', color: 'indigo' }
-              ].map((c, i) => (
+              {(() => {
+                const accentColors: Record<string, string> = {
+                  brand: 'oklch(0.55 0.22 255)',
+                  sky: 'oklch(0.65 0.15 235)',
+                  purple: 'oklch(0.55 0.2 290)',
+                  rose: 'oklch(0.55 0.2 355)',
+                  amber: 'oklch(0.65 0.2 85)',
+                  indigo: 'oklch(0.5 0.2 265)',
+                };
+                const disciplines = [
+                  { icon: Layout, title: 'UI/UX Design', desc: 'Map immersive digital interfaces. Master Figma, user research, and interactive prototyping.', color: 'brand' },
+                  { icon: Terminal, title: 'Web Engineering', desc: 'Build the architecture of the web. From semantic HTML/CSS to advanced React.', color: 'sky' },
+                  { icon: Palette, title: 'Brand Identity', desc: 'Visual storytelling redefined. Learn color theory, typography, and cohesive identities.', color: 'purple' },
+                  { icon: TrendingUp, title: 'Growth Marketing', desc: 'Master data-driven strategies, SEO, and campaign engineering to dominate landscapes.', color: 'rose' },
+                  { icon: Database, title: 'Data Science', desc: 'Extract deep, actionable insights from complex ecosystems using Python and SQL.', color: 'amber' },
+                  { icon: Bot, title: 'AI & Automation', desc: 'Leverage AI and workflow automation to scale productivity and build intelligent tools.', color: 'indigo' }
+                ];
+                return disciplines.map((c, i) => {
+                  const accent = accentColors[c.color] || 'oklch(0.55 0.22 255)';
+                  return (
                 <SectionReveal key={i} stagger={i % 3}>
-                  <article className={`glass-panel interactive-card rounded-3xl group cursor-pointer overflow-hidden shadow-sm relative border-t-2 border-t-${c.color}-500/50 h-full`}>
+                  <article className="surface-panel interactive-card rounded-3xl group cursor-pointer overflow-hidden h-full"
+                    style={{ borderColor: `${accent.replace(')', ' / 0.25)')}` }}>
+                    <div className="h-1.5" style={{ background: `${accent.replace(')', ' / 0.5)')}` }} />
                     <div className="p-8">
-                      <div className={`w-14 h-14 rounded-2xl bg-${c.color}-500/10 flex items-center justify-center mb-8 text-${c.color}-500 border border-${c.color}-500/20 shadow-inner`}>
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-8 border shadow-inner"
+                        style={{ background: `${accent.replace(')', ' / 0.1)')}`, color: accent, borderColor: `${accent.replace(')', ' / 0.2)')}` }}>
                         <c.icon className="w-7 h-7" />
                       </div>
                       <h4 className="text-2xl font-bold mb-3 text-white">{c.title}</h4>
                       <p className="text-slate-400 text-sm leading-relaxed mb-6">{c.desc}</p>
-                      <span className="inline-flex items-center text-brand-500 text-sm font-bold group-hover:translate-x-2 transition-transform duration-300">
+                      <span className="inline-flex items-center text-sm font-bold group-hover:translate-x-2 transition-transform duration-300"
+                        style={{ color: accent }}>
                         Explore Curriculum <ArrowRight className="w-4 h-4 ml-2" />
                       </span>
                     </div>
                   </article>
                 </SectionReveal>
-              ))}
+                  );
+                });
+              })()}
             </div>
           </div>
         </section>
@@ -326,30 +380,42 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <SectionReveal>
-                <h2 className="text-brand-600 font-bold tracking-wider text-sm uppercase mb-3">Why CETECH?</h2>
-                <h3 className="text-4xl lg:text-5xl font-bold mb-8 text-white">Why Choose CETECH Academy?</h3>
+                <h2 className="text-brand-400 font-bold tracking-wider text-sm uppercase mb-3">The Difference</h2>
+                <h3 className="text-4xl lg:text-5xl font-bold mb-8 text-white">Why CETECH Academy?</h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {[
-                    { icon: Code2, text: 'Practical, hands-on training building real projects', color: 'brand' },
-                    { icon: Monitor, text: 'Hybrid format: live sessions + on-demand content', color: 'accent' },
-                    { icon: Briefcase, text: 'Real-world projects for your portfolio', color: 'brand' },
-                    { icon: Users, text: 'Personal mentorship from industry practitioners', color: 'accent' },
-                    { icon: GraduationCap, text: 'Small cohorts capped at 30 students', color: 'brand' },
-                    { icon: TrendingUp, text: 'Career-focused: designed for income and growth', color: 'accent' }
-                  ].map((f, i) => (
-                    <div key={i} className={`glass-panel interactive-card p-5 rounded-2xl border-${f.color}-500/10 group cursor-pointer flex items-center gap-4 transition-all duration-300 hover:border-${f.color}-500/30`}>
-                      <div className={`w-10 h-10 rounded-xl bg-${f.color}-500/10 flex items-center justify-center text-${f.color}-500 shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                  {(() => {
+                    const featureAccents: Record<string, string> = {
+                      brand: 'oklch(0.55 0.22 255)',
+                      accent: 'oklch(0.78 0.14 210)',
+                    };
+                    const features = [
+                      { icon: Code2, text: 'Practical, hands-on training building real projects', color: 'brand' },
+                      { icon: Monitor, text: 'Hybrid format: live sessions + on-demand content', color: 'accent' },
+                      { icon: Briefcase, text: 'Real-world projects for your portfolio', color: 'brand' },
+                      { icon: Users, text: 'Personal mentorship from industry practitioners', color: 'accent' },
+                      { icon: GraduationCap, text: 'Small cohorts capped at 30 students', color: 'brand' },
+                      { icon: TrendingUp, text: 'Career-focused: designed for income and growth', color: 'accent' }
+                    ];
+                    return features.map((f, i) => {
+                      const accent = featureAccents[f.color] || featureAccents.brand;
+                      return (
+                    <div key={i} className="surface-panel interactive-card p-5 rounded-2xl group cursor-pointer flex items-center gap-4"
+                      style={{ borderColor: `${accent.replace(')', ' / 0.1)')}` }}>
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300"
+                        style={{ background: `${accent.replace(')', ' / 0.1)')}`, color: accent }}>
                         <f.icon className="w-5 h-5" />
                       </div>
                       <p className="text-slate-300 text-sm font-medium leading-snug">{f.text}</p>
                     </div>
-                  ))}
+                      );
+                    });
+                  })()}
                 </div>
               </SectionReveal>
 
               <SectionReveal stagger={2}>
-                <div className="glass-panel p-10 rounded-[3rem] border-brand-500/20 bg-brand-900 text-white text-center relative overflow-hidden h-full flex flex-col justify-center">
+                <div className="surface-panel-inset p-10 rounded-[3rem] text-white text-center relative overflow-hidden h-full flex flex-col justify-center">
                   <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LCAyNTUsIDI1NSwgMC4wNSkiLz48L3N2Zz4=')] opacity-30"></div>
                   <div className="relative z-10">
                     <div className="w-20 h-20 rounded-2xl bg-brand-950/10 flex items-center justify-center mx-auto mb-8">
@@ -394,7 +460,7 @@ export default function Home() {
                   { icon: Database, title: 'Data Analyst', price: '₦200,000', desc: 'Python, SQL, and data visualization for business intelligence.' },
                   { icon: Palette, title: 'Graphic Design', price: '₦120,000', desc: 'Visual communication, branding, and typography mastery.' }
                 ].map((c, i) => (
-                  <article key={i} className={`glass-panel p-8 rounded-3xl border-slate-800 transition-all group ${c.featured ? 'border-brand-500/20 bg-brand-50/30 ring-1 ring-brand-500/10' : 'hover:border-brand-500/30'}`}>
+                  <article key={i} className={`surface-panel p-8 rounded-3xl border-slate-800 transition-all group ${c.featured ? 'border-brand-500/20 ring-1 ring-brand-500/10' : 'hover:border-brand-500/30'}`}>
                     <div className="flex justify-between items-start mb-6">
                       <div className={`w-12 h-12 rounded-xl bg-brand-500/${c.featured ? '20' : '10'} flex items-center justify-center text-brand-600`}>
                         <c.icon className="w-6 h-6" />
@@ -413,7 +479,7 @@ export default function Home() {
                 ))}
 
                 {/* Special Program */}
-                <div className="md:col-span-2 lg:col-span-3 mt-8 glass-panel p-8 rounded-3xl border-brand-500/30 bg-brand-900 text-white relative overflow-hidden group">
+                <div className="md:col-span-2 lg:col-span-3 mt-8 surface-panel-inset p-8 rounded-3xl text-white relative overflow-hidden group">
                   <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
                     <Rocket className="w-32 h-32 -rotate-12" />
                   </div>
@@ -447,11 +513,19 @@ export default function Home() {
             </SectionReveal>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start max-w-5xl">
-              {[
-                { name: 'Chukwudi Collins', role: 'Multi-skilled Digital Professional', desc: 'Full-stack expertise spanning design, development, and digital strategy.', img: '/assets/mentor_chukwudi.jpeg', color: 'brand' },
-                { name: 'Nwankwor Chukwudalu E.', role: 'Visual Creative Professional', desc: 'Expert in visual storytelling, brand aesthetics, and creative direction.', img: '/assets/mentor_nwankwor.PNG', color: 'accent', offset: 'md:translate-y-6' },
-                { name: 'Obinna John', role: 'Creative Designer', desc: 'Crafting compelling visual experiences with a keen eye for detail.', img: '/assets/mentor_obinna.jpeg', color: 'brand', offset: 'md:translate-y-12' }
-              ].map((m, i) => (
+              {(() => {
+                const mentorAccents: Record<string, string> = {
+                  brand: 'oklch(0.55 0.22 255)',
+                  accent: 'oklch(0.78 0.14 210)',
+                };
+                const mentors = [
+                  { name: 'Chukwudi Collins', role: 'Multi-skilled Digital Professional', desc: 'Full-stack expertise spanning design, development, and digital strategy.', img: '/assets/mentor_chukwudi.jpeg', color: 'brand' },
+                  { name: 'Nwankwor Chukwudalu E.', role: 'Visual Creative Professional', desc: 'Expert in visual storytelling, brand aesthetics, and creative direction.', img: '/assets/mentor_nwankwor.PNG', color: 'accent', offset: 'md:translate-y-6' },
+                  { name: 'Obinna John', role: 'Creative Designer', desc: 'Crafting compelling visual experiences with a keen eye for detail.', img: '/assets/mentor_obinna.jpeg', color: 'brand', offset: 'md:translate-y-12' }
+                ];
+                return mentors.map((m, i) => {
+                  const accent = mentorAccents[m.color] || mentorAccents.brand;
+                  return (
                 <SectionReveal key={i} stagger={i + 1} className={m.offset}>
                   <article className="group">
                     <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] mb-6 bg-slate-100 shadow-xl">
@@ -463,16 +537,18 @@ export default function Home() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                        <div className={`glass-panel p-5 rounded-2xl border-${m.color}-500/20 backdrop-blur-xl`}>
+                        <div className="surface-panel p-5 rounded-2xl">
                           <h4 className="font-bold text-white text-lg">{m.name}</h4>
-                          <p className={`text-${m.color}-500 text-xs font-bold tracking-wider uppercase mt-1`}>{m.role}</p>
+                          <p className="text-xs font-bold tracking-wider uppercase mt-1" style={{ color: accent }}>{m.role}</p>
                           <p className="text-slate-400 text-xs mt-2 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">{m.desc}</p>
                         </div>
                       </div>
                     </div>
                   </article>
                 </SectionReveal>
-              ))}
+                  );
+                });
+              })()}
             </div>
           </div>
         </section>
@@ -483,20 +559,20 @@ export default function Home() {
             <div className="lg:col-span-2">
               <Link href="/" className="flex items-center gap-3 mb-6 group">
                 <Image src="/assets/logo.png" alt="CeTech Academy" width={64} height={64} className="h-12 md:h-18 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
-                <span className="text-2xl font-bold tracking-tight text-white group-hover:text-brand-900 transition-colors">CeTech Academy</span>
+                <span className="text-2xl font-bold tracking-tight text-white group-hover:text-brand-400 transition-colors">CeTech Academy</span>
               </Link>
               <p className="text-slate-500 text-sm mb-8 max-w-sm leading-relaxed">Empowering the next generation of African digital architects. We forge careers through rigorous, tactile mastery.</p>
               <div className="flex gap-4">
                 <a href="https://www.facebook.com/share/1JBgGiieXV/?mibextid=wwXIfr" target="_blank" className="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:opacity-90 transition-all shadow-md">
                   <Facebook className="w-5 h-5 fill-white" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 hover:bg-brand-500 hover:text-white transition-all">
+                <a href="#" className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 hover:bg-brand-400 hover:text-white transition-all">
                   <Twitter className="w-5 h-5" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 hover:bg-brand-500 hover:text-white transition-all">
+                <a href="#" className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 hover:bg-brand-400 hover:text-white transition-all">
                   <Linkedin className="w-5 h-5" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 hover:bg-brand-500 hover:text-white transition-all">
+                <a href="#" className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 hover:bg-brand-400 hover:text-white transition-all">
                   <Github className="w-5 h-5" />
                 </a>
               </div>
@@ -505,10 +581,10 @@ export default function Home() {
             <nav aria-label="Quick links">
               <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Navigation</h4>
               <ul className="space-y-4">
-                <li><Link href="#curriculum" className="text-slate-500 hover:text-brand-600 transition-colors text-sm">Curriculum</Link></li>
-                <li><Link href="#pricing" className="text-slate-500 hover:text-brand-600 transition-colors text-sm">Pricing</Link></li>
-                <li><Link href="#mentors" className="text-slate-500 hover:text-brand-600 transition-colors text-sm">Faculty</Link></li>
-                <li><Link href="/login" className="text-slate-500 hover:text-brand-600 transition-colors text-sm">Student Login</Link></li>
+                <li><Link href="#curriculum" className="text-slate-500 hover:text-brand-400 transition-colors text-sm">Curriculum</Link></li>
+                <li><Link href="#pricing" className="text-slate-500 hover:text-brand-400 transition-colors text-sm">Pricing</Link></li>
+                <li><Link href="#mentors" className="text-slate-500 hover:text-brand-400 transition-colors text-sm">Faculty</Link></li>
+                <li><Link href="/login" className="text-slate-500 hover:text-brand-400 transition-colors text-sm">Student Login</Link></li>
               </ul>
             </nav>
 

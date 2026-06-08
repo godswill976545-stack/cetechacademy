@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk } from 'next/font/google';
-import { ConvexClientProvider } from '@/components/ConvexClientProvider';
+import { Inter, Space_Grotesk, Roboto_Flex } from 'next/font/google';
+import { ClerkProvider } from '@clerk/nextjs';
 import StyledJsxRegistry from '@/lib/registry';
 
 const inter = Inter({
@@ -16,6 +16,13 @@ const spaceGrotesk = Space_Grotesk({
   display: 'swap',
 });
 
+const robotoFlex = Roboto_Flex({
+  subsets: ['latin'],
+  variable: '--font-roboto-flex',
+  display: 'swap',
+  axes: ['opsz', 'wght'] as any,
+});
+
 export const metadata: Metadata = {
   title: 'CeTech Academy',
   description: 'Elite Digital Craftsmanship & Tech Education',
@@ -27,13 +34,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${robotoFlex.variable}`}>
       <body className="antialiased">
-        <ConvexClientProvider>
+        <ClerkProvider>
           <StyledJsxRegistry>
             {children}
           </StyledJsxRegistry>
-        </ConvexClientProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
