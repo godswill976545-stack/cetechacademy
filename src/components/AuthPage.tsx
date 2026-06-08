@@ -31,7 +31,7 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
         const firstName = nameParts[0] || '';
         const lastName = nameParts.slice(1).join(' ') || '';
 
-        // Create user via server-side API (bypasses client SDK 422)
+        // Step 1: Create user via Clerk Backend API
         const signupRes = await fetch('/api/debug-clerk', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -43,28 +43,22 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
           throw new Error(signupData.error || 'Failed to create account');
         }
 
-        // Now sign in via client SDK (user exists, should work)
-        const { error: signInError } = await signIn!.create({
-          identifier: email,
-          password,
+        // Step 2: Send OTP via Resend
+        const otpRes = await fetch('/api/auth/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
         });
+        const otpData = await otpRes.json();
 
-        if (signInError) {
-          // If verification needed, send code
-          if (signIn!.status === 'needs_first_factor') {
-            const { error: codeError } = await signIn!.emailCode.sendCode();
-            if (codeError) throw codeError;
-            localStorage.setItem('pending_user_email', email);
-            router.push('/verify');
-            return;
-          }
-          throw signInError;
+        if (!otpRes.ok) {
+          throw new Error(otpData.error || 'Failed to send verification code');
         }
 
-        if (signIn!.status === 'complete') {
-          router.push('/portal');
-          return;
-        }
+        // Step 3: Redirect to verify page
+        localStorage.setItem('pending_user_email', email);
+        router.push('/verify');
+        return;
       } else {
         if (!signIn) throw new Error('Auth not ready');
 
@@ -73,12 +67,7 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
           password,
         });
 
-        if (error) {
-          console.error('Clerk signin error:', JSON.stringify(error));
-          throw error;
-        }
-
-        console.log('Sign-in status:', signIn.status);
+        if (error) throw error;
 
         // Check if sign-in is complete
         if (signIn.status === 'complete') {
@@ -86,10 +75,19 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
           return;
         }
 
-        // If email code verification is needed
+        // If verification needed, send OTP via Resend
         if (signIn.status === 'needs_first_factor') {
-          const { error: codeError } = await signIn.emailCode.sendCode();
-          if (codeError) throw codeError;
+          const otpRes = await fetch('/api/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+          const otpData = await otpRes.json();
+
+          if (!otpRes.ok) {
+            throw new Error(otpData.error || 'Failed to send verification code');
+          }
+
           localStorage.setItem('pending_user_email', email);
           router.push('/verify');
           return;

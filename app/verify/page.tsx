@@ -4,22 +4,21 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ShieldCheck, ArrowLeft } from 'lucide-react';
-import { useSignUp, useSignIn } from '@clerk/nextjs';
+import { useSignIn } from '@clerk/nextjs';
 import Aurora from '@/components/Aurora';
 
 export default function VerifyPage() {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const [feedback, setFeedback] = useState({ message: '', type: '' });
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
 
-  const { signUp } = useSignUp();
   const { signIn } = useSignIn();
 
   useEffect(() => {
     inputRefs.current[0]?.focus();
-
     const pendingEmail = localStorage.getItem('pending_user_email');
     if (!pendingEmail) {
       router.push('/login');
@@ -31,7 +30,6 @@ export default function VerifyPage() {
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
-
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -45,7 +43,7 @@ export default function VerifyPage() {
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    const pasteData = e.clipboardData.getData('text').slice(0, 6).split('');
+    const pasteData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6).split('');
     const newCode = [...code];
     pasteData.forEach((char, i) => {
       if (i < 6) newCode[i] = char;
@@ -59,57 +57,58 @@ export default function VerifyPage() {
     const fullCode = code.join('');
     if (fullCode.length !== 6) return;
 
+    const email = localStorage.getItem('pending_user_email');
+    if (!email) {
+      setFeedback({ message: 'No pending email found. Please sign up again.', type: 'error' });
+      return;
+    }
+
     setLoading(true);
+    setFeedback({ message: '', type: '' });
     try {
-      // Try signup verification first
-      if (signUp) {
-        const { error } = await signUp.verifications.verifyEmailCode({ code: fullCode });
-        if (error) throw error;
+      // Step 1: Verify OTP against our database
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: fullCode }),
+      });
+      const data = await res.json();
 
-        if (signUp.status === 'complete') {
-          localStorage.removeItem('pending_user_email');
-          router.push('/portal');
-          return;
-        }
+      if (!res.ok) {
+        throw new Error(data.error || 'Verification failed');
       }
 
-      // Try login verification
-      if (signIn) {
-        const { error } = await signIn.emailCode.verifyCode({ code: fullCode });
-        if (error) throw error;
-
-        if (signIn.status === 'complete') {
-          localStorage.removeItem('pending_user_email');
-          router.push('/portal');
-          return;
-        }
-      }
-
-      alert('Invalid code. Please try again.');
+      // Step 2: Redirect to login — user enters password to sign in
+      localStorage.removeItem('pending_user_email');
+      router.push('/login');
     } catch (error: any) {
-      const msg = error?.errors?.[0]?.message || error?.message || 'Verification failed';
-      alert(msg);
+      const msg = error?.message || 'Verification failed';
+      setFeedback({ message: msg, type: 'error' });
     } finally {
       setLoading(false);
     }
-  }, [code, router, signUp, signIn]);
+  }, [code, router, signIn]);
 
   const handleResend = async () => {
+    const email = localStorage.getItem('pending_user_email');
+    if (!email) return;
+
     setResending(true);
     try {
-      if (signUp) {
-        const { error } = await signUp.verifications.sendEmailCode();
-        if (error) throw error;
-        alert('A new verification code has been sent to your email.');
-      } else if (signIn) {
-        const { error } = await signIn.emailCode.sendCode();
-        if (error) throw error;
-        alert('A new verification code has been sent to your email.');
-      } else {
-        alert('Unable to resend code. Please try signing in again.');
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to resend code');
       }
-    } catch (error) {
-      alert('Failed to resend code.');
+
+      setFeedback({ message: 'A new verification code has been sent to your email.', type: 'success' });
+    } catch (error: any) {
+      setFeedback({ message: error.message || 'Failed to resend code.', type: 'error' });
     } finally {
       setResending(false);
     }
@@ -127,7 +126,6 @@ export default function VerifyPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-brand-950 relative overflow-hidden">
-      {/* Aurora background */}
       <div className="fixed inset-0 pointer-events-none z-0 opacity-70">
         <Aurora
           colorStops={['#020617', '#007bff', '#00d2ff']}
@@ -151,6 +149,7 @@ export default function VerifyPage() {
               <input
                 key={i}
                 type="text"
+                inputMode="numeric"
                 maxLength={1}
                 value={digit}
                 onChange={(e) => handleChange(i, e.target.value)}
@@ -160,6 +159,12 @@ export default function VerifyPage() {
               />
             ))}
           </div>
+
+          {feedback.message && (
+            <div className={`mb-4 p-3 rounded-xl text-sm ${feedback.type === 'error' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-green-500/10 text-green-400 border border-green-500/20'}`}>
+              {feedback.message}
+            </div>
+          )}
 
           <button
             onClick={handleVerify}

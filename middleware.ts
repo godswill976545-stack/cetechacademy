@@ -14,6 +14,8 @@ const isPublicRoute = createRouteMatcher([
   '/api/contact',
   '/api/clerk-webhook',
   '/api/debug-clerk',
+  '/api/auth/send-otp',
+  '/api/auth/verify-otp',
 ]);
 
 // Rate limiting
