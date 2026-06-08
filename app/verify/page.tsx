@@ -67,7 +67,6 @@ export default function VerifyPage() {
         if (error) throw error;
 
         if (signUp.status === 'complete') {
-          await signUp.finalize();
           localStorage.removeItem('pending_user_email');
           router.push('/portal');
           return;
@@ -80,7 +79,6 @@ export default function VerifyPage() {
         if (error) throw error;
 
         if (signIn.status === 'complete') {
-          await signIn.finalize();
           localStorage.removeItem('pending_user_email');
           router.push('/portal');
           return;

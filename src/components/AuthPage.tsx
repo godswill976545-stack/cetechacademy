@@ -51,9 +51,8 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
           return;
         }
 
-        // If sign-up is complete, finalize the session
+        // If sign-up is complete, session is auto-created
         if (signUp.status === 'complete') {
-          await signUp.finalize();
           router.push('/portal');
           return;
         }
@@ -69,7 +68,6 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
 
         // Check if sign-in is complete
         if (signIn.status === 'complete') {
-          await signIn.finalize();
           router.push('/portal');
           return;
         }
