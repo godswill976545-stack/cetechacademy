@@ -38,9 +38,10 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
         if (firstName) params.firstName = firstName;
         if (lastName) params.lastName = lastName;
 
-        const { error } = await signUp.create(params);
+        const result = await signUp.create(params);
+        console.log('Clerk signUp result:', JSON.stringify({ status: result.status, error: result.error, signUpId: result.signUpId }));
 
-        if (error) throw error;
+        if (result.error) throw result.error;
 
         // If email verification is needed, send the code
         if (signUp.status === 'missing_requirements') {
@@ -59,12 +60,13 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
       } else {
         if (!signIn) throw new Error('Auth not ready');
 
-        const { error } = await signIn.create({
+        const result = await signIn.create({
           identifier: email,
           password,
         });
+        console.log('Clerk signIn result:', JSON.stringify({ status: result.status, error: result.error }));
 
-        if (error) throw error;
+        if (result.error) throw result.error;
 
         // Check if sign-in is complete
         if (signIn.status === 'complete') {
@@ -88,6 +90,7 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
       } else if (error?.message) {
         errorMessage = error.message;
       }
+      console.error('Auth error:', error);
       setFeedback({ message: errorMessage, type: 'error' });
     } finally {
       setLoading(false);
@@ -148,8 +151,12 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field w-full px-5 py-4 rounded-2xl"
                 placeholder="••••••••"
+                minLength={8}
                 required
               />
+              {type === 'signup' && (
+                <p className="text-slate-600 text-xs mt-2 ml-1">Min 8 characters, mix of upper, lower & numbers</p>
+              )}
             </div>
 
             <div id="clerk-captcha" className="clerk-captcha" />
