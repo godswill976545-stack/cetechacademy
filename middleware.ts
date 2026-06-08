@@ -13,6 +13,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/paystack-webhook',
   '/api/contact',
   '/api/clerk-webhook',
+  '/api/debug-clerk',
 ]);
 
 // Rate limiting

@@ -31,42 +31,54 @@ export default function AuthPage({ type }: { type: 'login' | 'signup' }) {
         const firstName = nameParts[0] || '';
         const lastName = nameParts.slice(1).join(' ') || '';
 
-        const params: Record<string, string> = {
-          emailAddress: email,
-          password,
-        };
-        if (firstName) params.firstName = firstName;
-        if (lastName) params.lastName = lastName;
+        // Create user via server-side API (bypasses client SDK 422)
+        const signupRes = await fetch('/api/debug-clerk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, firstName, lastName }),
+        });
+        const signupData = await signupRes.json();
 
-        const result = await signUp.create(params);
-        console.log('Clerk signUp result:', JSON.stringify({ status: result.status, error: result.error, signUpId: result.signUpId }));
-
-        if (result.error) throw result.error;
-
-        // If email verification is needed, send the code
-        if (signUp.status === 'missing_requirements') {
-          const { error: verifyError } = await signUp.verifications.sendEmailCode();
-          if (verifyError) throw verifyError;
-          localStorage.setItem('pending_user_email', email);
-          router.push('/verify');
-          return;
+        if (!signupRes.ok) {
+          throw new Error(signupData.error || 'Failed to create account');
         }
 
-        // If sign-up is complete, session is auto-created
-        if (signUp.status === 'complete') {
+        // Now sign in via client SDK (user exists, should work)
+        const { error: signInError } = await signIn!.create({
+          identifier: email,
+          password,
+        });
+
+        if (signInError) {
+          // If verification needed, send code
+          if (signIn!.status === 'needs_first_factor') {
+            const { error: codeError } = await signIn!.emailCode.sendCode();
+            if (codeError) throw codeError;
+            localStorage.setItem('pending_user_email', email);
+            router.push('/verify');
+            return;
+          }
+          throw signInError;
+        }
+
+        if (signIn!.status === 'complete') {
           router.push('/portal');
           return;
         }
       } else {
         if (!signIn) throw new Error('Auth not ready');
 
-        const result = await signIn.create({
+        const { error } = await signIn.create({
           identifier: email,
           password,
         });
-        console.log('Clerk signIn result:', JSON.stringify({ status: result.status, error: result.error }));
 
-        if (result.error) throw result.error;
+        if (error) {
+          console.error('Clerk signin error:', JSON.stringify(error));
+          throw error;
+        }
+
+        console.log('Sign-in status:', signIn.status);
 
         // Check if sign-in is complete
         if (signIn.status === 'complete') {
