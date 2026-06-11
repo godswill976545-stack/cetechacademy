@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     // Also insert into Supabase users table via webhook normally handles this,
-    // but let's also do it here as a fallback
+    // but let's also do it here as a fallback - use upsert to prevent race conditions
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -43,24 +43,25 @@ export async function POST(req: Request) {
     );
 
     const userId = data.id;
-    const userUuid = crypto.randomUUID();
 
-    // Check if already exists
-    const { data: existing } = await supabase
-      .from('users')
-      .select('id')
-      .eq('clerk_id', userId)
-      .single();
-
-    if (!existing) {
-      await supabase.from('users').insert({
-        id: userUuid,
+    // Use upsert to safely insert or ignore if already exists
+    const { error: upsertError } = await supabase.from('users').upsert(
+      {
         clerk_id: userId,
         email,
         full_name: [firstName, lastName].filter(Boolean).join(' '),
         is_verified: false,
         payment_status: 'unpaid',
-      });
+      },
+      {
+        onConflict: 'clerk_id',
+        ignoreDuplicates: true,
+      }
+    );
+
+    if (upsertError) {
+      console.error('Error upserting user:', upsertError);
+      // Don't fail the signup - the user was created in Clerk, just log the error
     }
 
     return NextResponse.json({ userId, email });

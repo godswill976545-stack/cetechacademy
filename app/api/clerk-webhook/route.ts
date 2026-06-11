@@ -13,15 +13,18 @@ export async function POST(req: Request) {
       'svix-signature': req.headers.get('svix-signature') || '',
     };
 
-    // Verify webhook signature
-    if (webhookSecret) {
-      const wh = new Webhook(webhookSecret);
-      try {
-        wh.verify(body, headers);
-      } catch (err) {
-        console.error('Webhook verification failed:', err);
-        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-      }
+    // Verify webhook signature - require secret to be set
+    if (!webhookSecret) {
+      console.error('CLERK_WEBHOOK_SECRET is not configured');
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
+    }
+    
+    const wh = new Webhook(webhookSecret);
+    try {
+      wh.verify(body, headers);
+    } catch (err) {
+      console.error('Webhook verification failed:', err);
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
     const payload = JSON.parse(body);
