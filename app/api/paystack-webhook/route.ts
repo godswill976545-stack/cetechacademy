@@ -8,22 +8,30 @@ export async function POST(req: Request) {
 
     const body = await req.text();
 
-    if (secret && signature) {
-      const encoder = new TextEncoder();
-      const key = await crypto.subtle.importKey(
-        'raw',
-        encoder.encode(secret),
-        { name: 'HMAC', hash: 'SHA-512' },
-        false,
-        ['verify']
-      );
-      const expectedSignature = Array.from(
-        new Uint8Array(await crypto.subtle.sign('HMAC', key, encoder.encode(body)))
-      ).map(b => b.toString(16).padStart(2, '0')).join('');
+    // Require both secret and signature to be present
+    if (!secret) {
+      console.error('PAYSTACK_SECRET is not configured');
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
+    }
+    
+    if (!signature) {
+      return NextResponse.json({ error: 'Missing signature header' }, { status: 401 });
+    }
+    
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-512' },
+      false,
+      ['verify']
+    );
+    const expectedSignature = Array.from(
+      new Uint8Array(await crypto.subtle.sign('HMAC', key, encoder.encode(body)))
+    ).map(b => b.toString(16).padStart(2, '0')).join('');
 
-      if (signature !== expectedSignature) {
-        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-      }
+    if (signature !== expectedSignature) {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
     const payload = JSON.parse(body);
