@@ -13,6 +13,7 @@ interface VariableProximityProps {
   className?: string;
   onClick?: () => void;
   style?: React.CSSProperties;
+  disabled?: boolean;
   [key: string]: any;
 }
 
@@ -76,6 +77,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
     className = '',
     onClick,
     style,
+    disabled = false,
     ...restProps
   } = props;
 
@@ -86,6 +88,8 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
   const mousePositionRef = useMousePositionRef(containerRef, mouseHasMoved);
   const lastPositionRef = useRef<{ x: number | null; y: number | null }>({ x: null, y: null });
   const isInView = useRef(false);
+  const smoothedMousePos = useRef({ x: 0, y: 0 });
+  const updateThrottleRef = useRef(0);
 
   useEffect(() => {
     if (!containerRef?.current) return;
@@ -162,12 +166,26 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
   };
 
   useAnimationFrame(() => {
-    if (!containerRef?.current || letterPositions.current.length === 0 || !isInView.current || !mouseHasMoved.current) return;
+    if (!containerRef?.current || letterPositions.current.length === 0 || !isInView.current || !mouseHasMoved.current || disabled) return;
     
-    const { x, y } = mousePositionRef.current;
-    if (lastPositionRef.current.x === x && lastPositionRef.current.y === y) {
-      return;
-    }
+    const rawX = mousePositionRef.current.x;
+    const rawY = mousePositionRef.current.y;
+    
+    // Throttle updates to every 16ms (60fps) to prevent jitter
+    const now = Date.now();
+    if (now - updateThrottleRef.current < 16) return;
+    updateThrottleRef.current = now;
+    
+    // Smooth interpolation of mouse position
+    smoothedMousePos.current.x += (rawX - smoothedMousePos.current.x) * 0.3;
+    smoothedMousePos.current.y += (rawY - smoothedMousePos.current.y) * 0.3;
+    
+    const { x, y } = smoothedMousePos.current;
+    
+    // Only update if position changed significantly (threshold of 2px)
+    const lastX = lastPositionRef.current.x ?? 0;
+    const lastY = lastPositionRef.current.y ?? 0;
+    if (Math.abs(x - lastX) < 2 && Math.abs(y - lastY) < 2) return;
     lastPositionRef.current = { x, y };
 
     letterRefs.current.forEach((letterRef, index) => {
@@ -204,7 +222,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
   return (
     <span
       ref={ref}
-      className={`${className} variable-proximity`}
+      className={`${className} variable-proximity ${disabled ? 'disabled' : ''}`}
       onClick={onClick}
       style={{ display: 'inline', ...style }}
       {...restProps}
@@ -221,7 +239,8 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
                 }}
                 style={{
                   display: 'inline-block',
-                  fontVariationSettings: interpolatedSettingsRef.current[currentLetterIndex] || fromFontVariationSettings
+                  fontVariationSettings: interpolatedSettingsRef.current[currentLetterIndex] || fromFontVariationSettings,
+                  transition: 'font-variation-settings 150ms ease-out'
                 }}
                 aria-hidden="true"
               >
