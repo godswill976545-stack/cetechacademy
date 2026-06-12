@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useMemo, useRef, useEffect } from 'react';
+import React, { forwardRef, useMemo, useRef, useEffect, useCallback } from 'react';
 import './VariableProximity.css';
 
 interface VariableProximityProps {
@@ -17,63 +17,14 @@ interface VariableProximityProps {
   [key: string]: any;
 }
 
-function useAnimationFrame(callback: () => void) {
-  const callbackRef = useRef(callback);
-  callbackRef.current = callback;
-
-  useEffect(() => {
-    let frameId: number;
-    const loop = () => {
-      callbackRef.current();
-      frameId = requestAnimationFrame(loop);
-    };
-    frameId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(frameId);
-  }, []);
-}
-
-function useMousePositionRef(containerRef: React.RefObject<HTMLElement | null>, mouseHasMovedRef: React.MutableRefObject<boolean>) {
-  const positionRef = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const updatePosition = (x: number, y: number) => {
-      if (containerRef?.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        positionRef.current = { x: x - rect.left, y: y - rect.top };
-      } else {
-        positionRef.current = { x, y };
-      }
-    };
-
-    const handleMouseMove = (ev: MouseEvent) => {
-      mouseHasMovedRef.current = true;
-      updatePosition(ev.clientX, ev.clientY);
-    };
-    const handleTouchMove = (ev: TouchEvent) => {
-      mouseHasMovedRef.current = true;
-      const touch = ev.touches[0];
-      updatePosition(touch.clientX, touch.clientY);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchmove', handleTouchMove);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleTouchMove);
-    };
-  }, [containerRef, mouseHasMovedRef]);
-
-  return positionRef;
-}
-
 const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((props, ref) => {
   const {
     label,
     fromFontVariationSettings,
     toFontVariationSettings,
     containerRef,
-    radius = 50,
-    falloff = 'linear',
+    radius = 100,
+    falloff = 'gaussian',
     className = '',
     onClick,
     style,
@@ -82,26 +33,12 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
   } = props;
 
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const letterPositions = useRef<{ x: number; y: number }[]>([]);
-  const interpolatedSettingsRef = useRef<string[]>([]);
-  const mouseHasMoved = useRef(false);
-  const mousePositionRef = useMousePositionRef(containerRef, mouseHasMoved);
-  const lastPositionRef = useRef<{ x: number | null; y: number | null }>({ x: null, y: null });
-  const isInView = useRef(false);
-  const smoothedMousePos = useRef({ x: 0, y: 0 });
-  const updateThrottleRef = useRef(0);
-
-  useEffect(() => {
-    if (!containerRef?.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isInView.current = entry.isIntersecting;
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [containerRef]);
+  const letterPositions = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const animationFrameRef = useRef<number | null>(null);
+  const targetMouseRef = useRef({ x: 0, y: 0 });
+  const currentMouseRef = useRef({ x: 0, y: 0 });
+  const lastUpdateRef = useRef(0);
+  const isInitializedRef = useRef(false);
 
   const parsedSettings = useMemo(() => {
     const parseSettings = (settingsStr: string) =>
@@ -125,96 +62,125 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
     }));
   }, [fromFontVariationSettings, toFontVariationSettings]);
 
-  useEffect(() => {
-    const updatePositions = () => {
-      if (!containerRef?.current) return;
-      const containerRect = containerRef.current.getBoundingClientRect();
-      
-      letterPositions.current = letterRefs.current.map(letterRef => {
-        if (!letterRef) return { x: 0, y: 0 };
-        const rect = letterRef.getBoundingClientRect();
-        return {
-          x: rect.left + rect.width / 2 - containerRect.left,
-          y: rect.top + rect.height / 2 - containerRect.top
-        };
+  const updatePositions = useCallback(() => {
+    if (!containerRef?.current) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
+    
+    letterRefs.current.forEach((letterRef, index) => {
+      if (!letterRef) return;
+      const rect = letterRef.getBoundingClientRect();
+      letterPositions.current.set(index, {
+        x: rect.left + rect.width / 2 - containerRect.left,
+        y: rect.top + rect.height / 2 - containerRect.top
       });
-    };
+    });
+    isInitializedRef.current = true;
+  }, [containerRef]);
 
-    updatePositions();
+  useEffect(() => {
+    const timer = setTimeout(updatePositions, 100);
     window.addEventListener('resize', updatePositions);
-    const timer = setTimeout(updatePositions, 500);
     
     return () => {
-      window.removeEventListener('resize', updatePositions);
       clearTimeout(timer);
+      window.removeEventListener('resize', updatePositions);
     };
-  }, [containerRef, label]);
+  }, [updatePositions]);
 
-  const calculateDistance = (x1: number, y1: number, x2: number, y2: number) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-
-  const calculateFalloff = (distance: number) => {
-    const norm = Math.min(Math.max(1 - distance / radius, 0), 1);
-    switch (falloff) {
-      case 'exponential':
-        return norm ** 2;
-      case 'gaussian':
-        return Math.exp(-((distance / (radius / 2)) ** 2) / 2);
-      case 'linear':
-      default:
-        return norm;
+  useEffect(() => {
+    if (disabled) {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      return;
     }
-  };
 
-  useAnimationFrame(() => {
-    if (!containerRef?.current || letterPositions.current.length === 0 || !isInView.current || !mouseHasMoved.current || disabled) return;
-    
-    const rawX = mousePositionRef.current.x;
-    const rawY = mousePositionRef.current.y;
-    
-    // Throttle updates to every 16ms (60fps) to prevent jitter
-    const now = Date.now();
-    if (now - updateThrottleRef.current < 16) return;
-    updateThrottleRef.current = now;
-    
-    // Smooth interpolation of mouse position
-    smoothedMousePos.current.x += (rawX - smoothedMousePos.current.x) * 0.3;
-    smoothedMousePos.current.y += (rawY - smoothedMousePos.current.y) * 0.3;
-    
-    const { x, y } = smoothedMousePos.current;
-    
-    // Only update if position changed significantly (threshold of 2px)
-    const lastX = lastPositionRef.current.x ?? 0;
-    const lastY = lastPositionRef.current.y ?? 0;
-    if (Math.abs(x - lastX) < 2 && Math.abs(y - lastY) < 2) return;
-    lastPositionRef.current = { x, y };
+    const handleMouseMove = (ev: MouseEvent) => {
+      if (!containerRef?.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      targetMouseRef.current = {
+        x: ev.clientX - rect.left,
+        y: ev.clientY - rect.top
+      };
+    };
 
-    letterRefs.current.forEach((letterRef, index) => {
-      if (!letterRef || !letterPositions.current[index]) return;
+    const calculateDistance = (x1: number, y1: number, x2: number, y2: number) => 
+      Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 
-      const pos = letterPositions.current[index];
-      const distance = calculateDistance(x, y, pos.x, pos.y);
+    const calculateFalloff = (distance: number) => {
+      const norm = Math.min(Math.max(1 - distance / radius, 0), 1);
+      switch (falloff) {
+        case 'exponential':
+          return norm ** 2;
+        case 'linear':
+          return norm;
+        case 'gaussian':
+        default:
+          return Math.exp(-((distance / (radius / 2.5)) ** 2) / 2);
+      }
+    };
 
-      if (distance >= radius) {
-        if (letterRef.style.fontVariationSettings !== fromFontVariationSettings) {
-          letterRef.style.fontVariationSettings = fromFontVariationSettings;
-        }
+    const animate = () => {
+      if (!isInitializedRef.current) {
+        animationFrameRef.current = requestAnimationFrame(animate);
         return;
       }
 
-      const falloffValue = calculateFalloff(distance);
-      const newSettings = parsedSettings
-        .map(({ axis, fromValue, toValue }) => {
-          const interpolatedValue = fromValue + (toValue - fromValue) * falloffValue;
-          return `'${axis}' ${interpolatedValue}`;
-        })
-        .join(', ');
+      // Smooth interpolation of mouse position (lerp)
+      const smoothing = 0.08;
+      currentMouseRef.current.x += (targetMouseRef.current.x - currentMouseRef.current.x) * smoothing;
+      currentMouseRef.current.y += (targetMouseRef.current.y - currentMouseRef.current.y) * smoothing;
 
-      if (interpolatedSettingsRef.current[index] !== newSettings) {
-        interpolatedSettingsRef.current[index] = newSettings;
-        letterRef.style.fontVariationSettings = newSettings;
+      // Only update DOM at 30fps to prevent jitter
+      const now = Date.now();
+      if (now - lastUpdateRef.current > 33) {
+        lastUpdateRef.current = now;
+        
+        const { x, y } = currentMouseRef.current;
+
+        letterRefs.current.forEach((letterRef, index) => {
+          if (!letterRef) return;
+          
+          const pos = letterPositions.current.get(index);
+          if (!pos) return;
+
+          const distance = calculateDistance(x, y, pos.x, pos.y);
+
+          if (distance >= radius) {
+            if (letterRef.style.fontVariationSettings !== fromFontVariationSettings) {
+              letterRef.style.fontVariationSettings = fromFontVariationSettings;
+            }
+            return;
+          }
+
+          const falloffValue = calculateFalloff(distance);
+          const newSettings = parsedSettings
+            .map(({ axis, fromValue, toValue }) => {
+              const interpolatedValue = fromValue + (toValue - fromValue) * falloffValue;
+              return `'${axis}' ${interpolatedValue}`;
+            })
+            .join(', ');
+
+          if (letterRef.style.fontVariationSettings !== newSettings) {
+            letterRef.style.fontVariationSettings = newSettings;
+          }
+        });
       }
-    });
-  });
+
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    animationFrameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [containerRef, radius, falloff, disabled, parsedSettings, fromFontVariationSettings]);
 
   const words = label.split(' ');
   let globalLetterIndex = 0;
@@ -239,8 +205,8 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
                 }}
                 style={{
                   display: 'inline-block',
-                  fontVariationSettings: interpolatedSettingsRef.current[currentLetterIndex] || fromFontVariationSettings,
-                  transition: 'font-variation-settings 150ms ease-out'
+                  fontVariationSettings: fromFontVariationSettings,
+                  willChange: 'font-variation-settings'
                 }}
                 aria-hidden="true"
               >

@@ -56,13 +56,13 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             {!isSignedIn ? (
               <>
-                <Link href="/login" className="duo-btn duo-btn-sm duo-btn-secondary">SIGN IN</Link>
-                <Link href="/signup" className="duo-btn duo-btn-sm duo-btn-secondary">GET STARTED</Link>
+                <Link href="/login" className="nav-btn">SIGN IN</Link>
+                <Link href="/signup" className="duo-btn duo-btn-sm duo-btn-primary">GET STARTED</Link>
               </>
             ) : (
               <>
-                <Link href="/portal" className="duo-btn duo-btn-sm duo-btn-secondary">PORTAL</Link>
-                <button onClick={handleLogout} className="duo-btn duo-btn-sm duo-btn-secondary">SIGN OUT</button>
+                <Link href="/portal" className="nav-btn">PORTAL</Link>
+                <button onClick={handleLogout} className="nav-btn">SIGN OUT</button>
               </>
             )}
           </div>
@@ -104,13 +104,13 @@ export default function Navbar() {
               <div className="mt-4 p-2 flex flex-col gap-3">
                 {!isSignedIn ? (
                   <>
-                    <Link href="/login" onClick={() => setIsOpen(false)} className="duo-btn duo-btn-secondary">Sign In</Link>
-                    <Link href="/signup" onClick={() => setIsOpen(false)} className="duo-btn duo-btn-secondary">Get started</Link>
+                    <Link href="/login" onClick={() => setIsOpen(false)} className="nav-btn w-full text-center">Sign In</Link>
+                    <Link href="/signup" onClick={() => setIsOpen(false)} className="duo-btn duo-btn-sm duo-btn-primary w-full">Get started</Link>
                   </>
                 ) : (
                   <>
-                    <Link href="/portal" onClick={() => setIsOpen(false)} className="duo-btn duo-btn-secondary">Portal</Link>
-                    <button onClick={() => { handleLogout(); setIsOpen(false); }} className="duo-btn duo-btn-secondary">Sign Out</button>
+                    <Link href="/portal" onClick={() => setIsOpen(false)} className="nav-btn w-full text-center">Portal</Link>
+                    <button onClick={() => { handleLogout(); setIsOpen(false); }} className="nav-btn w-full">Sign Out</button>
                   </>
                 )}
               </div>
